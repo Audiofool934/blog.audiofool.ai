@@ -1,0 +1,15 @@
+---
+interface Props { target: string }
+const { target } = Astro.props;
+---
+<script is:inline define:vars={{ target }}>
+  const destination = new URL(target, window.location.href);
+  if (window.location.search) {
+    destination.search = destination.search
+      ? destination.search + "&" + window.location.search.slice(1)
+      : window.location.search;
+  }
+  if (!destination.hash) destination.hash = window.location.hash;
+  window.location.replace(destination.href);
+</script>
+<noscript><meta http-equiv="refresh" content={`0; url=${target}`} /></noscript>

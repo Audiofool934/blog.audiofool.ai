@@ -44,7 +44,7 @@ export default defineConfig({
       rehypePlugins: [rehypeKatex, rehypeImgAttrs],
     }),
   },
-  site: "https://audiofool.blog",
+  site: "https://blog.audiofool.ai",
   trailingSlash: 'always',
   vite: {
     build: {

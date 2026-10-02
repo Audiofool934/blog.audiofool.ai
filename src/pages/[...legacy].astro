@@ -1,4 +1,5 @@
 ---
+import LegacyRedirect from "../components/site/LegacyRedirect.astro";
 import { legacyRedirects } from "../data/legacyRedirects.mjs";
 import { redirectsForFilesystem, isCaseSensitiveFilesystem } from "../utils/legacyRoutes.mjs";
 
@@ -19,12 +20,9 @@ const canonical = new URL(target, Astro.site).href;
     <head>
         <meta charset="utf-8" />
         <meta name="robots" content="noindex, follow" />
-        <meta http-equiv="refresh" content={`0; url=${target}`} />
+        <LegacyRedirect target={target} />
         <link rel="canonical" href={canonical} />
         <title>Moved | Audiofool</title>
-        <script is:inline define:vars={{ target }}>
-            window.location.replace(target);
-        </script>
     </head>
     <body>
         <p>This page has moved to <a href={target}>{target}</a>.</p>

@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://audiofool.blog/sitemap-index.xml
+Sitemap: https://blog.audiofool.ai/sitemap-index.xml

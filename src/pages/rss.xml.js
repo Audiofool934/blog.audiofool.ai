@@ -1,5 +1,6 @@
 import rss from '@astrojs/rss';
 import { getTimelineItems } from '../utils/timelineItems';
+import { stableRssGuid } from '../utils/rssGuid.mjs';
 
 export async function GET(context) {
   const items = await getTimelineItems();
@@ -13,6 +14,7 @@ export async function GET(context) {
       pubDate: item.date,
       description: item.description || item.lane,
       link: item.href,
+      customData: stableRssGuid(item.href),
     })),
     customData: `<language>en-us</language>`,
   });

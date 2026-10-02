@@ -18,7 +18,7 @@ interface Props {
 const { title, description, image, imageAlt, ogType, math, datePublished, dateModified } = Astro.props;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const socialImageURL = new URL(image, Astro.site);
-const siteOrigin = (Astro.site ?? new URL("https://audiofool.blog")).origin;
+const siteOrigin = (Astro.site ?? new URL("https://blog.audiofool.ai")).origin;
 const jsonLdGraph: Record<string, unknown>[] = [
     {
         "@type": "Person",

@@ -6,7 +6,7 @@ import { legacyRedirects } from "../src/data/legacyRedirects.mjs";
 import { isCaseSensitiveFilesystem, redirectsForFilesystem } from "../src/utils/legacyRoutes.mjs";
 
 const dist = fileURLToPath(new URL("../dist/", import.meta.url));
-const site = "https://audiofool.blog";
+const site = "https://blog.audiofool.ai";
 const files = await fs.readdir(dist, { recursive: true });
 const htmlFiles = files.filter((file) => file.endsWith(".html"));
 assert(htmlFiles.length > 0, "Build the site before checking routes");
