@@ -11,6 +11,7 @@ stack: ['TypeScript', 'Pi', 'Music', 'TUI']
 type: 'Product'
 url: 'https://moondog.audiofool.ai/'
 githubRepo: 'Audiofool934/moondog'
+githubReadme: true
 ---
 
 ## Overview

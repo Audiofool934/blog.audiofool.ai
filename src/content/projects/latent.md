@@ -11,6 +11,7 @@ stack: ['Swift', 'Python', 'Semantic Search', 'Photography']
 type: 'Product'
 url: 'https://github.com/Audiofool934/latent'
 githubRepo: 'Audiofool934/latent'
+githubReadme: true
 ---
 
 ## Overview

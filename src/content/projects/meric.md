@@ -8,6 +8,8 @@ featured: true
 pinned: true
 pinOrder: 1
 url: 'https://meric.audiofool.ai/'
+githubRepo: 'Audiofool934/meric'
+githubReadme: true
 stack: ['Python', 'Flow Matching', 'Retrieval', 'MuQ', 'Multimodal']
 type: 'Research'
 ---
@@ -29,4 +31,5 @@ That shared representation makes the system more than a one-way generator. It be
 
 ## Public Status
 
-This project is listed here as a public-facing research dossier. The source repository is private, so the site does not sync its README or expose repository internals.
+The [current project homepage](https://meric.audiofool.ai/) presents the research and listening examples.
+The [public repository](https://github.com/Audiofool934/meric) contains the source and setup instructions.

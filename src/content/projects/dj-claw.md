@@ -1,12 +1,14 @@
 ---
 title: 'DJ Claw'
 pubDate: '2026-05-14'
-description: 'A personal radio agent for music generation, taste memory, and station-like creative workflows.'
+description: 'An open-source framework for long-term music taste memory and agentic music interaction.'
 category: 'Agent'
 status: 'active'
 featured: true
 stack: ['OpenClaw', 'Agents', 'Music Generation', 'Memory', 'Radio']
 type: 'Experiment'
+githubRepo: 'Audiofool934/dj-claw'
+githubReadme: true
 ---
 
 ## Overview

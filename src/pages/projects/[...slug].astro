@@ -3,6 +3,7 @@ import { getCollection, render } from "astro:content";
 import MinimalLayout from "../../layouts/MinimalLayout.astro";
 import githubProjects from "../../data/github-projects.json";
 import { formatDateCompact } from "../../utils/formatDate";
+import { getProjectState } from "../../utils/projectState";
 import "../../style/post.css"; // Standard typography
 
 export async function getStaticPaths() {
@@ -19,6 +20,9 @@ const readmes = await getCollection("projectReadmes");
 const readme = readmes.find((item) => item.data.project === entry.id);
 const ReadmeContent = readme ? (await render(readme)).Content : null;
 const githubMeta = githubProjects.projects.find((item) => item.project === entry.id);
+const projectState = getProjectState(entry, githubProjects.projects);
+const unavailable = githubMeta?.syncStatus === "unavailable";
+const stale = githubMeta?.syncStatus === "stale";
 
 // Only ship the KaTeX stylesheet when the brief or synced README contains math.
 const hasMath =
@@ -30,7 +34,7 @@ const ogImage =
         ? entry.data.image
         : entry.data.image?.url;
 
-const repoUrl = githubMeta?.url || (entry.data.githubRepo ? `https://github.com/${entry.data.githubRepo}` : "");
+const repoUrl = unavailable ? "" : githubMeta?.url || (entry.data.githubRepo ? `https://github.com/${entry.data.githubRepo}` : "");
 const repoLabel = entry.data.githubRepo || githubMeta?.repo;
 const pushedDate = githubMeta?.pushedAt ? new Date(githubMeta.pushedAt) : null;
 const syncedDate = readme?.data.syncedAt || null;
@@ -61,7 +65,7 @@ function compactDate(date: Date | null) {
                     <div
                         class="font-mono text-xs text-[var(--accent)] mb-2 uppercase tracking-wider"
                     >
-                        {entry.data.type || "Project"} / {entry.data.status} / {
+                        {entry.data.type || "Project"} / {projectState.status} / {
                             entry.data.pubDate.getFullYear()
                         }
                     </div>
@@ -119,6 +123,18 @@ function compactDate(date: Date | null) {
         {
             (repoLabel || githubMeta) && (
                 <section class="mb-12 border border-[var(--border-main)]">
+                    {(unavailable || stale) && (
+                        <p class="p-4 border-b border-[var(--border-main)] text-sm text-[var(--text-muted)]">
+                            {unavailable
+                                ? "The repository is not currently public at this address. The metadata and README below are the last saved public snapshot."
+                                : "GitHub could not be refreshed. The metadata below are from the last successful sync."}
+                        </p>
+                    )}
+                    {projectState.fork && (
+                        <p class="p-4 border-b border-[var(--border-main)] text-sm text-[var(--text-muted)]">
+                            This repository is a fork of an upstream project.
+                        </p>
+                    )}
                     <div class="grid md:grid-cols-[10rem_minmax(0,1fr)] border-b border-[var(--border-main)]">
                         <div class="p-4 border-b md:border-b-0 md:border-r border-[var(--border-main)] font-mono text-xs uppercase tracking-wider text-[var(--text-muted)]">
                             GitHub

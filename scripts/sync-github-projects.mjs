@@ -197,7 +197,11 @@ async function githubFetch(url) {
   if (token) headers.Authorization = `Bearer ${token}`;
 
   const res = await fetch(url, { headers });
-  if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+  if (!res.ok) {
+    const error = new Error(`${res.status} ${res.statusText}`);
+    error.status = res.status;
+    throw error;
+  }
   return res;
 }
 
@@ -214,6 +218,11 @@ async function syncProject(file) {
 
   const metaRes = await githubFetch(`https://api.github.com/repos/${owner}/${repo}`);
   const meta = await metaRes.json();
+  if (meta.private) {
+    const error = new Error('Repository is no longer public; keeping the published snapshot');
+    error.status = 404;
+    throw error;
+  }
   const branch = meta.default_branch || 'main';
 
   let readmeMarkdown = '';
@@ -250,6 +259,11 @@ async function syncProject(file) {
     homepage: meta.homepage || '',
     description: meta.description || '',
     visibility: meta.private ? 'private' : 'public',
+    syncStatus: 'current',
+    syncedAt: new Date().toISOString(),
+    createdAt: meta.created_at || '',
+    archived: Boolean(meta.archived),
+    fork: Boolean(meta.fork),
     language: meta.language || '',
     stars: meta.stargazers_count || 0,
     forks: meta.forks_count || 0,
@@ -289,7 +303,7 @@ async function main() {
       console.warn(`[github-projects] Failed to sync ${file}: ${error.message}`);
       const prev = prevById.get(id);
       if (prev) {
-        metadata.push(prev);
+        metadata.push({ ...prev, syncStatus: error.status === 404 ? 'unavailable' : 'stale' });
         console.warn(`[github-projects]   ↳ reused last-known-good metadata for ${id}`);
       }
     }

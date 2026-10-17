@@ -80,6 +80,9 @@ githubReadme: true
 
 `npm run refresh:github-projects` fetches repository metadata and the README, sanitizes it, and writes a snapshot to `src/data/github-projects.json` and `src/content/project-readmes/`.
 The snapshot is committed, so builds never call the GitHub API.
+Timeline and Project Index use the latest public GitHub push as the project update date, with the original publication date as a fallback.
+Pinned projects keep their curated order and primary links.
+Unavailable repositories retain their last public snapshot and show a notice on the detail page.
 
 **AudioShow.**
 Episodes are authored in batches in `src/content/audioshow/` and parsed by `src/utils/parseAudioshow.ts`.

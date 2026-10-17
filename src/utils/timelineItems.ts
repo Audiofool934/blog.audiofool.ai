@@ -1,6 +1,8 @@
 import type { CollectionEntry } from "astro:content";
 import { getCollection } from "astro:content";
 import { getPostType } from "./postType";
+import githubProjects from "../data/github-projects.json";
+import { getProjectState } from "./projectState";
 
 export type TimelineItemKind = "log" | "project" | "note" | "audioshow" | "gallery";
 
@@ -12,6 +14,7 @@ export interface TimelineItem {
     href: string;
     description: string;
     sourceId: string;
+    dateLabel?: string;
 }
 
 function fromLog(entry: CollectionEntry<"log">): TimelineItem {
@@ -38,15 +41,19 @@ export async function getTimelineItems(): Promise<TimelineItem[]> {
 
     const items: TimelineItem[] = [
         ...logs.filter((entry) => entry.data.timeline).map(fromLog),
-        ...projects.map((entry) => ({
-            kind: "project" as const,
-            lane: "project",
-            title: entry.data.title,
-            date: entry.data.pubDate,
-            href: `/projects/${entry.id}/`,
-            description: entry.data.description || "",
-            sourceId: entry.id,
-        })),
+        ...projects.map((entry) => {
+            const state = getProjectState(entry, githubProjects.projects);
+            return {
+                kind: "project" as const,
+                lane: "project",
+                title: entry.data.title,
+                date: state.date,
+                dateLabel: state.dateLabel,
+                href: state.href,
+                description: entry.data.description || "",
+                sourceId: entry.id,
+            };
+        }),
         ...wiki.map((entry) => ({
             kind: "note" as const,
             lane: "note",

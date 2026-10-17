@@ -14,7 +14,7 @@ export async function GET(context) {
       pubDate: item.date,
       description: item.description || item.lane,
       link: item.href,
-      customData: stableRssGuid(item.href),
+      customData: stableRssGuid(item.kind === 'project' ? `/projects/${item.sourceId}/` : item.href),
     })),
     customData: `<language>en-us</language>`,
   });

@@ -11,6 +11,7 @@ stack: ['JavaScript', 'Python', 'Hand Tracking', 'Music Generation']
 type: 'Product'
 url: 'https://github.com/Audiofool934/sway'
 githubRepo: 'Audiofool934/sway'
+githubReadme: true
 ---
 
 ## Overview

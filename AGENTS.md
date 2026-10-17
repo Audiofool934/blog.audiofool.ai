@@ -60,6 +60,9 @@ Run either GitHub sync command only when fresh project data is explicitly reques
 Update `getTimelineItems()` when changing what counts as an update; keep sorting and filtering out of individual consumers.
 Project metadata lives in `src/content/projects/`, synced READMEs in `src/content/project-readmes/`, and the GitHub catalog in `src/data/github-projects.json`.
 Pinned projects use `pinOrder` for display order and `url` for their primary destination in the project index.
+`src/utils/projectState.ts` shares project update dates, primary links, and GitHub archive status across Project Index and Timeline.
+Use current public GitHub `pushedAt` for update ordering; keep authored `pubDate` as the fallback and preserve project RSS GUIDs when links change.
+The GitHub sync keeps unavailable public snapshots with a status notice and never imports private README content.
 
 ## Content and Routes
 

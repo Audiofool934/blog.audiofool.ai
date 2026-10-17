@@ -2,11 +2,14 @@
 import MinimalLayout from "../../layouts/MinimalLayout.astro";
 import { getCollection } from "astro:content";
 import { formatDateCompact } from "../../utils/formatDate";
+import githubProjects from "../../data/github-projects.json";
+import { getProjectState } from "../../utils/projectState";
 
 const projects = await getCollection("projects");
+const projectState = (project: (typeof projects)[number]) => getProjectState(project, githubProjects.projects);
 
 const sortedProjects = [...projects].sort(
-    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+    (a, b) => projectState(b).date.valueOf() - projectState(a).date.valueOf(),
 );
 
 const pinnedProjects = sortedProjects
@@ -43,12 +46,11 @@ const sortedCategories = Object.keys(categorizedProjects).sort((a, b) => {
 });
 
 function projectHref(project: (typeof sortedProjects)[number]) {
-    if (project.data.pinned && project.data.url) return project.data.url;
-    return `/projects/${project.id}/`;
+    return projectState(project).href;
 }
 
 function projectMeta(project: (typeof sortedProjects)[number]) {
-    return [project.data.category, project.data.status, project.data.type]
+    return [project.data.category, projectState(project).status, project.data.type, projectState(project).fork ? "fork" : ""]
         .filter(Boolean)
         .join(" / ");
 }
@@ -91,7 +93,7 @@ function projectMeta(project: (typeof sortedProjects)[number]) {
                                         PIN {String(index + 1).padStart(2, "0")}
                                     </span>
                                     <span class="font-mono text-xs text-[var(--text-faint)] group-hover:text-[var(--bg-body)]">
-                                        {formatDateCompact(project.data.pubDate)}
+                                        {projectState(project).dateLabel} · {formatDateCompact(projectState(project).date)}
                                     </span>
                                 </div>
                                 <h2 class="text-2xl font-bold font-heading mb-3">
@@ -103,7 +105,7 @@ function projectMeta(project: (typeof sortedProjects)[number]) {
                                 <div class="flex flex-wrap gap-x-3 gap-y-1 font-mono text-[10px] uppercase tracking-wider text-[var(--text-faint)] group-hover:text-[var(--bg-body)]">
                                     <span>{project.data.category}</span>
                                     <span>/</span>
-                                    <span>{project.data.status}</span>
+                                    <span>{projectState(project).status}</span>
                                     <span>/</span>
                                     <span>{project.data.stack[0]}</span>
                                 </div>
@@ -121,7 +123,7 @@ function projectMeta(project: (typeof sortedProjects)[number]) {
                         Project Index
                     </h2>
                     <p class="text-sm text-[var(--text-muted)] max-w-2xl">
-                        A compact project browser. Latest is chronological; All keeps the current categorized archive.
+                        Latest follows GitHub updates, or publication dates for projects without public activity. All keeps the categorized archive.
                     </p>
                 </div>
 
@@ -154,8 +156,9 @@ function projectMeta(project: (typeof sortedProjects)[number]) {
                         <span class="absolute -left-[1.65rem] md:-left-[2.15rem] top-1 h-2 w-2 rounded-full bg-[var(--bg-body)] border border-[var(--text-main)] group-hover:bg-[var(--text-main)] transition-colors" />
 
                         <div class="grid gap-1 md:grid-cols-[8rem_8rem_minmax(0,1fr)] md:gap-4 md:items-baseline font-mono text-sm">
-                            <time class="text-xs uppercase tracking-wider text-[var(--text-faint)] transition-opacity">
-                                {formatDateCompact(project.data.pubDate)}
+                            <time datetime={projectState(project).date.toISOString()} class="text-xs uppercase tracking-wider text-[var(--text-faint)] transition-opacity">
+                                {formatDateCompact(projectState(project).date)}
+                                <span class="block mt-1 text-[10px]">{projectState(project).dateLabel}</span>
                             </time>
 
                             <span class="text-[10px] uppercase tracking-wider text-[var(--text-faint)] transition-opacity">
@@ -179,7 +182,8 @@ function projectMeta(project: (typeof sortedProjects)[number]) {
                                     </p>
                                 )}
                                 <div class="mt-2 flex flex-wrap gap-x-3 gap-y-1 font-mono text-[10px] uppercase tracking-wider text-[var(--text-faint)]">
-                                    <span>{project.data.status}</span>
+                                    <span>{projectState(project).status}</span>
+                                    {projectState(project).fork && <span>fork</span>}
                                     <span>{project.data.type}</span>
                                     {project.data.stack.slice(0, 3).map((tech) => (
                                         <span>{tech}</span>
@@ -216,8 +220,9 @@ function projectMeta(project: (typeof sortedProjects)[number]) {
                                         <span class="absolute -left-[1.65rem] md:-left-[2.15rem] top-1 h-2 w-2 rounded-full bg-[var(--bg-body)] border border-[var(--text-main)] group-hover:bg-[var(--text-main)] transition-colors" />
 
                                         <div class="grid gap-1 md:grid-cols-[8rem_minmax(0,1fr)_7rem] md:gap-4 md:items-baseline font-mono text-sm">
-                                            <time class="text-xs uppercase tracking-wider text-[var(--text-faint)]">
-                                                {formatDateCompact(project.data.pubDate)}
+                                            <time datetime={projectState(project).date.toISOString()} class="text-xs uppercase tracking-wider text-[var(--text-faint)]">
+                                                {formatDateCompact(projectState(project).date)}
+                                                <span class="block mt-1 text-[10px]">{projectState(project).dateLabel}</span>
                                             </time>
 
                                             <div class="min-w-0">

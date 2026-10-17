@@ -76,8 +76,9 @@ const filters = filterOrder
                             <span class="absolute -left-[1.65rem] md:-left-[2.15rem] top-1 h-2 w-2 rounded-full bg-[var(--bg-body)] border border-[var(--text-main)] group-hover:bg-[var(--text-main)] transition-colors" />
 
                             <div class="grid gap-1 md:grid-cols-[8rem_5rem_minmax(0,1fr)] md:gap-4 md:items-baseline font-mono text-sm">
-                                <time class="text-xs uppercase tracking-wider text-[var(--text-faint)] transition-opacity">
+                                <time datetime={post.date.toISOString()} class="text-xs uppercase tracking-wider text-[var(--text-faint)] transition-opacity">
                                     {formatDateCompact(post.date)}
+                                    {post.dateLabel && <span class="block mt-1 text-[10px]">{post.dateLabel}</span>}
                                 </time>
 
                                 <span class="text-[10px] uppercase tracking-wider text-[var(--text-faint)] transition-opacity">
