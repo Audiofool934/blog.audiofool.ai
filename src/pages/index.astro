@@ -9,20 +9,20 @@ const timelinePosts = (await getTimelineItems()).slice(0, 3);
 <MinimalLayout title="Audiofool — Creative AI, Notes, AudioShow & Photography">
 	<div class="index-hero relative overflow-clip flex flex-col" transition:animate="fade">
 		<!-- Background -->
-		<div class="absolute bottom-0 right-0 pointer-events-none max-h-[50%] max-w-[66%] md:max-w-[50%]">
+		<div class="index-portrait absolute bottom-0 right-0 pointer-events-none max-w-[56%] md:max-w-[42.5%]">
 			<picture class="contents">
 				<source
 					type="image/avif"
-					srcset="/images/_generated/site/BG-320.avif 320w, /images/_generated/site/BG-480.avif 480w, /images/_generated/site/BG-640.avif 640w, /images/_generated/site/BG-960.avif 960w, /images/_generated/site/BG-1280.avif 1280w"
-					sizes="(min-width: 1440px) 592px, (min-width: 768px) calc((100vw - 256px) / 2), 66vw"
+					srcset="/images/_generated/site/audiofool-portrait-320.avif 320w, /images/_generated/site/audiofool-portrait-480.avif 480w, /images/_generated/site/audiofool-portrait-640.avif 640w, /images/_generated/site/audiofool-portrait-960.avif 960w, /images/_generated/site/audiofool-portrait-1280.avif 1280w"
+					sizes="(min-width: 1440px) 503px, (min-width: 768px) calc((100vw - 256px) * 0.425), 56vw"
 				/>
 			<img
-				src="/images/_generated/site/BG-960.webp"
-				srcset="/images/_generated/site/BG-320.webp 320w, /images/_generated/site/BG-480.webp 480w, /images/_generated/site/BG-640.webp 640w, /images/_generated/site/BG-960.webp 960w, /images/_generated/site/BG-1280.webp 1280w"
-				sizes="(min-width: 1440px) 592px, (min-width: 768px) calc((100vw - 256px) / 2), 66vw"
+				src="/images/_generated/site/audiofool-portrait-960.webp"
+				srcset="/images/_generated/site/audiofool-portrait-320.webp 320w, /images/_generated/site/audiofool-portrait-480.webp 480w, /images/_generated/site/audiofool-portrait-640.webp 640w, /images/_generated/site/audiofool-portrait-960.webp 960w, /images/_generated/site/audiofool-portrait-1280.webp 1280w"
+				sizes="(min-width: 1440px) 503px, (min-width: 768px) calc((100vw - 256px) * 0.425), 56vw"
 				alt=""
 				width="960"
-				height="807"
+				height="960"
 				loading="eager"
 				fetchpriority="high"
 				decoding="async"
@@ -109,6 +109,27 @@ const timelinePosts = (await getTimelineItems()).slice(0, 3);
 		.index-hero {
 			min-height: calc(100vh - 2rem);
 		}
+	}
+
+	.index-portrait {
+		/* Crop the right side while keeping the visible photograph in the corner. */
+		--portrait-crop-right: 15%;
+		clip-path: inset(0 var(--portrait-crop-right) 0 0);
+		transform: translateX(var(--portrait-crop-right));
+	}
+
+	.index-portrait img {
+		/* Feather outside the supplied contour; preserve the complete foreground. */
+		--portrait-mask:
+			url("/images/audiofool-portrait-mask.svg"),
+			linear-gradient(to bottom, transparent, rgb(0 0 0 / 0.08) 4%, rgb(0 0 0 / 0.3) 8%, rgb(0 0 0 / 0.65) 13%, #000 20%),
+			linear-gradient(to right, transparent, rgb(0 0 0 / 0.2) 2%, rgb(0 0 0 / 0.8) 4%, #000 6%);
+		-webkit-mask-image: var(--portrait-mask);
+		mask-image: var(--portrait-mask);
+		-webkit-mask-composite: source-in;
+		mask-composite: intersect;
+		mask-size: 100% 100%;
+		mask-repeat: no-repeat;
 	}
 
 	.audiofool-seal {

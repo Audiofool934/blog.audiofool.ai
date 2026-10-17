@@ -9,8 +9,8 @@ const generatorMtime = (await fs.stat(fileURLToPath(import.meta.url))).mtimeMs;
 
 const variants = [
   {
-    source: path.join(publicDir, "images/BG.webp"),
-    name: "BG",
+    source: path.join(publicDir, "images/audiofool-portrait.jpg"),
+    name: "audiofool-portrait",
     widths: [320, 480, 640, 960, 1280],
     quality: 74,
     formats: { webp: 74, avif: 60 },
