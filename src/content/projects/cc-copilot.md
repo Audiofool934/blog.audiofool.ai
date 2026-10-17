@@ -6,6 +6,8 @@ category: 'Agent'
 status: 'active'
 featured: true
 pinned: true
+pinOrder: 5
+url: 'https://github.com/Audiofool934/cc-copilot'
 stack: ['Python', 'Textual', 'TUI', 'Coding Agents', 'Observability']
 type: 'Product'
 githubRepo: 'Audiofool934/cc-copilot'

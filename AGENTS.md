@@ -59,6 +59,7 @@ Run either GitHub sync command only when fresh project data is explicitly reques
 
 Update `getTimelineItems()` when changing what counts as an update; keep sorting and filtering out of individual consumers.
 Project metadata lives in `src/content/projects/`, synced READMEs in `src/content/project-readmes/`, and the GitHub catalog in `src/data/github-projects.json`.
+Pinned projects use `pinOrder` for display order and `url` for their primary destination in the project index.
 
 ## Content and Routes
 

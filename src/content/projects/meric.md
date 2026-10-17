@@ -6,6 +6,8 @@ category: 'Music Generation'
 status: 'research'
 featured: true
 pinned: true
+pinOrder: 1
+url: 'https://meric.audiofool.ai/'
 stack: ['Python', 'Flow Matching', 'Retrieval', 'MuQ', 'Multimodal']
 type: 'Research'
 ---

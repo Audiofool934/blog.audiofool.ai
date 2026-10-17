@@ -5,7 +5,6 @@ description: 'A personal radio agent for music generation, taste memory, and sta
 category: 'Agent'
 status: 'active'
 featured: true
-pinned: true
 stack: ['OpenClaw', 'Agents', 'Music Generation', 'Memory', 'Radio']
 type: 'Experiment'
 ---

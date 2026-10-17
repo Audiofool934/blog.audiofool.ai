@@ -9,7 +9,9 @@ const sortedProjects = [...projects].sort(
     (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
 
-const pinnedProjects = sortedProjects.filter((project) => project.data.pinned);
+const pinnedProjects = sortedProjects
+    .filter((project) => project.data.pinned)
+    .sort((a, b) => (a.data.pinOrder ?? Infinity) - (b.data.pinOrder ?? Infinity));
 const latestProjects = sortedProjects.slice(0, 8);
 
 const categorizedProjects = sortedProjects.reduce(
@@ -41,6 +43,7 @@ const sortedCategories = Object.keys(categorizedProjects).sort((a, b) => {
 });
 
 function projectHref(project: (typeof sortedProjects)[number]) {
+    if (project.data.pinned && project.data.url) return project.data.url;
     return `/projects/${project.id}/`;
 }
 

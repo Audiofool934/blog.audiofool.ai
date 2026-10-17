@@ -5,7 +5,6 @@ description: 'A campus music map where people turn places, images, and short sto
 category: 'Music Generation'
 status: 'active'
 featured: true
-pinned: true
 stack: ['React', 'TypeScript', 'Leaflet', 'Express', 'PostgreSQL', 'MERIC']
 type: 'Product'
 url: 'https://sounddrop.audiofool.blog/'
