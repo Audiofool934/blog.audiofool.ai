@@ -1,19 +1,19 @@
-# audiofool.blog
+# blog.audiofool.ai
 
 A personal archive for notes, music, photography, and projects.
 
 <p align="center">
-  <a href="https://audiofool.blog">
-    <img src="docs/home.png" alt="audiofool.blog homepage with sidebar navigation, the persistent audio player, and recent updates" width="900">
+  <a href="https://blog.audiofool.ai">
+    <img src="docs/home.png" alt="blog.audiofool.ai homepage with sidebar navigation, the persistent audio player, and recent updates" width="900">
   </a>
 </p>
 
 <p align="center">
-  <a href="https://audiofool.blog"><strong>audiofool.blog</strong></a>
+  <a href="https://blog.audiofool.ai"><strong>blog.audiofool.ai</strong></a>
   ·
-  <a href="https://audiofool.blog/rss.xml">RSS</a>
+  <a href="https://blog.audiofool.ai/rss.xml">RSS</a>
   ·
-  <a href="https://audiofool.blog/timeline/">Timeline</a>
+  <a href="https://blog.audiofool.ai/timeline/">Timeline</a>
 </p>
 
 The site is a small set of typed content systems built with Astro.
@@ -151,7 +151,7 @@ npx lighthouse@13.4.1 http://localhost:4321/notes/policy-gradient/ \
 
 ## License
 
-The canonical repository is [Audiofool934/Audiofool934.github.io](https://github.com/Audiofool934/Audiofool934.github.io).
+The canonical repository is [Audiofool934/blog.audiofool.ai](https://github.com/Audiofool934/blog.audiofool.ai).
 
 - **Code** (the Astro site, components, scripts, and styles) is released under the [MIT License](LICENSE).
 - **Content** (writing, photographs, AudioShow curation, and other personal media) is © Audiofool, all rights reserved, and is not covered by the MIT License.

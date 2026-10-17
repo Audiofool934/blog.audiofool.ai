@@ -3,13 +3,13 @@
   "version": "0.0.1",
   "private": true,
   "type": "module",
-  "description": "audiofool.blog, a personal archive for notes, music, photography, and projects, built with Astro.",
-  "author": "Audiofool (https://audiofool.blog)",
+  "description": "blog.audiofool.ai, a personal archive for notes, music, photography, and projects, built with Astro.",
+  "author": "Audiofool (https://blog.audiofool.ai)",
   "license": "MIT",
-  "homepage": "https://audiofool.blog",
+  "homepage": "https://blog.audiofool.ai",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Audiofool934/Audiofool934.github.io.git"
+    "url": "git+https://github.com/Audiofool934/blog.audiofool.ai.git"
   },
   "engines": {
     "node": ">=22.12.0"

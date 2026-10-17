@@ -1,6 +1,6 @@
 # Agent Guide
 
-Audiofool.blog is a personal archive for projects, notes, music, photography, and public updates.
+blog.audiofool.ai is a personal archive for projects, notes, music, photography, and public updates.
 It uses Astro 6, TypeScript, Tailwind CSS 3 via PostCSS, and Markdown content collections; there is no UI framework runtime.
 Keep this guide current when project conventions change.
 
