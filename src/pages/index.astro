@@ -8,25 +8,25 @@ const timelinePosts = (await getTimelineItems()).slice(0, 3);
 
 <MinimalLayout title="Audiofool — Creative AI, Notes, AudioShow & Photography">
 	<div class="index-hero relative overflow-clip flex flex-col" transition:animate="fade">
-		<!-- Background: the feathered cutout comes from the alpha matte baked in by generate-site-images. On mobile it sits under the text, so keep it faint there. -->
-		<div class="index-portrait absolute bottom-0 right-0 pointer-events-none max-w-[56%] md:max-w-[42.5%]">
+		<!-- Portrait: a feathered cutout from the alpha matte baked in by generate-site-images. It sits in the bottom-right corner; below md it follows the content in flow so it never covers text. -->
+		<div class="index-portrait order-last self-end w-[62%] max-w-[280px] pointer-events-none md:absolute md:bottom-0 md:right-0 md:w-auto md:max-w-[30%]">
 			<picture class="contents">
 				<source
 					type="image/avif"
 					srcset="/images/_generated/site/audiofool-portrait-320.avif 320w, /images/_generated/site/audiofool-portrait-480.avif 480w, /images/_generated/site/audiofool-portrait-640.avif 640w, /images/_generated/site/audiofool-portrait-960.avif 960w, /images/_generated/site/audiofool-portrait-1280.avif 1280w"
-					sizes="(min-width: 1440px) 503px, (min-width: 768px) calc((100vw - 256px) * 0.425), 56vw"
+					sizes="(min-width: 1440px) 355px, (min-width: 768px) calc((100vw - 256px) * 0.3), min(62vw, 280px)"
 				/>
 			<img
 				src="/images/_generated/site/audiofool-portrait-960.webp"
 				srcset="/images/_generated/site/audiofool-portrait-320.webp 320w, /images/_generated/site/audiofool-portrait-480.webp 480w, /images/_generated/site/audiofool-portrait-640.webp 640w, /images/_generated/site/audiofool-portrait-960.webp 960w, /images/_generated/site/audiofool-portrait-1280.webp 1280w"
-				sizes="(min-width: 1440px) 503px, (min-width: 768px) calc((100vw - 256px) * 0.425), 56vw"
+				sizes="(min-width: 1440px) 355px, (min-width: 768px) calc((100vw - 256px) * 0.3), min(62vw, 280px)"
 				alt=""
 				width="960"
 				height="960"
 				loading="eager"
 				fetchpriority="high"
 				decoding="async"
-				class="w-full h-full object-cover opacity-40 md:opacity-100"
+				class="w-full h-full object-cover"
 			/>
 			</picture>
 		</div>
