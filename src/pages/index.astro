@@ -4,98 +4,113 @@ import { formatDateCompact } from "../utils/formatDate";
 import { getTimelineItems } from "../utils/timelineItems";
 
 const timelinePosts = (await getTimelineItems()).slice(0, 3);
+
+// Widths produced by scripts/generate-site-images.mjs for the homepage portraits.
+const portraitWidths = [320, 480, 640, 960, 1280];
+const srcset = (name: string, format: "avif" | "webp") =>
+	portraitWidths.map((width) => `/images/_generated/site/${name}-${width}.${format} ${width}w`).join(", ");
+
+// Each theme shows one portrait. Both are lazy so the hidden one is never downloaded.
+const portraits = [
+	{
+		// Dark theme: a night cutout, feathered by the alpha matte baked in by the image generator.
+		name: "audiofool-portrait",
+		width: 960,
+		height: 960,
+		sizes: "min(64vw, 280px)",
+		class: "index-portrait-night hidden dark:block",
+	},
+	{
+		// Light theme: a film frame, shown whole with its rebate.
+		name: "audiofool-film-portrait",
+		width: 960,
+		height: 828,
+		sizes: "(min-width: 768px) 324px, min(calc(100vw - 4rem), 420px)",
+		class: "index-portrait-film block dark:hidden",
+	},
+];
 ---
 
 <MinimalLayout title="Audiofool — Creative AI, Notes, AudioShow & Photography">
-	<div class="index-hero relative overflow-clip flex flex-col" transition:animate="fade">
-		<!-- Portrait: a feathered cutout from the alpha matte baked in by generate-site-images. It sits in the bottom-right corner; below md it follows the content in flow so it never covers text. -->
-		<div class="index-portrait order-last self-end w-[62%] max-w-[280px] pointer-events-none md:absolute md:bottom-0 md:right-0 md:w-auto md:max-w-[30%]">
-			<picture class="contents">
-				<source
-					type="image/avif"
-					srcset="/images/_generated/site/audiofool-portrait-320.avif 320w, /images/_generated/site/audiofool-portrait-480.avif 480w, /images/_generated/site/audiofool-portrait-640.avif 640w, /images/_generated/site/audiofool-portrait-960.avif 960w, /images/_generated/site/audiofool-portrait-1280.avif 1280w"
-					sizes="(min-width: 1440px) 355px, (min-width: 768px) calc((100vw - 256px) * 0.3), min(62vw, 280px)"
-				/>
-			<img
-				src="/images/_generated/site/audiofool-portrait-960.webp"
-				srcset="/images/_generated/site/audiofool-portrait-320.webp 320w, /images/_generated/site/audiofool-portrait-480.webp 480w, /images/_generated/site/audiofool-portrait-640.webp 640w, /images/_generated/site/audiofool-portrait-960.webp 960w, /images/_generated/site/audiofool-portrait-1280.webp 1280w"
-				sizes="(min-width: 1440px) 355px, (min-width: 768px) calc((100vw - 256px) * 0.3), min(62vw, 280px)"
-				alt=""
-				width="960"
-				height="960"
-				loading="eager"
-				fetchpriority="high"
-				decoding="async"
-				class="w-full h-full object-cover"
-			/>
-			</picture>
-		</div>
+	<div class="index-hero flex flex-col justify-start md:justify-center px-8 pt-6 pb-10 md:p-12" transition:animate="fade">
+		<!-- The sidebar and top bar already show "Audiofool", so the page heading is for screen readers only. -->
+		<h1 class="sr-only">Audiofool</h1>
 
-		<!-- Content -->
-		<div class="relative p-8 md:p-12 flex-1 flex flex-col justify-start pt-[15%] md:pt-[12%]">
-			<h1
-				class="flex items-center gap-4 md:gap-6 text-4xl md:text-6xl font-bold tracking-tight font-heading mb-12 md:mb-16"
-			>
-				<span>Audiofool</span>
-				<img
-					src="/images/_generated/site/audiofool-seal-112.webp"
-					alt=""
-					width="112"
-					height="112"
-					loading="eager"
-					decoding="async"
-					class="audiofool-seal h-11 w-11 md:h-14 md:w-14 shrink-0 opacity-90"
-					aria-hidden="true"
-				/>
-			</h1>
-			<div class="max-w-2xl text-[var(--text-muted)] text-base md:text-lg leading-relaxed space-y-5 index-intro">
-				<p>
-					I build and study <strong>creative AI</strong>, with a focus on
-					<strong>multimodal understanding/generation</strong> and
-					<strong>AI agent</strong>.
-				</p>
-				<p>
-					The <a href="/timeline/">timeline</a> is a chronological trace of notes, projects, music, photos, and site changes. <a href="/projects/">Projects</a> collects what I’m building. <a href="/notes/">Notes</a> holds math, AI/ML, and ideas in progress. <a href="/audioshow/">AudioShow</a> is my long-running music journal — 200+ song episodes and curated listening crates. <a href="/gallery/">Gallery</a> keeps selected photographs I took.
-				</p>
+		<!-- Stacked below xl: portrait on top. From xl: text on the left, portrait on the right. -->
+		<div class="index-layout flex flex-col items-center gap-8 xl:flex-row-reverse xl:items-center xl:justify-between xl:gap-12">
+			<div class="index-portrait pointer-events-none">
+				{
+					portraits.map((portrait) => (
+						<picture class="contents">
+							<source type="image/avif" srcset={srcset(portrait.name, "avif")} sizes={portrait.sizes} />
+							<img
+								src={`/images/_generated/site/${portrait.name}-960.webp`}
+								srcset={srcset(portrait.name, "webp")}
+								sizes={portrait.sizes}
+								alt=""
+								width={portrait.width}
+								height={portrait.height}
+								loading="lazy"
+								fetchpriority="high"
+								decoding="async"
+								class:list={[portrait.class, "w-full h-auto"]}
+							/>
+						</picture>
+					))
+				}
 			</div>
 
-			{
-				timelinePosts.length > 0 && (
-					<section class="mt-12 md:mt-16 max-w-3xl index-news">
-						<div class="flex items-baseline gap-4 mb-3">
-							<h2 class="font-mono text-xs uppercase tracking-widest text-[var(--text-muted)]">
-								Updates
-							</h2>
-							<a
-								href="/timeline/"
-								class="font-mono text-xs text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors"
-							>
-								[ View timeline ]
-							</a>
-						</div>
+			<div class="w-full max-w-2xl min-w-0">
+				<div class="text-[var(--text-muted)] text-base md:text-lg leading-relaxed space-y-5 index-intro">
+					<p>
+						I am <strong>Yinbo Wang</strong>.<br />
+						I build and study <strong>creative AI</strong>, with a focus on
+						<strong>multimodal understanding/generation</strong> and
+						<strong>AI agent</strong>.
+					</p>
+					<p>
+						The <a href="/timeline/">timeline</a> is a chronological trace of notes, projects, music, photos, and site changes. <a href="/projects/">Projects</a> collects what I’m building. <a href="/notes/">Notes</a> holds math, AI/ML, and ideas in progress. <a href="/audioshow/">AudioShow</a> is my long-running music journal — 200+ song episodes and curated listening crates. <a href="/gallery/">Gallery</a> keeps selected photographs I took.
+					</p>
+				</div>
 
-						<div class="space-y-1.5">
-							{timelinePosts.map((post) => {
-								const type = post.lane;
-								return (
-									<a
-										href={post.href}
-										class="group block text-xs md:text-sm text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors"
-									>
-										<span class="font-mono uppercase tracking-wider text-[var(--text-faint)]">
-											{formatDateCompact(post.date)} · {type}
-										</span>
-										<span class="mx-2 opacity-35">—</span>
-										<span class="text-[var(--text-main)] group-hover:underline decoration-1 underline-offset-4">
-											{post.title}
-										</span>
-									</a>
-								);
-							})}
-						</div>
-					</section>
-				)
-			}
+				{
+					timelinePosts.length > 0 && (
+						<section class="mt-12 index-news">
+							<div class="flex items-baseline gap-4 mb-3">
+								<h2 class="font-mono text-xs uppercase tracking-widest text-[var(--text-muted)]">
+									Updates
+								</h2>
+								<a
+									href="/timeline/"
+									class="font-mono text-xs text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors"
+								>
+									[ View timeline ]
+								</a>
+							</div>
+
+							<div class="space-y-1.5">
+								{timelinePosts.map((post) => {
+									const type = post.lane;
+									return (
+										<a
+											href={post.href}
+											class="group block text-xs md:text-sm text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors"
+										>
+											<span class="font-mono uppercase tracking-wider text-[var(--text-faint)]">
+												{formatDateCompact(post.date)} · {type}
+											</span>
+											<span class="mx-2 opacity-35">—</span>
+											<span class="text-[var(--text-main)] group-hover:underline decoration-1 underline-offset-4">
+												{post.title}
+											</span>
+										</a>
+									);
+								})}
+							</div>
+						</section>
+					)
+				}
+			</div>
 		</div>
 	</div>
 </MinimalLayout>
@@ -110,15 +125,22 @@ const timelinePosts = (await getTimelineItems()).slice(0, 3);
 		}
 	}
 
-	.audiofool-seal {
-		border-radius: 9999px;
-		filter: invert(1);
-		image-rendering: auto;
+	/* Phones: the square night cutout stays compact; the landscape film frame fills more of the column. */
+	.index-portrait {
+		flex: none;
+		width: min(64vw, 280px);
 	}
-
-	:global(html.dark) .audiofool-seal {
-		filter: none;
-		opacity: 0.86;
+	:global(html:not(.dark)) .index-portrait {
+		width: min(100%, 420px);
+	}
+	/* Larger screens: cap both portraits at 280px tall (the film frame is 960×828). */
+	@media (min-width: 768px) {
+		.index-portrait {
+			width: 280px;
+		}
+		:global(html:not(.dark)) .index-portrait {
+			width: 324px;
+		}
 	}
 
 	.index-intro strong {

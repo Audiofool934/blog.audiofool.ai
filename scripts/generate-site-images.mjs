@@ -18,10 +18,12 @@ const variants = [
     formats: { webp: 74, avif: 60 },
   },
   {
-    source: path.join(publicDir, "images/audiofool-seal.webp"),
-    name: "audiofool-seal",
-    widths: [112],
-    quality: 82,
+    // Light-theme homepage portrait: a film frame shown with its rebate intact.
+    source: path.join(publicDir, "images/audiofool-film-portrait.jpg"),
+    name: "audiofool-film-portrait",
+    widths: [320, 480, 640, 960, 1280],
+    quality: 78,
+    formats: { webp: 78, avif: 62 },
   },
   {
     source: path.join(publicDir, "muse/muse.png"),
