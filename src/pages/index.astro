@@ -8,7 +8,7 @@ const timelinePosts = (await getTimelineItems()).slice(0, 3);
 
 <MinimalLayout title="Audiofool — Creative AI, Notes, AudioShow & Photography">
 	<div class="index-hero relative overflow-clip flex flex-col" transition:animate="fade">
-		<!-- Background -->
+		<!-- Background: the feathered cutout comes from the alpha matte baked in by generate-site-images. On mobile it sits under the text, so keep it faint there. -->
 		<div class="index-portrait absolute bottom-0 right-0 pointer-events-none max-w-[56%] md:max-w-[42.5%]">
 			<picture class="contents">
 				<source
@@ -26,10 +26,9 @@ const timelinePosts = (await getTimelineItems()).slice(0, 3);
 				loading="eager"
 				fetchpriority="high"
 				decoding="async"
-				class="w-full h-full object-cover object-right-bottom opacity-50"
+				class="w-full h-full object-cover opacity-40 md:opacity-100"
 			/>
 			</picture>
-			<div class="absolute inset-0 bg-gradient-to-br from-[var(--bg-body)] via-transparent to-transparent"></div>
 		</div>
 
 		<!-- Content -->
@@ -109,27 +108,6 @@ const timelinePosts = (await getTimelineItems()).slice(0, 3);
 		.index-hero {
 			min-height: calc(100vh - 2rem);
 		}
-	}
-
-	.index-portrait {
-		/* Crop the right side while keeping the visible photograph in the corner. */
-		--portrait-crop-right: 15%;
-		clip-path: inset(0 var(--portrait-crop-right) 0 0);
-		transform: translateX(var(--portrait-crop-right));
-	}
-
-	.index-portrait img {
-		/* Feather outside the supplied contour; preserve the complete foreground. */
-		--portrait-mask:
-			url("/images/audiofool-portrait-mask.svg"),
-			linear-gradient(to bottom, transparent, rgb(0 0 0 / 0.08) 4%, rgb(0 0 0 / 0.3) 8%, rgb(0 0 0 / 0.65) 13%, #000 20%),
-			linear-gradient(to right, transparent, rgb(0 0 0 / 0.2) 2%, rgb(0 0 0 / 0.8) 4%, #000 6%);
-		-webkit-mask-image: var(--portrait-mask);
-		mask-image: var(--portrait-mask);
-		-webkit-mask-composite: source-in;
-		mask-composite: intersect;
-		mask-size: 100% 100%;
-		mask-repeat: no-repeat;
 	}
 
 	.audiofool-seal {

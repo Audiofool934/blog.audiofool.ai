@@ -10,6 +10,8 @@ const generatorMtime = (await fs.stat(fileURLToPath(import.meta.url))).mtimeMs;
 const variants = [
   {
     source: path.join(publicDir, "images/audiofool-portrait.jpg"),
+    // Grayscale subject matte with feathered edges, applied as the alpha channel.
+    alpha: path.join(publicDir, "images/audiofool-portrait-matte.png"),
     name: "audiofool-portrait",
     widths: [320, 480, 640, 960, 1280],
     quality: 74,
@@ -53,32 +55,40 @@ async function exists(file) {
   }
 }
 
-async function isFresh(sourcePath, outputPath) {
+async function isFresh(inputPaths, outputPath) {
   try {
-    const [sourceStat, outputStat] = await Promise.all([
-      fs.stat(sourcePath),
-      fs.stat(outputPath),
-    ]);
-    return outputStat.mtimeMs >= Math.max(sourceStat.mtimeMs, generatorMtime);
+    const [outputStat, ...inputStats] = await Promise.all(
+      [outputPath, ...inputPaths].map((file) => fs.stat(file)),
+    );
+    const newestInput = Math.max(generatorMtime, ...inputStats.map((stat) => stat.mtimeMs));
+    return outputStat.mtimeMs >= newestInput;
   } catch {
     return false;
   }
 }
 
-async function generateVariant({ source, outputDir, name }, width, format, quality) {
-  if (!(await exists(source))) {
-    throw new Error(`Missing source image: ${source}`);
+async function generateVariant({ source, alpha, outputDir, name }, width, format, quality) {
+  const inputs = alpha ? [source, alpha] : [source];
+  for (const input of inputs) {
+    if (!(await exists(input))) {
+      throw new Error(`Missing source image: ${input}`);
+    }
   }
 
   const outputPath = path.join(outputDir || outputRoot, `${name}-${width}.${format}`);
-  if (await isFresh(source, outputPath)) return false;
+  if (await isFresh(inputs, outputPath)) return false;
 
   await fs.mkdir(path.dirname(outputPath), { recursive: true });
-  await sharp(source)
-    .rotate()
-    .resize({ width, withoutEnlargement: true })
-    .toFormat(format, { quality, effort: 4 })
-    .toFile(outputPath);
+  let image = sharp(source).rotate().resize({ width, withoutEnlargement: true });
+  if (alpha) {
+    const { info } = await image.clone().raw().toBuffer({ resolveWithObject: true });
+    const matte = await sharp(alpha)
+      .resize(info.width, info.height, { fit: "fill" })
+      .toColourspace("b-w")
+      .toBuffer();
+    image = sharp(await image.removeAlpha().toBuffer()).joinChannel(matte);
+  }
+  await image.toFormat(format, { quality, effort: 4 }).toFile(outputPath);
   return true;
 }
 
