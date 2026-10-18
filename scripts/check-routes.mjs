@@ -24,6 +24,8 @@ function attrs(tag) {
 
 for (const file of htmlFiles) {
     const html = await fs.readFile(path.join(dist, file), "utf8");
+    // rehypeKatexErrors prints broken formulas during the build; this gate stops the deploy.
+    assert(!/class="[^"]*\bkatex-error\b/.test(html), `${file}: a formula failed to render with KaTeX`);
     const head = html.split("</head>")[0];
     const meta = [...head.matchAll(/<meta\b[^>]*>/gi)].map(([tag]) => attrs(tag));
     const refresh = meta.find((tag) => tag["http-equiv"]?.toLowerCase() === "refresh");
@@ -65,4 +67,4 @@ for (const { from } of redirectsForFilesystem(legacyRedirects, isCaseSensitiveFi
     const filename = await fs.realpath(fileForRoute(`/${from}/`));
     assert(redirects.has(filename), `${from}: legacy redirect is missing`);
 }
-console.log(`${htmlFiles.length} HTML pages and ${redirects.size} internal redirects passed; no loops, missing targets, or sitemap redirects.`);
+console.log(`${htmlFiles.length} HTML pages and ${redirects.size} internal redirects passed; no loops, missing targets, sitemap redirects, or KaTeX errors.`);

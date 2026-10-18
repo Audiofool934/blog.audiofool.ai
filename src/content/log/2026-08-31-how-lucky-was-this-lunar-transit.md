@@ -3,6 +3,8 @@ title: "A Side Note on a Lunar Transit"
 pubDate: 2026-08-31
 tags: ["Photography", "Math", "Aviation", "Moon"]
 description: "A geometry-first estimate of the chance of photographing an airliner inside the rising Moon."
+image: "../../assets/gallery/26-08-30-lunar-transit-close.jpg"
+imageAlt: "An aircraft crossing the rising Moon"
 ---
 
 At 19:59:58 on August 30, 2026, a passenger jet crossed the Moon in my 400 mm frame.

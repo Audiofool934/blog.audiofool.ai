@@ -106,22 +106,23 @@ function getConnectionCount(id: string) {
                             data-kind={entry.data.kind.toLowerCase()}
                         >
                             <div class="grid grid-cols-[5.5rem_minmax(0,1fr)_auto] gap-4 items-start">
-                                <span class="font-mono text-[10px] uppercase tracking-wider text-[var(--text-faint)] pt-1">
+                                <span class="font-mono text-[11px] uppercase tracking-wider text-[var(--text-faint)] pt-1">
                                     {entry.data.kind}
                                 </span>
                                 <div class="min-w-0">
                                     <h2 class="font-bold text-[15px] group-hover:underline decoration-1 underline-offset-4">
                                         {entry.data.title}
                                     </h2>
-                                    <div class="flex flex-wrap items-center gap-x-2 gap-y-1 mt-1.5">
-                                        {entry.data.tags.map((tag) => (
-                                            <span class="font-mono text-[10px] text-[var(--text-faint)]">
-                                                {tag.toLowerCase()}
+                                    <div class="flex flex-wrap items-baseline gap-x-2 gap-y-1 mt-1.5 font-mono text-[11px] text-[var(--text-faint)]">
+                                        {/* Commas end each tag, so a wrapped row always starts with a tag. */}
+                                        {entry.data.tags.map((tag, i) => (
+                                            <span class="whitespace-nowrap">
+                                                {tag.toLowerCase()}{i < entry.data.tags.length - 1 && ","}
                                             </span>
                                         ))}
                                         {connCount > 0 && (
-                                            <span class="font-mono text-[10px] text-[var(--text-faint)] ml-1">
-                                                · {connCount}↔
+                                            <span class="whitespace-nowrap">
+                                                ({connCount} {connCount === 1 ? "link" : "links"})
                                             </span>
                                         )}
                                     </div>

@@ -1,5 +1,6 @@
 ---
 title: 'Fourier Transform: Uncertainty and Duality'
+description: 'The Fourier transform is a change of orthonormal basis, so duality, energy conservation, uncertainty, and smoothness-decay are facets of one structure.'
 kind: Concept
 updatedDate: 2026-03-10
 tags: ["analysis", "fourier", "signal", "dsp", "math"]
@@ -18,7 +19,7 @@ $$
 This formula appears in every textbook. What the textbooks often miss is that the Fourier transform is not merely a computational tool—it reveals three deep structural truths about functions.
 
 
-### 1. Duality: Time and Frequency Are Symmetric
+## 1. Duality: Time and Frequency Are Symmetric
 
 The inverse transform has almost the same form:
 
@@ -38,7 +39,7 @@ The only difference is a sign flip in the exponent. This means **time and freque
 The convolution theorem is the most consequential: filtering in one domain is multiplication in the other. This is why the FFT changed engineering—it converts $O(n^2)$ convolution into $O(n \log n)$ pointwise operations.
 
 
-### 2. Parseval: Energy Is Conserved
+## 2. Parseval: Energy Is Conserved
 
 $$
 \int_{-\infty}^{\infty} |f(t)|^2 \, dt = \int_{-\infty}^{\infty} |\hat{f}(\xi)|^2 \, d\xi
@@ -51,7 +52,7 @@ This is not a coincidence. The complex exponentials $\{e^{2\pi i \xi t}\}$ form 
 This connects directly to conditional expectation: both are projections in Hilbert space. Parseval is the Pythagorean theorem applied to this particular change of basis.
 
 
-### 3. The Uncertainty Principle: Localization Has a Price
+## 3. The Uncertainty Principle: Localization Has a Price
 
 Here is the deepest insight. For $f \in L^2(\mathbb{R})$ with $\|f\|_2 = 1$, define:
 
@@ -73,7 +74,7 @@ The **Gaussian** $f(t) = e^{-\pi t^2}$ achieves equality: it is its own Fourier 
 **This is not quantum mechanics.** The uncertainty principle is a theorem of Fourier analysis. It applies equally to audio signals, antenna design, and the fundamental limits of data compression. Heisenberg's quantum uncertainty is a special case, where the Fourier pair is position and momentum.
 
 
-### 4. Regularity ↔ Decay: Smoothness Is Spectral Sparsity
+## 4. Regularity ↔ Decay: Smoothness Is Spectral Sparsity
 
 There is a precise duality between **smoothness** of $f$ in time and **decay** of $\hat{f}$ in frequency:
 
@@ -88,7 +89,7 @@ The mechanism: differentiation in time becomes multiplication by $2\pi i \xi$ in
 **Implication for signal processing**: smooth signals are "spectrally sparse"—their energy is concentrated in low frequencies. This is why low-pass filtering works: natural signals are smooth, and high-frequency components are mostly noise. The Fourier transform makes this intuition mathematically precise.
 
 
-### 5. The Discrete World: DFT and Aliasing
+## 5. The Discrete World: DFT and Aliasing
 
 In practice, we sample $f$ at $N$ discrete points, yielding the DFT:
 
@@ -101,6 +102,6 @@ The DFT inherits all the structure above (duality, Parseval, convolution theorem
 This is not a defect of the DFT. It is the discrete manifestation of the uncertainty principle: finite sampling resolution limits frequency discrimination. See [Sampling Theorem](/notes/sampling-theorem/) for the full story.
 
 
-### The Takeaway
+## The Takeaway
 
 The Fourier transform is an isometry of $L^2$ that exchanges two complementary descriptions of the same object. Its consequences—duality, energy conservation, the uncertainty principle, and the smoothness-decay correspondence—are not separate facts but facets of a single geometric structure: the algebra of $L^2$ inner products under a change of orthonormal basis.

@@ -1,5 +1,6 @@
 ---
 title: 'Renewal Process: Intuition & The Renewal Argument'
+description: 'Renewal processes resist direct convolution, so we condition on the first renewal to get the renewal equation and use limit theorems for long-run behavior.'
 kind: Concept
 updatedDate: 2026-01-03
 tags: ["stochastic", "probability", "math"]
@@ -7,7 +8,7 @@ parents: []
 related: ["markov-chains", "dynamic-programming"]
 ---
 
-### Perspective 1: Why Not Calculate Directly? (The Computational Challenge of Convolution)
+## Perspective 1: Why Not Calculate Directly? (The Computational Challenge of Convolution)
 
 We represent the system in two complementary ways:
 
@@ -34,7 +35,7 @@ While this formula is theoretically rigorous, in practice, **convolution is anal
 **This is why we cannot rely solely on the distribution of $N(t)$, but must study its expectation $m(t)$ and asymptotic properties (Limit Theorems).**
 
 
-### Perspective 2: The Philosophy of "Rebirth" (The Renewal Argument)
+## Perspective 2: The Philosophy of "Rebirth" (The Renewal Argument)
 
 This is the **soul** of this chapter and the origin of the integral equations (Renewal Equations).
 
@@ -69,7 +70,7 @@ $$
 **Summary**: The core of this perspective is **decomposing a complex problem into "1 + a smaller instance of the same problem" via the "First Renewal".** This structure gives rise to the integral equations characterizing the process.
 
 
-### Perspective 3: From "Exact" to "Asymptotic" (Limit Theory)
+## Perspective 3: From "Exact" to "Asymptotic" (Limit Theory)
 
 Since the exact distribution of $N(t)$ (via convolution) is intractable, and the exact solution to the Renewal Equation is often complex, what is the objective?
 
@@ -87,7 +88,7 @@ This leads to a hierarchy of theorems:
     *   Answer: Yes. The renewal density tends to a constant $1/\mu$ regardless of the observation time.
 
 
-### Conceptual Framework Update:
+## Conceptual Framework Update:
 
 1.  **Input**: $F$ (Micro mechanism)
 2.  **Challenge**: Direct summation ($S_n$) leads to computational intractability (convolution), complicated by the lack of memorylessness.

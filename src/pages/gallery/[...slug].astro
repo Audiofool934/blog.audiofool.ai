@@ -20,14 +20,12 @@ const { Content } = await render(entry);
 // Optimized variants: a 1200px card for the social/og image, plus
 // width-capped large variants for every on-demand fullscreen image
 // (capped to each source width so small originals are never upscaled).
-const ogImage = (
-    await getImage({
-        src: entry.data.image,
-        width: Math.min(1200, entry.data.image.width),
-        format: "webp",
-        quality: 82,
-    })
-).src;
+const ogImage = await getImage({
+    src: entry.data.image,
+    width: Math.min(1200, entry.data.image.width),
+    format: "webp",
+    quality: 82,
+});
 const detailImages =
     entry.data.images && entry.data.images.length > 0
         ? entry.data.images
@@ -50,9 +48,12 @@ const galleryDescription =
 ---
 
 <MinimalLayout
-    title={`${entry.data.title} | Gallery`}
+    title={entry.data.title}
+    section="Gallery"
     description={galleryDescription}
-    image={ogImage}
+    image={ogImage.src}
+    imageWidth={ogImage.attributes.width}
+    imageHeight={ogImage.attributes.height}
     ogType="article"
     datePublished={entry.data.date}
 >

@@ -1,5 +1,6 @@
 ---
 title: 'Markov Chains: Forgetting and Mixing'
+description: 'A Markov chain forgets its start, and the real question is how fast: the spectral gap, bottlenecks, and coupling each measure the rate of forgetting.'
 kind: Concept
 updatedDate: 2026-03-10
 tags: ["stochastic", "probability", "math"]
@@ -14,7 +15,7 @@ A Markov chain is a system that **forgets**. At each step, the entire history co
 The deep question is not *whether* the chain forgets its initial condition, but **how fast**.
 
 
-### 1. Why Memorylessness Is Not Enough
+## 1. Why Memorylessness Is Not Enough
 
 The Markov property says $P(X_{n+1} | X_n, \ldots, X_0) = P(X_{n+1} | X_n)$. This is a **local** statement about one-step transitions. It says nothing about long-term behavior.
 
@@ -26,7 +27,7 @@ Consider two chains on $\{0, 1\}$:
 Both are Markov. Both converge to a stationary distribution. The difference is **mixing time**—and understanding what controls it is the central problem.
 
 
-### 2. The Spectral Gap: Geometry of Forgetting
+## 2. The Spectral Gap: Geometry of Forgetting
 
 Let $P$ be the transition matrix of an irreducible, aperiodic chain on $n$ states with stationary distribution $\pi$. The eigenvalues of $P$ satisfy:
 
@@ -47,7 +48,7 @@ $$
 This is the same geometry as conditional expectation: $P$ acts as a projection-like operator, pushing all distributions toward $\pi$, and the spectral gap quantifies the rate.
 
 
-### 3. Conductance: The Bottleneck Principle
+## 3. Conductance: The Bottleneck Principle
 
 The spectral gap has a beautiful combinatorial characterization via **Cheeger's inequality**. Define the conductance:
 
@@ -66,7 +67,7 @@ $$
 The insight: **mixing is slow if and only if the state space has a bottleneck**. This connects Markov chain theory to graph partitioning, expander graphs, and even differential geometry (where the original Cheeger inequality lives on Riemannian manifolds).
 
 
-### 4. Coupling: Forgetting as Coalescence
+## 4. Coupling: Forgetting as Coalescence
 
 There is an entirely different way to understand mixing that avoids eigenvalues altogether: **coupling**.
 
@@ -82,7 +83,7 @@ The mixing time is bounded by how quickly we can make two copies **coalesce**. T
 **Example**: For a random walk on the hypercube $\{0,1\}^n$, the "coupon collector" coupling flips coordinates one at a time. Both copies agree once every coordinate has been updated at least once, giving $t_{\text{mix}} \sim n \log n$.
 
 
-### 5. The Dichotomy: Rapid Mixing vs. Torpid Mixing
+## 5. The Dichotomy: Rapid Mixing vs. Torpid Mixing
 
 In applications (MCMC, sampling algorithms), the fundamental question is:
 
@@ -94,7 +95,7 @@ In applications (MCMC, sampling algorithms), the fundamental question is:
 This is where the bottleneck picture becomes vivid: at low temperature, the Ising model has two dominant states (all $+$ and all $-$) separated by a free energy barrier. The chain must cross this barrier to mix, and the crossing probability is exponentially small.
 
 
-### Why This Matters
+## Why This Matters
 
 The theory of mixing times is the mathematical foundation for:
 

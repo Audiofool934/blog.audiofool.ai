@@ -1,5 +1,6 @@
 ---
 title: 'How I "Freed" Myself From Claude Subscription'
+description: 'Claude Code is a harness, not a model: separating the two let me remove Claude as my default and route work across models by capability and cost.'
 kind: Essay
 pubDate: 2026-06-19
 updatedDate: 2026-06-19

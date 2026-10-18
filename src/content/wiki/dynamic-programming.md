@@ -1,5 +1,6 @@
 ---
 title: 'Dynamic Programming: Recursion Without Redundancy'
+description: 'Dynamic programming is a proof technique: choose a state that makes the future independent of the past, then decompose, remember, and combine.'
 kind: Method
 updatedDate: 2026-03-10
 tags: ["algorithm", "algorithms", "cs", "math"]
@@ -16,7 +17,7 @@ The idea: if an optimization problem has **optimal substructure** (the optimal s
 This sounds simple. The depth lies in recognizing when a problem has this structure—and in the art of defining the right subproblems.
 
 
-### 1. Bellman's Principle of Optimality
+## 1. Bellman's Principle of Optimality
 
 > An optimal policy has the property that, whatever the initial state and initial decision are, the remaining decisions must constitute an optimal policy with regard to the state resulting from the first decision.
 
@@ -36,7 +37,7 @@ $$
 Choose the action $a$ that minimizes the immediate cost $c(s, a)$ plus the optimal cost-to-go from the next state $f(s, a)$.
 
 
-### 2. The Structure of Recursion: Same as Renewal Theory
+## 2. The Structure of Recursion: Same as Renewal Theory
 
 The Bellman equation has the same architecture as the [Renewal Equation](/notes/renewal-process/):
 
@@ -57,7 +58,7 @@ Both decompose a problem into: **"handle the first step, then solve the remainin
 This is not a coincidence. Both are applications of the **principle of conditioning on the first step**: reduce a complex stochastic or combinatorial problem to "what happens first" + "what's left." The mathematical structure is identical; only the domain changes.
 
 
-### 3. Memoization vs. Tabulation: Two Philosophies
+## 3. Memoization vs. Tabulation: Two Philosophies
 
 **Top-down (memoization)**: Write the natural recursion, cache results. Only solve subproblems that are actually reached. Elegant, but carries function call overhead and stack depth limits.
 
@@ -69,7 +70,7 @@ Both produce the same answers. The choice depends on the subproblem space:
 - If the space is **exponential** but only **polynomially many** are reachable, memoization turns exponential brute force into polynomial DP.
 
 
-### 4. The Art: Choosing the State
+## 4. The Art: Choosing the State
 
 The hardest part of DP is **defining the state**. The state must capture exactly enough information to make the future independent of the past (the Markov property!). Too little, and the recursion is invalid. Too much, and the state space explodes.
 
@@ -80,7 +81,7 @@ The hardest part of DP is **defining the state**. The state must capture exactly
 **Example: Knapsack.** $\text{dp}[i][w]$ = maximum value using items $1..i$ with capacity $w$. The state captures the remaining capacity, which is all you need to decide about future items. The state space is $O(nW)$—pseudo-polynomial (polynomial in value, exponential in bits).
 
 
-### 5. From Optimization to Counting
+## 5. From Optimization to Counting
 
 DP is not only for optimization. Replace $\min$ with $\sum$ and you get **counting**:
 
@@ -95,7 +96,7 @@ $$
 The Bellman equation structure carries over exactly. The change is from $\min/\max$ (optimization) to $\sum$ (counting/expectation). In fact, the renewal function $m(t) = \mathbb{E}[N(t)]$ is exactly this: a counting recurrence averaged over randomness.
 
 
-### 6. The Computational Lens: Why DP Matters
+## 6. The Computational Lens: Why DP Matters
 
 DP is the standard proof technique for showing a problem is in **P** (solvable in polynomial time). The argument is always:
 
@@ -107,6 +108,6 @@ DP is the standard proof technique for showing a problem is in **P** (solvable i
 Conversely, when no polynomial state space suffices, the problem is likely **NP-hard** (TSP, graph coloring). DP still helps—it reduces from $O(n!)$ to $O(2^n \text{poly}(n))$—but the exponential barrier remains.
 
 
-### The Takeaway
+## The Takeaway
 
 Dynamic programming is the computational realization of a single principle: **decompose, remember, combine**. Its power comes not from cleverness in combining, but from the recognition that the same subproblems recur—and that solving them once suffices. The Bellman equation, the renewal equation, and the Markov property are all manifestations of this one idea: the future, given the present, is independent of the past. When this holds, exponential search collapses into polynomial computation.

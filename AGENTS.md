@@ -52,12 +52,14 @@ Run either GitHub sync command only when fresh project data is explicitly reques
 | Theme tokens and utilities | `src/style/global.css` |
 | Markdown typography and highlighting | `src/style/post.css`, `src/style/prism-theme.css` |
 | Collection schemas and loaders | `src/content.config.ts` |
-| Homepage updates, timeline, RSS items | `src/utils/timelineItems.ts` |
+| Homepage writing, timeline, RSS items, timeline lanes | `src/utils/timelineItems.ts`, `src/utils/postType.ts` |
 | Gallery controls and viewer | `src/components/gallery/` |
 | AudioShow image paths and widths | `src/utils/audioImages.mjs` |
 | Legacy aliases | `src/data/legacyRedirects.mjs` |
 
 Update `getTimelineItems()` when changing what counts as an update; keep sorting and filtering out of individual consumers.
+Timeline lanes follow the source collection; a log post is `site` when tagged Meta or Update, then `photo` (Gallery), `music` (AudioShow), `project` (Project/Projects), and otherwise `post`.
+The homepage shows the newest writing (`post` and `note` lanes) through `getLatestWriting()`.
 Project metadata lives in `src/content/projects/`, synced READMEs in `src/content/project-readmes/`, and the GitHub catalog in `src/data/github-projects.json`.
 Pinned projects use `pinOrder` for display order and `url` for their primary destination in the project index.
 `src/utils/projectState.ts` shares project update dates, primary links, and GitHub archive status across Project Index and Timeline.
@@ -95,10 +97,14 @@ Use `entry.id`, `render(entry)` from `astro:content`, and `getStaticPaths()` for
 ## Markdown and Media
 
 - Use `.post-content` for rendered Markdown and `.wiki-content` for denser notes; extend shared styles before adding one-off rules.
+- Text blocks in `.post-content` are capped at about 38rem for a 70-80 character measure; tables, code, images, and display math keep the full column.
 - Keep tables, code, and display math horizontally scrollable within their containers, without page overflow.
 - Preserve custom scrollbar styling and `.post-content .katex { position: relative; }`, which contains hidden MathML inside scrolling equations and tables.
 - Pass `math={hasMath}` for math notes so `SiteHead` loads local, package-matched KaTeX CSS and font preloads only when needed; keep fonts out of inline CSS.
 - `src/utils/rehypeImages.mjs`, registered in `astro.config.mjs`, adds lazy loading and async decoding to Markdown and raw HTML images, plus responsive local AudioShow variants and remote referrer policies.
+  Local Markdown images get srcset widths and `sizes`; the first image in a document loads eagerly with high fetch priority.
+- `src/utils/rehypeKatexErrors.mjs` prints any KaTeX parse error during the build without throwing (a throw would make the content loader ship an empty article); `check:routes` rejects built pages that contain `katex-error`, which blocks the deploy.
+- `src/utils/rehypeUnitSpaces.mjs` joins numbers and units with a no-break space outside code, math, and headings.
 - Fonts are vendored in `public/fonts/` with `font-display: swap`; do not load Google Fonts.
 - Give new images appropriate dimensions, `sizes`, decoding, loading, and fetch priority; use `referrerpolicy="no-referrer"` and a fallback for remote images where supported.
 - Gallery sources belong in `src/assets/gallery/` with schema-valid local paths using Astro's `image()` helper.

@@ -7,6 +7,8 @@ import remarkMath from 'remark-math';
 
 import sitemap from '@astrojs/sitemap';
 import { rehypeImgAttrs } from './src/utils/rehypeImages.mjs';
+import { rehypeKatexErrors } from './src/utils/rehypeKatexErrors.mjs';
+import { rehypeUnitSpaces } from './src/utils/rehypeUnitSpaces.mjs';
 import { legacyRedirects } from './src/data/legacyRedirects.mjs';
 
 const legacyRedirectPaths = new Set(legacyRedirects.map(({ from }) => `/${from}/`));
@@ -41,7 +43,8 @@ export default defineConfig({
     syntaxHighlight: 'prism',
     processor: unified({
       remarkPlugins: [remarkMath],
-      rehypePlugins: [rehypeKatex, rehypeImgAttrs],
+      // rehypeKatexErrors must follow rehypeKatex to see its error output.
+      rehypePlugins: [rehypeKatex, rehypeKatexErrors, rehypeUnitSpaces, rehypeImgAttrs],
     }),
   },
   site: "https://blog.audiofool.ai",

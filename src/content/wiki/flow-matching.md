@@ -1,5 +1,6 @@
 ---
 title: 'Flow Matching: Straightening the Path'
+description: 'Flow matching reframes generative modeling as vector field regression along straight paths from noise to data, which keeps training simple and sampling fast.'
 kind: Method
 updatedDate: 2026-03-10
 tags: ["generative", "flow matching", "deep learning", "math"]
@@ -18,7 +19,7 @@ $$
 Flow Matching offers the cleanest formulation: define a **velocity field** $v_t(x)$ that transports particles from noise to data along smooth trajectories, then regress a neural network onto this field.
 
 
-### 1. Continuous Normalizing Flows: The Setup
+## 1. Continuous Normalizing Flows: The Setup
 
 Define a time-dependent ODE:
 
@@ -37,7 +38,7 @@ $$
 This is beautiful in principle but has a practical problem: **we don't know the target velocity field**. We know $p_0$ (noise) and $p_1$ (data), but not the optimal $v_t$ connecting them.
 
 
-### 2. The Conditional Flow Trick
+## 2. The Conditional Flow Trick
 
 The key insight of Flow Matching (Lipman et al., 2023): instead of specifying the marginal flow $v_t(x)$ directly, define **conditional flows** that are trivially simple, then aggregate.
 
@@ -64,7 +65,7 @@ $$
 Sample a time $t$, a data point $x_1$, a noise vector $z$, form $x_t = (1-t)z + t \cdot x_1$, and regress the network output onto the direction $x_1 - z$. That's it.
 
 
-### 3. Why Straight Paths Matter
+## 3. Why Straight Paths Matter
 
 Compare with diffusion models, which follow **curved** trajectories dictated by a stochastic differential equation (see [Diffusion Models](/notes/diffusion-models/)). The diffusion forward process adds noise gradually:
 
@@ -83,7 +84,7 @@ Flow Matching's straight-line interpolation has two advantages:
 **The tradeoff**: individual conditional paths are simple (straight lines), but their aggregation into the marginal velocity field $v_t(x)$ can be complex—it's the network's job to learn this.
 
 
-### 4. Optimal Transport: The Straightest Possible Paths
+## 4. Optimal Transport: The Straightest Possible Paths
 
 The straight-line interpolation $x_t = (1-t)z + t x_1$ is a choice, not a necessity. It corresponds to a specific coupling between $p_0$ and $p_1$: pair each $x_1$ with an independent $z$.
 
@@ -94,7 +95,7 @@ The OT-conditioned flow matching objective replaces independent $(z, x_1)$ pairs
 - More uniform velocity fields (easier for the network to learn)
 
 
-### 5. Connection to the MUSE Architecture
+## 5. Connection to the MUSE Architecture
 
 In [MUSE](/projects/muse/), Stage 1 (Text2MuQFlow) uses cross-attention Flow Matching to generate music embeddings. The architecture choice is deliberate:
 
@@ -103,6 +104,6 @@ In [MUSE](/projects/muse/), Stage 1 (Text2MuQFlow) uses cross-attention Flow Mat
 - The **conditional flow** naturally accommodates the cross-modal setting: $x_1$ is the target MuQ embedding, and the conditioning text enters via cross-attention in $v_\theta$.
 
 
-### The Takeaway
+## The Takeaway
 
 Flow Matching reframes generative modeling as **vector field regression**: define simple conditional transport paths, aggregate them via expectation, and train a neural network to predict the resulting velocity field. The straight-line interpolation—a design choice, not a theorem—turns out to be both computationally efficient and empirically effective. The theory says any path works; the practice says straight paths work best.

@@ -1,5 +1,6 @@
 ---
 title: 'Bias-Variance: The Irreducible Geometry of Prediction'
+description: 'Bias-variance is a property of estimation itself: bias is the distance to the model class, variance is sensitivity to the sample, and noise is a floor.'
 kind: Concept
 updatedDate: 2026-03-10
 tags: ["ml", "machine learning", "probability", "regression"]
@@ -12,7 +13,7 @@ related: ["conditional-expectation-variance", "svd"]
 The bias-variance tradeoff is usually presented as a vague heuristic: simple models underfit, complex models overfit, find the sweet spot. This misses the actual mathematics—which is both cleaner and more revealing than the cartoon.
 
 
-### 1. Setup: What Are We Decomposing?
+## 1. Setup: What Are We Decomposing?
 
 Fix an input $x$. The target is $Y = f(x) + \varepsilon$ where $f(x) = \mathbb{E}[Y|X=x]$ and $\varepsilon$ is noise with $\mathbb{E}[\varepsilon|X=x] = 0$, $\operatorname{Var}(\varepsilon|X=x) = \sigma^2$.
 
@@ -25,7 +26,7 @@ $$
 The expectation is over both the noise in $Y$ and the randomness in $\mathcal{D}$.
 
 
-### 2. The Decomposition
+## 2. The Decomposition
 
 Expand the squared loss:
 
@@ -42,7 +43,7 @@ Three terms:
 3. **Variance**: How much the prediction fluctuates across training sets. This is sensitivity to the particular sample drawn.
 
 
-### 3. The Geometric View
+## 3. The Geometric View
 
 Recall from [Conditional Expectation as Projection](/notes/conditional-expectation-variance/): in $L^2$ space, $f(x) = \mathbb{E}[Y|X=x]$ is the **orthogonal projection** of $Y$ onto the subspace of functions of $X$.
 
@@ -57,7 +58,7 @@ The **bias** measures the distance from $f$ to the model subspace $\mathcal{H}$.
 The tradeoff is geometric: **the subspace that best approximates $f$ is not the one most reliably estimable from $n$ samples**.
 
 
-### 4. Concrete Example: Polynomial Regression
+## 4. Concrete Example: Polynomial Regression
 
 Fit degree-$k$ polynomials to data from $f(x) = \sin(x)$ with noise.
 
@@ -68,7 +69,7 @@ Fit degree-$k$ polynomials to data from $f(x) = \sin(x)$ with noise.
 The singular values of the design matrix $X$ (cf. [SVD](/notes/svd/)) reveal this directly: the $k$-th singular value determines how well the $k$-th polynomial component can be estimated. When $\sigma_k$ is small relative to the noise level, that component's estimate is dominated by variance.
 
 
-### 5. Why This Tradeoff Is Fundamental
+## 5. Why This Tradeoff Is Fundamental
 
 The bias-variance decomposition is not specific to any algorithm. It is a **property of the estimation problem itself**.
 
@@ -80,7 +81,7 @@ For **any** estimator $\hat{f}$:
 **The irreducible error is the floor**. No model, no matter how flexible, no matter how much data, can go below $\sigma^2$. This connects directly to the total variance decomposition: $\operatorname{Var}(\mathbb{E}[Y|X])$ is the maximum achievable explained variance. The rest—$\mathbb{E}[\operatorname{Var}(Y|X)]$—is noise forever.
 
 
-### The Modern Wrinkle: Double Descent
+## The Modern Wrinkle: Double Descent
 
 Classical wisdom: error is U-shaped as model complexity increases (underfit → sweet spot → overfit). But modern neural networks often exhibit **double descent**: error decreases, rises, then decreases *again* as model size grows far past the interpolation threshold.
 

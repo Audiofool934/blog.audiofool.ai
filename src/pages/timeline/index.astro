@@ -2,8 +2,23 @@
 import MinimalLayout from "../../layouts/MinimalLayout.astro";
 import { formatDateCompact } from "../../utils/formatDate";
 import { getTimelineItems } from "../../utils/timelineItems";
+import type { TimelineItem } from "../../utils/timelineItems";
 
 const sortedPosts = await getTimelineItems();
+
+// Items arrive newest first, so each year's rows are already contiguous.
+const years: { year: number; posts: TimelineItem[] }[] = [];
+for (const post of sortedPosts) {
+    const year = post.date.getUTCFullYear();
+    const group = years.at(-1);
+    if (group?.year === year) group.posts.push(post);
+    else years.push({ year, posts: [post] });
+}
+
+// Pinned projects link to their own sites; mark those rows so they don't pass for internal pages.
+const siteOrigin = Astro.site?.origin;
+const isExternal = (href: string) =>
+    /^https?:\/\//i.test(href) && new URL(href).origin !== siteOrigin;
 
 const typeLabels: Record<string, string> = {
     note: "Notes",
@@ -65,40 +80,57 @@ const filters = filterOrder
 
         <div class="max-w-4xl border-l border-[var(--border-main)] pl-5 md:pl-8">
             {
-                sortedPosts.map((post) => {
-                    const type = post.lane;
-                    return (
-                        <a
-                            href={post.href}
-                            class="timeline-entry group relative block pb-8 text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors"
-                            data-type={type}
-                        >
-                            <span class="absolute -left-[1.65rem] md:-left-[2.15rem] top-1 h-2 w-2 rounded-full bg-[var(--bg-body)] border border-[var(--text-main)] group-hover:bg-[var(--text-main)] transition-colors" />
+                years.map(({ year, posts }) => (
+                    <section class="timeline-year pt-4 first:pt-0">
+                        <h2 class="relative mb-6 font-mono text-sm font-semibold tracking-widest text-[var(--text-main)]">
+                            <span aria-hidden="true" class="absolute -left-5 md:-left-8 top-1/2 w-3 md:w-5 border-t border-[var(--border-main)]" />
+                            {year}
+                        </h2>
 
-                            <div class="grid gap-1 md:grid-cols-[8rem_5rem_minmax(0,1fr)] md:gap-4 md:items-baseline font-mono text-sm">
-                                <time datetime={post.date.toISOString()} class="text-xs uppercase tracking-wider text-[var(--text-faint)] transition-opacity">
-                                    {formatDateCompact(post.date)}
-                                    {post.dateLabel && <span class="block mt-1 text-[10px]">{post.dateLabel}</span>}
-                                </time>
+                        {posts.map((post) => {
+                            const type = post.lane;
+                            const external = isExternal(post.href);
+                            return (
+                                <a
+                                    href={post.href}
+                                    class="timeline-entry group relative block pb-8 text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors"
+                                    data-type={type}
+                                >
+                                    <span class="absolute -left-[1.65rem] md:-left-[2.15rem] top-1 h-2 w-2 rounded-full bg-[var(--bg-body)] border border-[var(--text-main)] group-hover:bg-[var(--text-main)] transition-colors" />
 
-                                <span class="text-[10px] uppercase tracking-wider text-[var(--text-faint)] transition-opacity">
-                                    {type}
-                                </span>
+                                    <div class="grid gap-1 md:grid-cols-[8rem_5rem_minmax(0,1fr)] md:gap-4 md:items-baseline font-mono text-sm">
+                                        {/* One metadata line on mobile; md:contents hands both cells back to the desktop grid. */}
+                                        <div class="flex flex-wrap items-baseline gap-x-2 md:contents">
+                                            <div class="flex items-baseline gap-x-2 md:block text-xs uppercase tracking-wider text-[var(--text-faint)] transition-opacity">
+                                                <time datetime={post.date.toISOString()}>{formatDateCompact(post.date)}</time>
+                                                {post.dateLabel && <span aria-hidden="true" class="md:hidden">·</span>}
+                                                {post.dateLabel && <span class="text-[10px] md:block md:mt-1">{post.dateLabel}</span>}
+                                            </div>
 
-                                <div class="min-w-0">
-                                    <h2 class="font-sans text-base font-semibold text-[var(--text-main)] group-hover:underline decoration-1 underline-offset-4">
-                                        {post.title}
-                                    </h2>
-                                    {post.description && (
-                                        <p class="mt-1 font-sans text-sm leading-relaxed text-[var(--text-faint)]">
-                                            {post.description}
-                                        </p>
-                                    )}
-                                </div>
-                            </div>
-                        </a>
-                    );
-                })
+                                            <div class="flex items-baseline gap-x-2 text-[10px] uppercase tracking-wider text-[var(--text-faint)] transition-opacity">
+                                                <span aria-hidden="true" class="md:hidden">·</span>
+                                                <span>{type}</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="min-w-0">
+                                            <h3 lang={post.lang} class="font-sans text-base font-semibold text-[var(--text-main)] group-hover:underline decoration-1 underline-offset-4">
+                                                {post.title}
+                                                {external && <span aria-hidden="true"> ↗</span>}
+                                                {external && <span class="sr-only"> (external)</span>}
+                                            </h3>
+                                            {post.description && (
+                                                <p class="mt-1 font-sans text-sm leading-relaxed text-[var(--text-faint)]">
+                                                    {post.description}
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
+                                </a>
+                            );
+                        })}
+                    </section>
+                ))
             }
 
             <div
@@ -146,6 +178,7 @@ const filters = filterOrder
 
             const filters = document.querySelectorAll<HTMLElement>(".timeline-filter");
             const entries = document.querySelectorAll<HTMLElement>(".timeline-entry");
+            const years = document.querySelectorAll<HTMLElement>(".timeline-year");
             const empty = document.getElementById("timeline-empty");
             if (!filters.length) return;
 
@@ -167,6 +200,14 @@ const filters = filterOrder
                     var show = filter === "all" || entry.dataset.type === filter;
                     entry.style.display = show ? "" : "none";
                     if (show) visible += 1;
+                });
+
+                // Hide a year heading once every entry under it is filtered out.
+                years.forEach((year) => {
+                    var hasVisible = Array.from(
+                        year.querySelectorAll<HTMLElement>(".timeline-entry"),
+                    ).some((entry) => entry.style.display !== "none");
+                    year.style.display = hasVisible ? "" : "none";
                 });
 
                 if (empty) empty.classList.toggle("hidden", visible > 0);

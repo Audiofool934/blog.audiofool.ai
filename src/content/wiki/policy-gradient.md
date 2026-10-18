@@ -1,5 +1,6 @@
 ---
 title: 'Policy Gradient: The Log-Derivative Trick'
+description: 'Policy gradient rests on the log-derivative trick, and everything after it, from baselines to actor-critic and GAE, is variance reduction.'
 kind: Method
 updatedDate: 2026-03-10
 tags: ["rl", "reinforcement learning", "probability", "ml"]
@@ -20,7 +21,7 @@ $$
 The expectation is over trajectories sampled from the policy. The policy determines the distribution, the reward is evaluated on the sample, and we need $\nabla_\theta J$.
 
 
-### 1. The Log-Derivative Trick
+## 1. The Log-Derivative Trick
 
 The key identity: for any distribution $p_\theta(x)$,
 
@@ -39,7 +40,7 @@ We multiplied and divided by $p_\theta(x)$. The ratio $\nabla_\theta p_\theta / 
 This transforms the gradient of an expectation into an expectation of a gradient—which we can estimate by Monte Carlo sampling.
 
 
-### 2. REINFORCE
+## 2. REINFORCE
 
 Applying the log-derivative trick to the RL objective:
 
@@ -58,7 +59,7 @@ $$
 This is REINFORCE (Williams, 1992). It is **unbiased**: $\mathbb{E}[\hat{g}] = \nabla_\theta J$. But it has a devastating problem.
 
 
-### 3. The Variance Problem
+## 3. The Variance Problem
 
 REINFORCE has enormous variance. Two sources:
 
@@ -69,7 +70,7 @@ REINFORCE has enormous variance. Two sources:
 Both issues inflate the variance of the gradient estimate, requiring many samples per update.
 
 
-### 4. Baselines: Variance Reduction Without Bias
+## 4. Baselines: Variance Reduction Without Bias
 
 **Key insight**: For any function $b(s)$ that depends only on the state (not the action):
 
@@ -98,7 +99,7 @@ The term $A_t = R_t - V(s_t)$ is the **advantage**: how much better this action 
 **Connection to martingales**: The advantage $A_t$ is a martingale difference sequence—its conditional expectation given $s_t$ is zero. This orthogonality (cf. [Martingales](/notes/martingales/)) is precisely why the baseline reduces variance without introducing bias.
 
 
-### 5. From REINFORCE to Actor-Critic
+## 5. From REINFORCE to Actor-Critic
 
 | Method | Gradient estimate | Variance | Bias |
 |--------|------------------|----------|------|
@@ -116,6 +117,6 @@ The term $A_t = R_t - V(s_t)$ is the **advantage**: how much better this action 
 This is exactly the [bias-variance tradeoff](/notes/bias-variance/) in a new guise: more bootstrapping (lower $\lambda$) reduces variance at the cost of bias from the value function approximation.
 
 
-### The Takeaway
+## The Takeaway
 
 Policy gradient is built on a single algebraic trick—the log-derivative identity—that converts an intractable gradient-through-sampling into a tractable expectation. Everything that follows (baselines, advantages, actor-critic, GAE) is **variance reduction**: the ongoing struggle to extract a clean learning signal from the inherent noise of sampled trajectories. The tools are orthogonality (baselines), bootstrapping (TD learning), and the bias-variance tradeoff—the same ideas that recur across all of statistical learning.

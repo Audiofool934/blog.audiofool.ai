@@ -1,5 +1,6 @@
 ---
 title: 'Sampling Theorem: The Bridge Between Continuous and Discrete'
+description: 'The sampling theorem says exactly when samples capture a bandlimited signal without loss, and Fourier duality explains both the sinc and aliasing.'
 kind: Concept
 updatedDate: 2026-03-10
 tags: ["dsp", "signal", "fourier", "math"]
@@ -16,7 +17,7 @@ You have a continuous signal $f(t)$—a sound wave, a voltage, an electromagneti
 The answer is one of the most important theorems in engineering.
 
 
-### 1. Nyquist-Shannon Sampling Theorem
+## 1. Nyquist-Shannon Sampling Theorem
 
 **Theorem**: If $f(t)$ is bandlimited to $B$ Hz (i.e., $\hat{f}(\xi) = 0$ for $|\xi| > B$), then $f$ is completely determined by its samples at rate $f_s = 1/T_s > 2B$.
 
@@ -31,7 +32,7 @@ where $\operatorname{sinc}(x) = \sin(\pi x) / (\pi x)$.
 Each sample contributes a scaled sinc function. The sum of these sincs exactly reproduces the original continuous signal. **No information is lost.**
 
 
-### 2. Why Sinc? The Fourier Perspective
+## 2. Why Sinc? The Fourier Perspective
 
 The sampling theorem is a direct consequence of Fourier duality (see [Fourier Transform](/notes/fourier-transform/)).
 
@@ -48,7 +49,7 @@ $$
 The entire proof is just: (1) sampling creates spectral copies, (2) if they don't overlap, we can separate them, (3) the filter that does the separation is the sinc.
 
 
-### 3. Aliasing: When Copies Collide
+## 3. Aliasing: When Copies Collide
 
 If $f_s < 2B$, the spectral copies **overlap**. High frequencies fold back and masquerade as low frequencies. This is **aliasing**—and it is irreversible.
 
@@ -62,7 +63,7 @@ If $f_s < 2B$, the spectral copies **overlap**. High frequencies fold back and m
 The Nyquist criterion $f_s > 2B$ is not a guideline. It is a **hard information-theoretic boundary**. Below it, aliasing corrupts the signal; above it, perfect reconstruction is possible.
 
 
-### 4. The Uncertainty Connection
+## 4. The Uncertainty Connection
 
 The sampling theorem is intimately connected to the [uncertainty principle](/notes/fourier-transform/):
 
@@ -72,7 +73,7 @@ The sampling theorem is intimately connected to the [uncertainty principle](/not
 The sampling theorem resolves this tension for bandlimited signals: if the frequency content is bounded, discrete samples suffice to capture the full continuous signal. The bandlimit is the **information-theoretic constraint** that makes discrete representation possible.
 
 
-### 5. Practical Reality: No Signal Is Truly Bandlimited
+## 5. Practical Reality: No Signal Is Truly Bandlimited
 
 A mathematically bandlimited signal must be infinite in duration (uncertainty principle). Real signals are time-limited, hence never perfectly bandlimited. Every real signal has some energy above any finite frequency.
 
@@ -81,7 +82,7 @@ The engineering solution: **approximately bandlimited** signals. Pass the analog
 **Audio example**: CD audio uses $f_s = 44.1$ kHz, giving a Nyquist frequency of 22.05 kHz. Human hearing tops out around 20 kHz. The anti-aliasing filter removes content above ~20 kHz, and the 2.05 kHz guard band accommodates the filter's finite roll-off. The result: mathematically imperfect, perceptually transparent.
 
 
-### 6. Beyond Nyquist: Compressed Sensing
+## 6. Beyond Nyquist: Compressed Sensing
 
 The sampling theorem assumes the signal is bandlimited (sparse in frequency). What if the signal is sparse in some other basis?
 
@@ -90,6 +91,6 @@ The sampling theorem assumes the signal is bandlimited (sparse in frequency). Wh
 The Nyquist theorem says: bandlimited signals need $2B$ samples/second. Compressed sensing says: $k$-sparse signals need $O(k \log n)$ measurements, regardless of bandwidth. The generalization is from "sparse in Fourier basis" to "sparse in any basis."
 
 
-### The Takeaway
+## The Takeaway
 
 The sampling theorem is the **terms of exchange** between the continuous and discrete worlds. It says exactly when—and why—discrete samples capture continuous reality, and exactly how aliasing destroys information when the terms are violated. The proof is pure Fourier analysis; the applications are everywhere an analog signal meets a digital system.

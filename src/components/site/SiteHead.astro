@@ -6,18 +6,48 @@ import katexMathFont from "katex/dist/fonts/KaTeX_Math-Italic.woff2?url";
 
 interface Props {
     title: string;
+    section?: string;
     description: string;
-    image: string;
-    imageAlt: string;
+    image?: string;
+    imageAlt?: string;
+    imageWidth?: number;
+    imageHeight?: number;
     ogType: string;
     math: boolean;
     datePublished?: Date;
     dateModified?: Date;
 }
 
-const { title, description, image, imageAlt, ogType, math, datePublished, dateModified } = Astro.props;
+const {
+    title,
+    section,
+    description,
+    image,
+    imageAlt,
+    imageWidth,
+    imageHeight,
+    ogType,
+    math,
+    datePublished,
+    dateModified,
+} = Astro.props;
+
+// Social titles stay bare; only the browser tab carries the section and site name.
+const documentTitle = section ? `${title} | ${section} | Audiofool` : title;
+
+// The square seal is shown as a small "summary" card; large cards would crop it.
+const socialImage = image
+    ? { src: image, width: imageWidth, height: imageHeight, alt: imageAlt ?? title }
+    : {
+          src: "/images/audiofool-seal.png",
+          width: 512,
+          height: 512,
+          alt: "Audiofool seal: a Vitruvian figure playing an electric guitar",
+      };
+const twitterCard = image ? "summary_large_image" : "summary";
+
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
-const socialImageURL = new URL(image, Astro.site);
+const socialImageURL = new URL(socialImage.src, Astro.site);
 const siteOrigin = (Astro.site ?? new URL("https://blog.audiofool.ai")).origin;
 const jsonLdGraph: Record<string, unknown>[] = [
     {
@@ -61,7 +91,7 @@ const jsonLd = JSON.stringify({
 
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, viewport-fit=cover" />
-<title>{title}</title>
+<title>{documentTitle}</title>
 <meta name="description" content={description} />
 <link rel="canonical" href={canonicalURL} />
 <meta name="generator" content={Astro.generator} />
@@ -79,14 +109,20 @@ const jsonLd = JSON.stringify({
 <meta property="og:url" content={canonicalURL} />
 <meta property="og:site_name" content="Audiofool" />
 <meta property="og:image" content={socialImageURL} />
-<meta property="og:image:alt" content={imageAlt} />
+{socialImage.width && socialImage.height && (
+    <>
+        <meta property="og:image:width" content={String(socialImage.width)} />
+        <meta property="og:image:height" content={String(socialImage.height)} />
+    </>
+)}
+<meta property="og:image:alt" content={socialImage.alt} />
 
-<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:card" content={twitterCard} />
 <meta name="twitter:site" content="@Audiofool934" />
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={description} />
 <meta name="twitter:image" content={socialImageURL} />
-<meta name="twitter:image:alt" content={imageAlt} />
+<meta name="twitter:image:alt" content={socialImage.alt} />
 
 <script is:inline type="application/ld+json" set:html={jsonLd} />
 

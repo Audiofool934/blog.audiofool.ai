@@ -7,11 +7,17 @@ import SiteThemeScripts from "../components/site/SiteThemeScripts.astro";
 import { getDefaultAudioTrack } from "../utils/defaultAudioTrack";
 
 interface Props {
+    /** The page's own title, without a " | Section" suffix. */
     title: string;
+    /** Site section for detail pages; adds " | Section | Audiofool" to the document title. */
+    section?: string;
     description?: string;
     lang?: string;
+    /** Share image, site-relative or absolute. Omit it to use the default seal card. */
     image?: string;
     imageAlt?: string;
+    imageWidth?: number;
+    imageHeight?: number;
     ogType?: string;
     math?: boolean;
     datePublished?: Date;
@@ -20,10 +26,13 @@ interface Props {
 
 const {
     title,
-    imageAlt = title,
+    section,
     description = "Audiofool — creative AI, notes, an AudioShow music journal, and photography.",
     lang = "en",
-    image = "/images/audiofool-seal.png",
+    image,
+    imageAlt,
+    imageWidth,
+    imageHeight,
     ogType = "website",
     math = false,
     datePublished,
@@ -38,9 +47,12 @@ const defaultTrackData = getDefaultAudioTrack();
     <head>
         <SiteHead
             title={title}
+            section={section}
             description={description}
             image={image}
             imageAlt={imageAlt}
+            imageWidth={imageWidth}
+            imageHeight={imageHeight}
             ogType={ogType}
             math={math}
             datePublished={datePublished}

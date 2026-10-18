@@ -1,5 +1,6 @@
 ---
 title: 'Attention Is Learned Association'
+description: 'Attention is kernel smoothing with a learned metric, and it works because natural data has enough low-rank structure to make all-pairs association feasible.'
 kind: Model
 updatedDate: 2026-03-10
 tags: ["deep learning", "neural network", "linear algebra"]
@@ -12,7 +13,7 @@ related: ["svd", "flow-matching"]
 Attention is typically described as "a weighted average over values, where the weights are determined by query-key similarity." This is accurate but shallow. The deeper question is: **why does this work so unreasonably well?**
 
 
-### 1. The Mechanics, Concisely
+## 1. The Mechanics, Concisely
 
 Given input embeddings $X \in \mathbb{R}^{n \times d}$ (sequence length $n$, dimension $d$):
 
@@ -27,7 +28,7 @@ The matrix $A = \text{softmax}(QK^T / \sqrt{d_k})$ is an $n \times n$ matrix of 
 The output for position $i$ is a convex combination of value vectors, with coefficients determined by query-key similarity.
 
 
-### 2. The Kernel Perspective: Attention as Soft Lookup
+## 2. The Kernel Perspective: Attention as Soft Lookup
 
 Strip away the neural network context. What is attention doing algebraically?
 
@@ -42,7 +43,7 @@ This is **kernel smoothing** with a softmax kernel. It's the same operation as N
 The innovation is that the "space" in which proximity is measured (the query-key projection) is **learned**, not fixed. The model discovers which dimensions of similarity are relevant for the task.
 
 
-### 3. Why Low Rank Is the Key
+## 3. Why Low Rank Is the Key
 
 Empirically, the attention matrix $A$ tends to be approximately **low-rank**. That is, out of $n^2$ possible attention patterns, the actual attention can be well-approximated by a few dominant modes.
 
@@ -53,7 +54,7 @@ This connects directly to the [SVD](/notes/svd/): the dominant singular values o
 **Practical consequence**: this is why efficient attention methods (linear attention, sparse attention, low-rank approximations) work. They exploit the fact that the information-theoretic content of $A$ is far less than $n^2$.
 
 
-### 4. Multi-Head: Decomposing the Interaction Space
+## 4. Multi-Head: Decomposing the Interaction Space
 
 Single-head attention computes one set of associations. Multi-head attention runs $h$ independent attention operations in parallel, each with its own $W_Q^{(i)}, W_K^{(i)}, W_V^{(i)}$ of dimension $d/h$:
 
@@ -66,7 +67,7 @@ The geometric interpretation: each head learns to attend along a **different sub
 This is analogous to how the SVD decomposes a matrix into independent rank-1 components. Multi-head attention decomposes the full interaction pattern into independent "modes" of association, each operating in its own subspace.
 
 
-### 5. Self-Attention as Message Passing
+## 5. Self-Attention as Message Passing
 
 There is yet another framing. View the sequence positions as nodes in a fully connected graph. Self-attention computes, for each node:
 
@@ -79,14 +80,14 @@ This is exactly **message passing** on the graph: each node aggregates informati
 One layer of self-attention = one round of message passing. Stacking $L$ layers allows information to propagate across $L$ hops. The difference from classical GNNs: the graph topology is not fixed but **learned per-input** through the QKV mechanism.
 
 
-### 6. Why $\sqrt{d_k}$ Matters
+## 6. Why $\sqrt{d_k}$ Matters
 
 The scaling factor $1/\sqrt{d_k}$ prevents the dot products $q_i \cdot k_j$ from growing with dimension. Without it, when $d_k$ is large, the dot products have variance $\sim d_k$, pushing the softmax into saturation (one weight near 1, rest near 0). The gradient vanishes.
 
 The scaling normalizes the variance to $O(1)$ regardless of $d_k$, keeping the softmax in its sensitive regime where gradients flow. This is a simple but critical detail—the difference between a model that trains and one that doesn't.
 
 
-### The Insight
+## The Insight
 
 Attention is not a single idea but a convergence of several:
 - **Nonparametric regression** (kernel smoothing with learned metric)

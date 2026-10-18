@@ -25,7 +25,8 @@ const cratePlaylist = crate.tracks.map((track) => ({
 ---
 
 <MinimalLayout
-    title={`${crate.title} | AudioShow Crates | Audiofool`}
+    title={crate.title}
+    section="AudioShow"
     description={crate.premise}
     image={crate.socialImage ?? crate.cover}
     imageAlt={`${crate.title} cover`}

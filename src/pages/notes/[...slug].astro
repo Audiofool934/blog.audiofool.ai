@@ -64,11 +64,39 @@ for (const e of referencedBy) {
         allConnections.push({ entry: e, type: "incoming" });
     }
 }
+
+const noteDescription =
+    entry.data.description ??
+    `${entry.data.kind} · ${entry.data.title}${entry.data.tags.length ? " - " + entry.data.tags.join(", ") : ""}`;
+
+const ogImage =
+    typeof entry.data.image === "string"
+        ? entry.data.image
+        : entry.data.image?.url;
+const ogImageAlt = ogImage
+    ? (typeof entry.data.image === "object" && entry.data.image.alt) ||
+      entry.data.title
+    : undefined;
+
+// Header dates: "Published" only when it adds information beyond "Updated".
+const toISODate = (date: Date) => date.toISOString().split("T")[0];
+const updatedISO = entry.data.updatedDate && toISODate(entry.data.updatedDate);
+const publishedISO = entry.data.pubDate && toISODate(entry.data.pubDate);
+const headerDates: { label: string; date: string }[] = [];
+if (publishedISO && publishedISO !== updatedISO) {
+    headerDates.push({ label: "Published", date: publishedISO });
+}
+if (updatedISO) {
+    headerDates.push({ label: "Updated", date: updatedISO });
+}
 ---
 
 <MinimalLayout
-    title={`${entry.data.title} | Notes`}
-    description={`${entry.data.kind} · ${entry.data.title}${entry.data.tags?.length ? " — " + entry.data.tags.join(", ") : ""}`}
+    title={entry.data.title}
+    section="Notes"
+    description={noteDescription}
+    image={ogImage}
+    imageAlt={ogImageAlt}
     ogType="article"
     math={hasMath}
     datePublished={entry.data.pubDate}
@@ -76,10 +104,10 @@ for (const e of referencedBy) {
 >
     <!-- Breadcrumb -->
     <div
-        class="border-b border-[var(--border-main)] bg-[var(--bg-body)] sticky top-0 z-10"
+        class="border-b border-[var(--border-main)] bg-[var(--bg-body)] md:sticky md:top-0 md:z-10"
     >
         <div
-            class="max-w-4xl mx-auto px-6 md:px-12 py-3 font-mono text-xs text-[var(--text-muted)] flex items-center gap-2"
+            class="max-w-[44rem] mx-auto px-6 md:px-12 py-3 font-mono text-xs text-[var(--text-muted)] flex items-center gap-2"
         >
             <a
                 href="/notes/"
@@ -94,7 +122,7 @@ for (const e of referencedBy) {
 
     <!-- Main Content -->
     <article
-        class="p-6 md:p-12 max-w-4xl mx-auto"
+        class="p-6 md:p-12 max-w-[44rem] mx-auto"
         transition:animate="fade"
     >
         <header class="mb-12 border-b border-[var(--border-main)] pb-6">
@@ -120,9 +148,13 @@ for (const e of referencedBy) {
                 </div>
 
                 {
-                    entry.data.updatedDate && (
-                        <div class="font-mono text-xs text-[var(--text-faint)]">
-                            {entry.data.updatedDate.toISOString().split("T")[0]}
+                    headerDates.length > 0 && (
+                        <div class="flex flex-wrap gap-x-3 gap-y-1 font-mono text-xs text-[var(--text-faint)]">
+                            {headerDates.map(({ label, date }) => (
+                                <span>
+                                    {label} <time datetime={date}>{date}</time>
+                                </span>
+                            ))}
                         </div>
                     )
                 }
@@ -139,16 +171,16 @@ for (const e of referencedBy) {
         {
             allConnections.length > 0 && (
                 <div class="mt-20 pt-8 border-t border-[var(--border-main)]">
-                    <h3 class="font-mono text-xs uppercase mb-6 text-[var(--text-muted)] tracking-wider">
+                    <h2 class="font-mono text-xs uppercase mb-6 text-[var(--text-muted)] tracking-wider">
                         Connected Nodes · {allConnections.length}
-                    </h3>
+                    </h2>
                     <div class="space-y-1">
                         {allConnections.map(({ entry: e, type }) => (
                             <a
                                 href={`/notes/${e.id}/`}
                                 class="flex items-center gap-3 py-2.5 px-3 -mx-3 text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors group border-b border-transparent hover:border-[var(--border-subtle)]"
                             >
-                                <span class="font-mono text-[10px] opacity-40 w-4 flex-shrink-0">
+                                <span class="font-mono text-[10px] text-[var(--text-faint)] w-4 flex-shrink-0">
                                     {type === "parent"
                                         ? "↑"
                                         : type === "related"
@@ -158,7 +190,7 @@ for (const e of referencedBy) {
                                 <span class="text-sm group-hover:underline decoration-1 underline-offset-4">
                                     {e.data.title}
                                 </span>
-                                <span class="font-mono text-[9px] text-[var(--text-faint)] ml-auto flex-shrink-0">
+                                <span class="font-mono text-[11px] text-[var(--text-faint)] ml-auto flex-shrink-0">
                                     {type}
                                 </span>
                             </a>

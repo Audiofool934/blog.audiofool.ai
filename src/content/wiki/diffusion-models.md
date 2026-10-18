@@ -1,5 +1,6 @@
 ---
 title: 'Diffusion Models: Score, Noise, and Reversal'
+description: 'Diffusion models turn generation into denoising: a fixed forward process destroys structure, and a learned score function reverses it.'
 kind: Model
 updatedDate: 2026-03-10
 tags: ["generative", "diffusion", "deep learning", "probability"]
@@ -14,7 +15,7 @@ A diffusion model learns to generate data by learning to **reverse** a destructi
 The forward process is trivial (just add noise). The reverse process is learned. The insight is that learning to denoise is **far easier** than learning to generate from scratch.
 
 
-### 1. The Forward Process: A Prescribed Destruction
+## 1. The Forward Process: A Prescribed Destruction
 
 Define a forward SDE that smoothly transforms data $x_0 \sim p_{\text{data}}$ into noise:
 
@@ -39,7 +40,7 @@ $$
 where $\bar{\alpha}_t = \exp\left(-\int_0^t \beta(s) \, ds\right)$. This means we can sample $x_t$ directly from $x_0$ without simulating the SDE step by step—essential for efficient training.
 
 
-### 2. The Score Function: Gradient of Log-Density
+## 2. The Score Function: Gradient of Log-Density
 
 The **score** of a distribution $p_t$ is the gradient of its log-density:
 
@@ -58,11 +59,11 @@ $$
 The reverse SDE has the same diffusion coefficient but a modified drift that involves the score $\nabla_x \log p_t$. **If we know the score at every noise level, we can exactly reverse the destruction process.**
 
 
-### 3. Denoising Score Matching: Tweedie's Identity
+## 3. Denoising Score Matching: Tweedie's Identity
 
 We don't know $p_t(x)$—that's the whole problem. But we can **learn** the score via a beautiful connection to denoising.
 
-**Tweedie's formula**: For the Gaussian perturbation $q(x_t | x_0) = \mathcal{N}(\sqrt{\bar{\alpha}_t} x_0, (1 - \bar{\alpha}_t}  )I)$:
+**Tweedie's formula**: For the Gaussian perturbation $q(x_t | x_0) = \mathcal{N}(\sqrt{\bar{\alpha}_t} x_0, (1 - \bar{\alpha}_t)I)$:
 
 $$
 \nabla_{x_t} \log q(x_t | x_0) = -\frac{x_t - \sqrt{\bar{\alpha}_t} x_0}{1 - \bar{\alpha}_t} = -\frac{\varepsilon}{\sqrt{1 - \bar{\alpha}_t}}
@@ -79,7 +80,7 @@ $$
 Sample a data point $x_0$, a noise level $t$, add noise $\varepsilon$ to get $x_t = \sqrt{\bar{\alpha}_t} x_0 + \sqrt{1 - \bar{\alpha}_t} \varepsilon$, and train the network to predict $\varepsilon$. The learned noise predictor $\epsilon_\theta$ gives the score via $s_\theta(x, t) = -\epsilon_\theta(x, t) / \sqrt{1 - \bar{\alpha}_t}$.
 
 
-### 4. Why the Noise Schedule Matters
+## 4. Why the Noise Schedule Matters
 
 The schedule $\beta(t)$ controls how quickly information is destroyed. It profoundly affects both training and generation:
 
@@ -92,7 +93,7 @@ The schedule $\beta(t)$ controls how quickly information is destroyed. It profou
 The noise schedule implicitly defines a **curriculum**: the model learns coarse structure first (from high-noise denoising) and fine details later (from low-noise denoising). This coarse-to-fine hierarchy is a key reason why diffusion models produce such coherent outputs.
 
 
-### 5. Diffusion vs. Flow Matching: The Fundamental Difference
+## 5. Diffusion vs. Flow Matching: The Fundamental Difference
 
 Both learn a time-dependent transformation from noise to data. The difference is in the **path**:
 
@@ -109,7 +110,7 @@ The diffusion framework is richer theoretically (connections to statistical phys
 Both converge to the same learned distribution. The paths between noise and data differ, but the endpoints are the same. Flow matching can be seen as the **deterministic limit** of diffusion (the "probability flow ODE"), with the added innovation of straight-line conditional paths.
 
 
-### 6. The Score Is All You Need
+## 6. The Score Is All You Need
 
 The score function $\nabla_x \log p_t(x)$ is the central object. From it, you can:
 
@@ -121,6 +122,6 @@ The score function $\nabla_x \log p_t(x)$ is the central object. From it, you ca
 This is why diffusion models are so flexible: the score is a **local** quantity (a gradient at a point), and local modifications to the score produce global changes in the generated distribution. Classifier-free guidance, for instance, simply interpolates between the conditional and unconditional score—a one-line modification that dramatically improves sample quality.
 
 
-### The Takeaway
+## The Takeaway
 
 Diffusion models convert the hard problem of generation into the easy problem of denoising, mediated by the score function. The forward process destroys structure; the learned reverse process reconstructs it. The noise schedule determines the curriculum. And the score—the gradient of log-density—is the thread that connects destruction to reconstruction, training to inference, and probability theory to practical generative modeling.

@@ -15,6 +15,26 @@ export interface TimelineItem {
     description: string;
     sourceId: string;
     dateLabel?: string;
+    // Set when the title needs its own language tag, e.g. a Chinese photo title.
+    lang?: string;
+}
+
+// Lanes that hold authored writing, as opposed to project pushes, photos, music, and site changes.
+const writingLanes = new Set(["post", "note"]);
+
+const hanPattern = /\p{Script=Han}/u;
+
+/** Log entries that appear on the timeline; redirect stubs never do. */
+export function isTimelineLog(entry: CollectionEntry<"log">): boolean {
+    return entry.data.timeline && !entry.data.redirectTo;
+}
+
+/** Timeline-visible log entries, newest first. */
+export async function getTimelineLogs(): Promise<CollectionEntry<"log">[]> {
+    const logs = await getCollection("log");
+    return logs
+        .filter(isTimelineLog)
+        .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 }
 
 function fromLog(entry: CollectionEntry<"log">): TimelineItem {
@@ -40,7 +60,7 @@ export async function getTimelineItems(): Promise<TimelineItem[]> {
     ]);
 
     const items: TimelineItem[] = [
-        ...logs.filter((entry) => entry.data.timeline).map(fromLog),
+        ...logs.filter(isTimelineLog).map(fromLog),
         ...projects.map((entry) => {
             const state = getProjectState(entry, githubProjects.projects);
             return {
@@ -60,16 +80,19 @@ export async function getTimelineItems(): Promise<TimelineItem[]> {
             title: entry.data.title,
             date: entry.data.updatedDate || entry.data.pubDate || new Date("2024-01-01"),
             href: `/notes/${entry.id}/`,
-            description: entry.data.tags.length ? entry.data.tags.join(" / ") : entry.data.kind,
+            description:
+                entry.data.description ||
+                (entry.data.tags.length ? entry.data.tags.join(" / ") : entry.data.kind),
             sourceId: entry.id,
         })),
         ...audioshow.map((entry) => ({
             kind: "audioshow" as const,
             lane: "music",
-            title: entry.data.title,
+            // Every batch file shares the same authored title, so name it by its episode range.
+            title: `AudioShow EP ${entry.data.episode}`,
             date: entry.data.pubDate,
             href: `/audioshow/${entry.id}/`,
-            description: entry.data.description || `AudioShow Episode ${entry.data.episode}`,
+            description: entry.data.description || "",
             sourceId: entry.id,
         })),
         ...gallery.map((entry) => ({
@@ -83,5 +106,15 @@ export async function getTimelineItems(): Promise<TimelineItem[]> {
         })),
     ];
 
+    for (const item of items) {
+        if (hanPattern.test(item.title)) item.lang = "zh";
+    }
+
     return items.sort((a, b) => b.date.valueOf() - a.date.valueOf());
+}
+
+/** The newest posts and notes, skipping project pushes, photos, music, and site changes. */
+export async function getLatestWriting(limit: number): Promise<TimelineItem[]> {
+    const items = await getTimelineItems();
+    return items.filter((item) => writingLanes.has(item.lane)).slice(0, limit);
 }

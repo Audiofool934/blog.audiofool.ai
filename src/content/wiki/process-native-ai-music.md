@@ -1,5 +1,6 @@
 ---
 title: 'Process-Native AI Music: From Studio Takes to Live Instruments'
+description: 'Process-native AI music treats the creative process, not the finished track, as the object of generation, from studio takes to live instruments.'
 kind: Essay
 updatedDate: 2026-05-25
 tags: ["ai music", "music generation", "process", "production", "instruments", "multitake"]

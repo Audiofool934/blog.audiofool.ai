@@ -1,5 +1,6 @@
 ---
 title: 'DJ Claw as a Personal Radio Agent'
+description: 'DJ Claw is a personal radio agent on OpenClaw: the backend makes sound, while the agent keeps taste memory, runs the station, and sets direction.'
 kind: Essay
 updatedDate: 2026-05-14
 tags: ["agents", "openclaw", "dj claw", "music", "runtime", "radio"]

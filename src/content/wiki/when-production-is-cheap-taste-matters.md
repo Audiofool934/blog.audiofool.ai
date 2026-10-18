@@ -1,5 +1,6 @@
 ---
 title: 'When Production Is Cheap, Taste Matters'
+description: 'AI lowers the cost of making music, so the creative barrier moves to taste: knowing what is worth producing and making it mean something.'
 kind: Essay
 updatedDate: 2026-05-13
 tags: ["ai music", "music", "taste", "creativity", "production"]

@@ -1,8 +1,8 @@
 ---
 title: 'ICBS: For Truth and Beauty'
 kind: Essay
-pubDate: '2024-7-14'
-description: 'reflections on participating in ICBS 2024'
+pubDate: '2024-07-14'
+description: 'Reflections on participating in ICBS 2024.'
 author: 'Audiofool'
 image:
     url: '/images/log/icbs_2024.jpg'

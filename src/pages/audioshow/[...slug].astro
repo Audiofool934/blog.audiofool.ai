@@ -23,10 +23,12 @@ const ogImage =
 ---
 
 <MinimalLayout
-    title={`EP ${entry.data.episode}: ${entry.data.title} | AudioShow`}
+    title={`EP ${entry.data.episode}: ${entry.data.title}`}
+    section="AudioShow"
     description={entry.data.description ??
         `AudioShow Episode ${entry.data.episode} — ${entry.data.title}`}
     image={ogImage}
+    imageAlt={`AudioShow EP ${entry.data.episode} cover art`}
     ogType="article"
     datePublished={entry.data.pubDate}
 >

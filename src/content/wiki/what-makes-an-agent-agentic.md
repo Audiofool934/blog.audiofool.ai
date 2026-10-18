@@ -1,5 +1,6 @@
 ---
 title: 'What Makes an Agent Agentic?'
+description: 'An agent is a model inside a goal-directed feedback loop with state, tools, feedback, and boundaries, which is why the harness shapes so much of its behavior.'
 kind: Essay
 updatedDate: 2026-05-26
 tags: ["agents", "harness", "context", "memory", "openclaw"]

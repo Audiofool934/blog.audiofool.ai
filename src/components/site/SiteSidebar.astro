@@ -9,11 +9,16 @@ const NAV_ITEMS = [
     { label: "AudioShow", href: "/audioshow/" },
     { label: "Gallery", href: "/gallery/" },
 ];
+
+// The sidebar is rendered per page (only the player persists across
+// navigation), so the current section can be resolved at build time.
+const { pathname } = Astro.url;
+const homeCurrent = pathname === "/" ? "page" : undefined;
 ---
 
-<aside class="w-full md:w-64 flex-shrink-0 border-b md:border-b-0 md:border-r border-[var(--border-main)] p-4 md:p-8 flex flex-col justify-between sticky top-0 md:h-screen transition-all z-[50] bg-[var(--bg-body)]">
+<aside class="site-sidebar w-full md:w-64 flex-shrink-0 border-b md:border-b-0 md:border-r border-[var(--border-main)] p-4 md:p-8 flex flex-col justify-between sticky top-0 md:h-screen md:overflow-y-auto transition-all z-[50] bg-[var(--bg-body)]">
     <div class="flex items-center justify-between md:hidden">
-        <a href="/" class="site-logo shrink-0 hover:opacity-60 transition-opacity">
+        <a href="/" aria-current={homeCurrent} class="site-logo shrink-0 hover:opacity-60 transition-opacity">
             <img src="/images/_generated/site/audiofool-seal-112.webp" alt="Audiofool" width="112" height="112" decoding="async" class="h-9 w-9 rounded-full" />
         </a>
         <div class="flex items-center gap-3">
@@ -26,16 +31,26 @@ const NAV_ITEMS = [
 
     <div id="nav-content" class="hidden md:flex flex-col gap-8 mt-6 md:mt-0">
         <div class="hidden md:flex items-center justify-between">
-            <a href="/" class="site-logo shrink-0 hover:opacity-60 transition-opacity">
+            <a href="/" aria-current={homeCurrent} class="site-logo shrink-0 hover:opacity-60 transition-opacity">
                 <img src="/images/_generated/site/audiofool-seal-112.webp" alt="Audiofool" width="112" height="112" decoding="async" class="h-11 w-11 rounded-full" />
             </a>
             <ThemeToggle id="theme-toggle" />
         </div>
 
         <nav class="flex flex-col gap-4">
-            {NAV_ITEMS.map((item) => (
-                <a href={item.href} class="nav-link text-lg font-medium hover:underline underline-offset-4 decoration-1 decoration-[var(--border-main)]">[ {item.label} ]</a>
-            ))}
+            {NAV_ITEMS.map((item) => {
+                const current = pathname.startsWith(item.href);
+                return (
+                    <a
+                        href={item.href}
+                        aria-current={pathname === item.href ? "page" : current ? "true" : undefined}
+                        class:list={[
+                            "nav-link text-lg font-medium underline-offset-4 decoration-1",
+                            current ? "underline decoration-[var(--text-muted)]" : "hover:underline decoration-[var(--border-main)]",
+                        ]}
+                    >[ {item.label} ]</a>
+                );
+            })}
             <div class="pt-6 mt-2 flex items-center gap-4 border-t border-[var(--border-main)]">
                 <a href="https://github.com/Audiofool934" target="_blank" rel="noopener noreferrer" class="text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors" title="GitHub" aria-label="GitHub profile">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"></path></svg>
@@ -51,6 +66,12 @@ const NAV_ITEMS = [
 </aside>
 
 <style>
+    /* Short desktop windows scroll the sidebar so the player stays reachable. */
+    .site-sidebar {
+        scrollbar-color: var(--border-main) var(--bg-body);
+        scrollbar-width: thin;
+    }
+
     /* The seal is drawn white on black; invert it for the light theme. */
     .site-logo img {
         filter: invert(1);

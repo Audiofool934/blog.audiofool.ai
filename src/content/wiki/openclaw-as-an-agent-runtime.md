@@ -1,5 +1,6 @@
 ---
 title: 'OpenClaw as an Agent Runtime'
+description: 'OpenClaw is an agent runtime, not just a coding agent: it moves recurring personal work into a system that can remember, schedule, route, and verify.'
 kind: Essay
 updatedDate: 2026-05-14
 tags: ["agents", "openclaw", "claude code", "runtime", "tools"]

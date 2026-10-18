@@ -41,13 +41,17 @@ const projectReadmes = defineCollection({
 
 const log = defineCollection({
     loader: glob({ pattern: '**/*.md', base: './src/content/log' }),
-    schema: z.object({
+    // `image()` resolves a local share image so the detail page can emit an
+    // optimized og:image.
+    schema: ({ image }) => z.object({
         title: z.string(),
         pubDate: z.coerce.date(),
         tags: z.array(z.string()).default([]),
         description: z.string().optional(),
         timeline: z.boolean().default(true),
         redirectTo: z.string().optional(),
+        image: image().optional(),
+        imageAlt: z.string().optional(),
     }),
 });
 
@@ -56,11 +60,19 @@ const wiki = defineCollection({
     schema: z.object({
         title: z.string(),
         kind: z.enum(['Concept', 'Method', 'Model', 'Essay', 'Reference']).default('Concept'),
+        description: z.string().optional(),
         pubDate: z.coerce.date().optional(),
         updatedDate: z.coerce.date().optional(),
         parents: z.array(z.string()).optional(),
         related: z.array(z.string()).optional(),
         tags: z.array(z.string()).default([]),
+        image: z.union([
+            z.string(),
+            z.object({
+                url: z.string(),
+                alt: z.string().optional()
+            })
+        ]).optional(),
     }),
 });
 

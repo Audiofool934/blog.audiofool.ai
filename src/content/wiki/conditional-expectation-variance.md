@@ -1,5 +1,6 @@
 ---
 title: 'Conditional Expectation as Projection'
+description: 'Conditional expectation is an orthogonal projection, and the Law of Total Variance is the Pythagorean theorem applied to signal and residual.'
 kind: Concept
 updatedDate: 2026-01-01
 tags: ["Probability", "Math", "Regression"]
@@ -13,7 +14,7 @@ In introductory probability, we often treat "variance" as a monolithic number de
 
 The core insight is geometric: if we view random variables as vectors in an $L^2$ space (the space of random variables with finite second moments), then **conditional expectation is nothing more than an orthogonal projection**.
 
-### 1. The Projection Principle
+## 1. The Projection Principle
 
 Let $Y \in L^2(\Omega, \mathcal{F}, P)$ be our target variable. We observe some information $X$, which generates a sub-$\sigma$-algebra $\mathcal{G} = \sigma(X)$.
 
@@ -27,7 +28,7 @@ This isn't just a definition; it's a decomposition of the vector $Y$ into two or
 1.  **The Projection**: $\mathbb{E}[Y|X]$ lies *in* the plane defined by $X$.
 2.  **The Residual**: $\varepsilon$ is *perpendicular* to that plane.
 
-### 2. Orthogonality and the Vanishing Cross-Term
+## 2. Orthogonality and the Vanishing Cross-Term
 
 The power of this perspective becomes clear when we look at the orthogonality condition. By definition of projection, the residual $\varepsilon$ is uncorrelated with any function of $X$ (technically, orthogonal in the inner product $\langle U, V \rangle = \mathbb{E}[UV]$).
 
@@ -37,7 +38,7 @@ $$
 
 This simple fact explains why there are no "cross terms" when we analyze variance.
 
-### 3. The Law of Total Variance via Pythagoras
+## 3. The Law of Total Variance via Pythagoras
 
 Since the decomposition $Y = \mathbb{E}[Y|X] + \varepsilon$ is orthogonal, the Pythagorean theorem applies directly to their "lengths" (variances):
 
@@ -54,7 +55,7 @@ $$
 *   **$\operatorname{Var}(\mathbb{E}[Y|X])$**: The "Explained Variance." This is how much our prediction moves around as $X$ changes. If $X$ tells us a lot about $Y$, this component is large.
 *   **$\mathbb{E}[\operatorname{Var}(Y|X)]$**: The "Unexplained Variance." This is the average squared length of the residual $\varepsilon$. It’s the noise we're stuck with even after using $X$.
 
-### 4. Why This Matters
+## 4. Why This Matters
 
 This geometric structure repeats itself everywhere in statistics:
 

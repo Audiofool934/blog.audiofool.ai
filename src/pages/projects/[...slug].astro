@@ -33,6 +33,8 @@ const ogImage =
     typeof entry.data.image === "string"
         ? entry.data.image
         : entry.data.image?.url;
+const ogImageAlt =
+    typeof entry.data.image === "object" ? entry.data.image.alt : undefined;
 
 const repoUrl = unavailable ? "" : githubMeta?.url || (entry.data.githubRepo ? `https://github.com/${entry.data.githubRepo}` : "");
 const repoLabel = entry.data.githubRepo || githubMeta?.repo;
@@ -45,9 +47,11 @@ function compactDate(date: Date | null) {
 ---
 
 <MinimalLayout
-    title={`${entry.data.title} | Projects`}
+    title={entry.data.title}
+    section="Projects"
     description={entry.data.description}
     image={ogImage}
+    imageAlt={ogImageAlt}
     ogType="article"
     math={hasMath}
     datePublished={entry.data.pubDate}
