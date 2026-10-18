@@ -87,7 +87,7 @@ Use `entry.id`, `render(entry)` from `astro:content`, and `getStaticPaths()` for
 
 - Preserve the minimal archival style: thin borders, compact metadata, square cards, and restrained interaction.
 - Use existing CSS variables for colors: `--bg-body`, `--text-main`, `--text-muted`, `--text-faint`, `--border-main`, `--border-subtle`, and `--accent`.
-- Resolve theme before first paint: explicit `localStorage.theme` (`light` or `dark`), then system preference, then dark if the preference API is unavailable.
+- Resolve theme before first paint: dark by default, regardless of system preference; only an explicit `localStorage.theme` of `light` from the toggle overrides it.
 - Keep both themes working and initialization consistent with transition handling in `MinimalLayout.astro`.
 - Use `<ClientRouter />`, attach page handlers on `astro:page-load`, and prevent duplicate listeners across navigation.
 - Use buttons for actions and links for navigation; preserve keyboard controls, the skip link, and `main#main-content` focus behavior.

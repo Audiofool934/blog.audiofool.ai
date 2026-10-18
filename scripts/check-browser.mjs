@@ -22,6 +22,14 @@ let browser;
 let page;
 try {
     browser = await chromium.launch();
+    const lightSystem = await browser.newContext({ colorScheme: "light", reducedMotion: "reduce" });
+    await lightSystem.route("**/*", (route) => (new URL(route.request().url()).origin === base ? route.continue() : route.abort()));
+    const lightSystemPage = await lightSystem.newPage();
+    await lightSystemPage.goto(`${base}/`);
+    assert.equal(await lightSystemPage.evaluate(() => document.documentElement.classList.contains("dark")), true, "The site must open in dark mode under a light system preference");
+    await lightSystem.close();
+    console.log("PASS dark theme by default under a light system preference");
+
     const context = await browser.newContext({ viewport: { width: 1440, height: 1000 }, colorScheme: "dark", reducedMotion: "reduce" });
     const errors = [];
     context.on("page", (opened) => opened.on("pageerror", (error) => errors.push(error.message)));

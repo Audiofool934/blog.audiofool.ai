@@ -1,13 +1,8 @@
 <script is:inline>
-    // Respect an explicit choice; otherwise initialize from the system preference.
+    // Dark is the default; only an explicit light choice from the toggle overrides it.
     const html = document.documentElement;
     const storedTheme = typeof localStorage !== "undefined" ? localStorage.getItem("theme") : null;
-    const systemPrefersDark = typeof window.matchMedia === "function"
-        ? window.matchMedia("(prefers-color-scheme: dark)").matches
-        : true;
-    const shouldUseDark = storedTheme === "dark"
-        || (storedTheme !== "light" && systemPrefersDark);
-    html.classList.toggle("dark", shouldUseDark);
+    html.classList.toggle("dark", storedTheme !== "light");
 </script>
 <style is:global>
     ::view-transition-old(root),

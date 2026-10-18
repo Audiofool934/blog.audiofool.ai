@@ -62,14 +62,7 @@ const defaultTrackData = getDefaultAudioTrack();
         <script>
             function applyTheme() {
                 const html = document.documentElement;
-                const theme = localStorage.getItem("theme");
-                const systemPrefersDark = typeof window.matchMedia === "function"
-                    ? window.matchMedia("(prefers-color-scheme: dark)").matches
-                    : true;
-                const shouldUseDark = theme === "dark"
-                    || (theme !== "light" && systemPrefersDark);
-
-                html.classList.toggle("dark", shouldUseDark);
+                html.classList.toggle("dark", localStorage.getItem("theme") !== "light");
                 syncThemeControls();
             }
 
