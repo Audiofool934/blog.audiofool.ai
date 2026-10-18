@@ -13,7 +13,9 @@ const NAV_ITEMS = [
 
 <aside class="w-full md:w-64 flex-shrink-0 border-b md:border-b-0 md:border-r border-[var(--border-main)] p-4 md:p-8 flex flex-col justify-between sticky top-0 md:h-screen transition-all z-[50] bg-[var(--bg-body)]">
     <div class="flex items-center justify-between md:hidden">
-        <a href="/" class="text-xl font-bold font-mono tracking-tighter hover:opacity-60 transition-opacity">Audiofool</a>
+        <a href="/" class="site-logo shrink-0 hover:opacity-60 transition-opacity">
+            <img src="/images/_generated/site/audiofool-seal-112.webp" alt="Audiofool" width="112" height="112" decoding="async" class="h-9 w-9 rounded-full" />
+        </a>
         <div class="flex items-center gap-3">
             <button id="mobile-menu-toggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-content" class="font-mono text-sm border border-transparent px-2 py-1 hover:opacity-60 transition-opacity focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--text-main)]">
                 <span id="menu-icon">[ ≡ ]</span>
@@ -24,7 +26,9 @@ const NAV_ITEMS = [
 
     <div id="nav-content" class="hidden md:flex flex-col gap-8 mt-6 md:mt-0">
         <div class="hidden md:flex items-center justify-between">
-            <a href="/" class="text-xl font-bold font-mono tracking-tighter hover:opacity-60 transition-opacity">Audiofool</a>
+            <a href="/" class="site-logo shrink-0 hover:opacity-60 transition-opacity">
+                <img src="/images/_generated/site/audiofool-seal-112.webp" alt="Audiofool" width="112" height="112" decoding="async" class="h-11 w-11 rounded-full" />
+            </a>
             <ThemeToggle id="theme-toggle" />
         </div>
 
@@ -45,3 +49,14 @@ const NAV_ITEMS = [
 
     <AudioPlayer />
 </aside>
+
+<style>
+    /* The seal is drawn white on black; invert it for the light theme. */
+    .site-logo img {
+        filter: invert(1);
+    }
+    :global(html.dark) .site-logo img {
+        filter: none;
+        opacity: 0.9;
+    }
+</style>

@@ -26,6 +26,13 @@ const variants = [
     formats: { webp: 78, avif: 62 },
   },
   {
+    // Sidebar and top-bar logo.
+    source: path.join(publicDir, "images/audiofool-seal.webp"),
+    name: "audiofool-seal",
+    widths: [112],
+    quality: 82,
+  },
+  {
     source: path.join(publicDir, "muse/muse.png"),
     outputDir: path.join(publicDir, "muse/_generated"),
     name: "muse-logo",
