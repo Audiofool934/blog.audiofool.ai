@@ -1,4 +1,7 @@
 export const legacyRedirects = [
+    // Unpublished: the Claude subscription essay and its timeline announcement.
+    { from: "notes/how-i-freed-myself-from-claude-subscription", to: "/notes/" },
+    { from: "timeline/2026-06-19-free-myself-from-claude", to: "/notes/" },
     { from: "audioshow/crates/88-roads", to: "/audioshow/crates/route-88/" },
     { from: "projects/MUSE", to: "/projects/muse/" },
     {

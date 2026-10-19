@@ -30,7 +30,6 @@ const redirectOnlyTimelinePaths = new Set([
   '/timeline/2026-05-14-openclaw-runtime-note/',
   '/timeline/2026-05-25-process-native-ai-music/',
   '/timeline/2026-05-26-agentic-essay/',
-  '/timeline/2026-06-19-free-myself-from-claude/',
 ]);
 
 function isRedirectOnlyTimelineUrl(page) {

@@ -3,6 +3,7 @@ import { getCollection } from "astro:content";
 import { getPostType } from "./postType";
 import githubProjects from "../data/github-projects.json";
 import { getProjectState } from "./projectState";
+import { homepageSelected } from "../data/homepageSelected";
 
 export type TimelineItemKind = "log" | "project" | "note" | "audioshow" | "gallery";
 
@@ -18,9 +19,6 @@ export interface TimelineItem {
     // Set when the title needs its own language tag, e.g. a Chinese photo title.
     lang?: string;
 }
-
-// Lanes that hold authored writing, as opposed to project pushes, photos, music, and site changes.
-const writingLanes = new Set(["post", "note"]);
 
 const hanPattern = /\p{Script=Han}/u;
 
@@ -113,8 +111,17 @@ export async function getTimelineItems(): Promise<TimelineItem[]> {
     return items.sort((a, b) => b.date.valueOf() - a.date.valueOf());
 }
 
-/** The newest posts and notes, skipping project pushes, photos, music, and site changes. */
-export async function getLatestWriting(limit: number): Promise<TimelineItem[]> {
+/**
+ * The curated homepage list from src/data/homepageSelected.ts, newest first.
+ * Projects link to their page here rather than their primary destination.
+ */
+export async function getSelectedItems(): Promise<TimelineItem[]> {
     const items = await getTimelineItems();
-    return items.filter((item) => writingLanes.has(item.lane)).slice(0, limit);
+    return homepageSelected
+        .map(({ kind, id }) => {
+            const item = items.find((candidate) => candidate.kind === kind && candidate.sourceId === id);
+            if (!item) throw new Error(`Homepage selection ${kind}:${id} is not a timeline item`);
+            return kind === "project" ? { ...item, href: `/projects/${id}/` } : item;
+        })
+        .sort((a, b) => b.date.valueOf() - a.date.valueOf());
 }

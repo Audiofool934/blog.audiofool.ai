@@ -1,9 +1,9 @@
 ---
 import MinimalLayout from "../layouts/MinimalLayout.astro";
 import { formatDateCompact } from "../utils/formatDate";
-import { getLatestWriting } from "../utils/timelineItems";
+import { getSelectedItems } from "../utils/timelineItems";
 
-const writingPosts = await getLatestWriting(3);
+const selectedItems = await getSelectedItems();
 
 // Widths produced by scripts/generate-site-images.mjs for the homepage portraits.
 const portraitWidths = [320, 480, 640, 960, 1280];
@@ -74,11 +74,11 @@ const portraits = [
 				</div>
 
 				{
-					writingPosts.length > 0 && (
+					selectedItems.length > 0 && (
 						<section class="mt-12 index-news">
 							<div class="flex items-baseline gap-4 mb-3">
 								<h2 class="font-mono text-xs uppercase tracking-widest text-[var(--text-muted)]">
-									Writing
+									Selected
 								</h2>
 								<a
 									href="/timeline/"
@@ -89,7 +89,7 @@ const portraits = [
 							</div>
 
 							<div class="space-y-1.5">
-								{writingPosts.map((post) => {
+								{selectedItems.map((post) => {
 									const type = post.lane;
 									return (
 										<a

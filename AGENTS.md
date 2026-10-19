@@ -52,14 +52,14 @@ Run either GitHub sync command only when fresh project data is explicitly reques
 | Theme tokens and utilities | `src/style/global.css` |
 | Markdown typography and highlighting | `src/style/post.css`, `src/style/prism-theme.css` |
 | Collection schemas and loaders | `src/content.config.ts` |
-| Homepage writing, timeline, RSS items, timeline lanes | `src/utils/timelineItems.ts`, `src/utils/postType.ts` |
+| Homepage selection, timeline, RSS items, timeline lanes | `src/utils/timelineItems.ts`, `src/utils/postType.ts`, `src/data/homepageSelected.ts` |
 | Gallery controls and viewer | `src/components/gallery/` |
 | AudioShow image paths and widths | `src/utils/audioImages.mjs` |
 | Legacy aliases | `src/data/legacyRedirects.mjs` |
 
 Update `getTimelineItems()` when changing what counts as an update; keep sorting and filtering out of individual consumers.
 Timeline lanes follow the source collection; a log post is `site` when tagged Meta or Update, then `photo` (Gallery), `music` (AudioShow), `project` (Project/Projects), and otherwise `post`.
-The homepage shows the newest writing (`post` and `note` lanes) through `getLatestWriting()`.
+The homepage shows a curated "Selected" list: edit `src/data/homepageSelected.ts` (kind and entry id); `getSelectedItems()` resolves it newest first and fails the build on a missing entry.
 Project metadata lives in `src/content/projects/`, synced READMEs in `src/content/project-readmes/`, and the GitHub catalog in `src/data/github-projects.json`.
 Pinned projects use `pinOrder` for display order and `url` for their primary destination in the project index.
 `src/utils/projectState.ts` shares project update dates, primary links, and GitHub archive status across Project Index and Timeline.
