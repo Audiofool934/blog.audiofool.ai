@@ -100,7 +100,8 @@
             <div
                 class="flex items-center justify-between text-[10px] font-mono text-[var(--text-muted)]"
             >
-                <span id="player-current-time">0:00</span>
+                <!-- Equal fixed widths keep the controls centered for any track length. -->
+                <span id="player-current-time" class="w-10 tabular-nums">0:00</span>
                 <div class="flex items-center gap-2">
                     <button
                         id="player-shuffle-btn"
@@ -131,10 +132,18 @@
                     <button
                         id="player-play-btn"
                         aria-label="Play"
-                        class="hover:text-[var(--text-main)] transition-colors disabled:opacity-30 p-1"
+                        class="w-6 h-6 flex items-center justify-center hover:text-[var(--text-main)] transition-colors disabled:opacity-30"
                         disabled
                     >
-                        <span id="play-icon" class="text-xl">▶</span>
+                        <span id="play-icon" data-play-icon class="flex items-center justify-center">
+                            <svg class="play-glyph" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                <polygon points="7 4 19 12 7 20" />
+                            </svg>
+                            <svg class="pause-glyph" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                <rect x="6" y="5" width="4" height="14" />
+                                <rect x="14" y="5" width="4" height="14" />
+                            </svg>
+                        </span>
                     </button>
                     <button
                         id="player-next-btn"
@@ -148,7 +157,7 @@
                         </svg>
                     </button>
                 </div>
-                <span id="player-duration">0:00</span>
+                <span id="player-duration" class="w-10 text-right tabular-nums">0:00</span>
             </div>
         </div>
     </div>
@@ -228,7 +237,15 @@
                 class="w-11 h-11 flex items-center justify-center border border-[var(--border-main)] hover:bg-[var(--text-main)] hover:text-[var(--bg-body)] transition-colors disabled:opacity-30"
                 disabled
             >
-                <span id="play-icon-mobile" class="text-lg">▶</span>
+                <span id="play-icon-mobile" data-play-icon class="flex items-center justify-center">
+                    <svg class="play-glyph" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <polygon points="7 4 19 12 7 20" />
+                    </svg>
+                    <svg class="pause-glyph" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <rect x="6" y="5" width="4" height="14" />
+                        <rect x="14" y="5" width="4" height="14" />
+                    </svg>
+                </span>
             </button>
             <button
                 id="player-next-btn-mobile"
@@ -292,6 +309,11 @@
         mask-repeat: no-repeat;
         -webkit-mask-composite: source-in;
         mask-composite: intersect;
+    }
+    /* Play and pause share one fixed box; only the visible glyph changes. */
+    [data-play-icon][data-playing] .play-glyph,
+    [data-play-icon]:not([data-playing]) .pause-glyph {
+        display: none;
     }
     [data-marquee][data-scrolling] > span {
         display: inline-block;

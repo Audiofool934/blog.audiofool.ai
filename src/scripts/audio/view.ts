@@ -65,14 +65,12 @@ export function renderPlayer(state: AudioPlayerState) {
         els.playBtn.disabled = !hasTrack;
         els.playBtn.setAttribute("aria-label", playLabel);
     }
-    if (els.playIcon) els.playIcon.textContent = isPlaying ? "II" : "▶";
+    els.playIcon?.toggleAttribute("data-playing", isPlaying);
     if (els.playBtnMobile) {
         els.playBtnMobile.disabled = !hasTrack;
         els.playBtnMobile.setAttribute("aria-label", playLabel);
     }
-    if (els.playIconMobile) {
-        els.playIconMobile.textContent = isPlaying ? "II" : "▶";
-    }
+    els.playIconMobile?.toggleAttribute("data-playing", isPlaying);
     if (els.artBtn) {
         els.artBtn.disabled = !hasTrack;
         els.artBtn.setAttribute(
