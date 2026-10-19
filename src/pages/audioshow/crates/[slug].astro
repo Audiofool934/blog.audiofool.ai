@@ -32,9 +32,10 @@ const cratePlaylist = crate.tracks.map((track) => ({
     imageAlt={`${crate.title} cover`}
     ogType="music.playlist"
 >
-    <div class="p-6 md:p-12 mb-20" transition:animate="fade">
-        <div class="mb-8">
-            <h1 class="text-4xl font-bold font-heading mb-2">AudioShow Crates</h1>
+    <div class="p-6 md:p-12 md:mb-20" transition:animate="fade">
+        <!-- Index heading: kept on desktop for continuity, hidden on phones so the crate title leads the first screen. -->
+        <div class="mb-8 hidden md:block">
+            <p class="text-4xl font-bold font-heading mb-2">AudioShow Crates</p>
             <p class="font-mono text-sm text-[var(--text-muted)] tracking-wider">
                 Is there anybody in there?
             </p>
@@ -83,14 +84,14 @@ const cratePlaylist = crate.tracks.map((track) => ({
                 <div class="min-w-0 self-end">
                     <div class="mb-3 flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-xs uppercase tracking-wider text-[var(--text-muted)]">
                         <span>Crate {crate.number}</span>
-                        <span>{crate.trackCount} tracks</span>
+                        <span>{crate.trackCount} {crate.trackCount === 1 ? "track" : "tracks"}</span>
                         <span>{crate.duration}</span>
                         <span>{crate.updated}</span>
                     </div>
 
-                    <h2 class="mb-3 text-3xl md:text-5xl font-bold font-heading leading-tight">
+                    <h1 class="mb-3 text-3xl md:text-5xl font-bold font-heading leading-tight">
                         {crate.title}
-                    </h2>
+                    </h1>
 
                     <p class="mb-5 max-w-3xl text-base md:text-lg text-[var(--text-muted)] leading-relaxed">
                         {crate.premise}
@@ -124,11 +125,11 @@ const cratePlaylist = crate.tracks.map((track) => ({
                     <section class="border border-[var(--border-main)]">
                         <div class="border-b border-[var(--border-main)] p-4">
                             <div class="flex flex-wrap items-baseline justify-between gap-3">
-                                <h3 class="text-xl font-bold font-heading">
+                                <h2 class="text-xl font-bold font-heading">
                                     {section.title}
-                                </h3>
+                                </h2>
                                 <span class="font-mono text-xs text-[var(--text-muted)]">
-                                    {section.tracks.length} tracks
+                                    {section.tracks.length} {section.tracks.length === 1 ? "track" : "tracks"}
                                 </span>
                             </div>
                             <p class="mt-2 max-w-3xl text-sm text-[var(--text-muted)] leading-relaxed">
@@ -139,13 +140,13 @@ const cratePlaylist = crate.tracks.map((track) => ({
                         <div>
                             {section.tracks.map((track) => (
                                 <div
-                                    class="track-row group grid cursor-pointer grid-cols-[48px_minmax(0,1fr)_32px] gap-4 border-b border-[var(--border-main)] p-4 transition-colors last:border-b-0 md:grid-cols-[56px_56px_minmax(0,1fr)_220px_40px] md:items-center"
+                                    class="track-row group grid cursor-pointer grid-cols-[48px_minmax(0,1fr)_32px] gap-x-4 gap-y-1 border-b border-[var(--border-main)] p-4 transition-colors last:border-b-0 md:grid-cols-[56px_56px_minmax(0,1fr)_220px_40px] md:items-center md:gap-4"
                                     data-crate-index={crate.tracks.indexOf(track)}
                                     tabindex="0"
                                     role="button"
                                     aria-label={`Play preview: ${track.title}`}
                                 >
-                                    <div class="h-12 w-12 overflow-hidden border border-[var(--border-main)] md:h-14 md:w-14">
+                                    <div class="row-span-2 h-12 w-12 overflow-hidden border border-[var(--border-main)] md:row-span-1 md:h-14 md:w-14">
                                         <img
                                             src={audioImage(track.cover, 96) || track.cover}
                                             srcset={audioImageSrcset(track.cover, [96, 192])}
@@ -169,13 +170,13 @@ const cratePlaylist = crate.tracks.map((track) => ({
                                             <span class="font-mono text-xs text-[var(--text-muted)]">
                                                 {track.number.toString().padStart(2, "0")}
                                             </span>
-                                            <h4 class="truncate font-bold leading-tight">
+                                            <h3 class="truncate font-bold leading-tight">
                                                 {track.title}
-                                            </h4>
+                                            </h3>
                                         </div>
-                                        <h4 class="hidden truncate font-bold leading-tight md:block">
+                                        <h3 class="hidden truncate font-bold leading-tight md:block">
                                             {track.title}
-                                        </h4>
+                                        </h3>
                                         <div class="truncate text-xs text-[var(--text-muted)]">
                                             {track.album} ({track.year})
                                         </div>

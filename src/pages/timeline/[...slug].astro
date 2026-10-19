@@ -76,19 +76,20 @@ const shareImage =
             math={hasMath}
             datePublished={entry.data.pubDate}
         >
-            {/* Breadcrumb: sticky from md up only; on mobile it would slide under the sticky site header. */}
+            {/* Breadcrumb: a sticky band from md up only (on phones it would slide under the sticky site header); below md, a quiet back link, since the H1 names the page. */}
             <div
-                class="border-b border-[var(--border-main)] bg-[var(--bg-body)] md:sticky md:top-0 md:z-10 px-6 md:px-12"
+                class="md:border-b border-[var(--border-main)] bg-[var(--bg-body)] md:sticky md:top-0 md:z-10 px-6 md:px-12"
             >
                 <div
-                    class="max-w-[38rem] mx-auto py-3 font-mono text-xs text-[var(--text-muted)] flex items-center gap-2"
+                    class="max-w-[38rem] mx-auto pt-3 md:py-3 font-mono text-xs text-[var(--text-muted)] flex items-center gap-2"
                 >
                     <a
                         href="/timeline/"
-                        class="hover:text-[var(--text-main)] transition-colors">Timeline</a
+                        class="py-3 md:py-0 hover:text-[var(--text-main)] transition-colors"
+                        ><span aria-hidden="true" class="md:hidden">← </span>Timeline</a
                     >
-                    <span class="opacity-30">/</span>
-                    <span class="text-[var(--text-main)] truncate"
+                    <span class="hidden md:block opacity-30">/</span>
+                    <span class="hidden md:block text-[var(--text-main)] truncate"
                         >{entry.data.title}</span
                     >
                 </div>

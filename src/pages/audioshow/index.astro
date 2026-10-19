@@ -19,7 +19,7 @@ const placeholderImage = "/images/placeholder-album.svg";
     title="AudioShow | Audiofool"
     description="The Great Gig in the Sky"
 >
-    <div class="p-6 md:p-12 mb-20" transition:animate="fade">
+    <div class="p-6 md:p-12 md:mb-20" transition:animate="fade">
         <!-- Header -->
         <div class="mb-8">
             <h1 class="text-4xl font-bold font-heading mb-2">AudioShow</h1>
@@ -35,13 +35,13 @@ const placeholderImage = "/images/placeholder-album.svg";
             </span>
             <a
                 href="/audioshow/crates/"
-                class="text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors"
+                class="py-1.5 -my-1.5 text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors"
             >
                 [ Crates ]
             </a>
             <a
                 href="/audioshow/archive/"
-                class="text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors"
+                class="py-1.5 -my-1.5 text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors"
             >
                 [ Archive ]
             </a>
@@ -279,7 +279,18 @@ const placeholderImage = "/images/placeholder-album.svg";
 
     /* Phones should size the shelf by viewport width, not just viewport height. */
     @media (max-width: 767px) {
-        .audioshow-carousel { --ep-card-width: min(74vw, 280px); }
+        /*
+         * Bleed past the 1.5rem page gutter so neighboring cards run to the screen edge.
+         * The edge spacers grow to match, so cards still snap to the same centered position.
+         */
+        .audioshow-carousel { --ep-card-width: min(74vw, 280px); margin-inline: -1.5rem; }
+        /* One phone type scale for every viewport height, with no text under 11px. */
+        .ep-content { max-height: 165px; padding: 0.75rem; }
+        .ep-quote { font-size: 0.75rem; margin-bottom: 0.5rem; }
+        .ep-title { font-size: 1rem; margin-bottom: 0.25rem; }
+        .ep-artist { font-size: 0.8125rem; margin-bottom: 0.25rem; }
+        .ep-meta { font-size: 0.75rem; }
+        .ep-number { font-size: 0.6875rem; margin-top: 0.375rem; }
     }
 </style>
 

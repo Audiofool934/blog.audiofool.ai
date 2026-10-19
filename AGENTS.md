@@ -122,6 +122,8 @@ Use `entry.id`, `render(entry)` from `astro:content`, and `getStaticPaths()` for
 - `src/utils/parseAudioshow.ts` parses episodes; `src/utils/loadEpisodes.ts` loads batches; `sortEpisodesDesc()` orders newest first.
 - Optional batch fields include `Audio Preview` / `Preview Audio`, `Project Links`, and a fourth metadata bullet for composer.
 - The player UI is `src/components/AudioPlayer.astro`; `src/scripts/audioPlayer.ts` coordinates the typed queue, provider, artwork, and view modules in `src/scripts/audio/`.
+- Player title and artist text live in one inner span; write it with `setMarqueeText()` from `src/scripts/audio/marquee.ts`, which scrolls overflowing text once per track and never moves under reduced motion.
+- `src/utils/rehypeAudioPreview.mjs` moves an episode's `Audio Preview` URL onto its cover as `data-audio-url` and removes the raw link paragraph.
 - Author artwork with `data-audio-url`; `src/scripts/audio/batch.ts` binds accessible playback after page load.
 - Keep each crate in `src/data/audioshow-crates/`, using its shared types; register it in `src/data/audioshowCrates.ts`.
 - Preserve `transition:persist` on `#audio-player-bar` and state on `window.__audioPlayerState` across navigation.

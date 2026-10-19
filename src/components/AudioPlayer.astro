@@ -61,20 +61,18 @@
             </button>
         </div>
 
-        <!-- Track Info -->
+        <!-- Track Info: each line keeps its text in one inner span that scrolls once -->
         <div class="flex flex-col min-w-0" aria-live="polite" aria-atomic="true">
             <div
                 id="player-track-name"
+                data-marquee
                 class="text-sm font-bold truncate leading-tight"
-            >
-                Select a track...
-            </div>
+            ><span>Select a track...</span></div>
             <div
                 id="player-artist-name"
+                data-marquee
                 class="text-xs text-[var(--text-muted)] truncate mt-1"
-            >
-                AudioShow
-            </div>
+            ><span>AudioShow</span></div>
         </div>
 
         <!-- Controls & Progress -->
@@ -157,19 +155,19 @@
 
     <!-- ==================== MOBILE PLAYER (Fixed Bottom Bar) ==================== -->
     <div
-        class="md:hidden fixed bottom-0 left-0 right-0 bg-[var(--bg-body)] border-t border-[var(--border-main)] z-[200] px-4 pt-3 safe-area-inset-bottom"
+        class="md:hidden fixed bottom-0 left-0 right-0 bg-[var(--bg-body)] border-t border-[var(--border-main)] z-[200] px-6 pt-3 safe-area-inset-bottom"
     >
-        <div class="flex items-center gap-1">
-            <!-- Mini Artwork -->
+        <div class="flex items-center">
+            <!-- Mini Artwork, matching the 44px play box -->
             <div
-                class="w-12 h-12 flex-shrink-0 border border-[var(--border-main)] relative overflow-hidden bg-[var(--bg-body)]"
+                class="w-11 h-11 flex-shrink-0 border border-[var(--border-main)] relative overflow-hidden bg-[var(--bg-body)]"
             >
                 <img
                     id="player-art-img-mobile"
                     src=""
                     alt=""
-                    width="48"
-                    height="48"
+                    width="44"
+                    height="44"
                     loading="lazy"
                     decoding="async"
                     fetchpriority="low"
@@ -184,27 +182,25 @@
             </div>
 
             <!-- Track Info -->
-            <div class="flex-1 min-w-0 px-1" aria-live="polite" aria-atomic="true">
+            <div class="flex-1 min-w-0 pl-3 pr-1" aria-live="polite" aria-atomic="true">
                 <div
                     id="player-track-name-mobile"
+                    data-marquee
                     class="text-sm font-bold truncate"
-                >
-                    Select a track...
-                </div>
+                ><span>Select a track...</span></div>
                 <div
                     id="player-artist-name-mobile"
+                    data-marquee
                     class="text-xs text-[var(--text-muted)] truncate"
-                >
-                    AudioShow
-                </div>
+                ><span>AudioShow</span></div>
             </div>
 
-            <!-- Controls -->
+            <!-- Controls: a fainter shuffle sits apart from prev / play / next -->
             <button
                 id="player-shuffle-btn-mobile"
                 aria-label="Shuffle"
                 aria-pressed="false"
-                class="w-11 h-11 flex items-center justify-center text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors"
+                class="w-[34px] h-11 mr-1 flex items-center justify-center text-[var(--text-faint)] hover:text-[var(--text-main)] transition-colors"
                 title="Shuffle"
             >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -218,7 +214,7 @@
             <button
                 id="player-prev-btn-mobile"
                 aria-label="Previous track"
-                class="w-11 h-11 flex items-center justify-center text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors"
+                class="w-[34px] h-11 flex items-center justify-center text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors"
                 title="Previous"
             >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -237,7 +233,7 @@
             <button
                 id="player-next-btn-mobile"
                 aria-label="Next track"
-                class="w-11 h-11 flex items-center justify-center text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors"
+                class="w-[34px] h-11 flex items-center justify-center text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors"
                 title="Next"
             >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -274,7 +270,30 @@
         font-size: 14px;
         font-weight: bold;
     }
-    #player-seek-container:hover #player-progress-bar {
-        background: var(--text-muted);
+    @media (hover: hover) and (pointer: fine) {
+        #player-seek-container:hover #player-progress-bar {
+            background: var(--text-muted);
+        }
+    }
+
+    /* Scroll-once titles (src/scripts/audio/marquee.ts). While a long line
+       moves, it clips with a 12px fade on each hidden side instead of an
+       ellipsis. */
+    [data-marquee][data-scrolling] {
+        text-overflow: clip;
+        /* Two 12px fades, one per side. Each layer is 12px wider than the box,
+           so a position of -12px or 0 shows or hides its fade; marquee.ts
+           reveals a side's fade only while text is hidden on that side. */
+        mask-image:
+            linear-gradient(to right, transparent, #000 12px),
+            linear-gradient(to left, transparent, #000 12px);
+        mask-size: calc(100% + 12px) 100%;
+        mask-position: -12px 0, -12px 0;
+        mask-repeat: no-repeat;
+        -webkit-mask-composite: source-in;
+        mask-composite: intersect;
+    }
+    [data-marquee][data-scrolling] > span {
+        display: inline-block;
     }
 </style>

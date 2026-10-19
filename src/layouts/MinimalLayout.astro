@@ -64,7 +64,9 @@ const defaultTrackData = getDefaultAudioTrack();
         <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[300] focus:bg-[var(--bg-body)] focus:text-[var(--text-main)] focus:border focus:border-[var(--border-main)] focus:px-3 focus:py-2 focus:font-mono focus:text-sm">
             Skip to content
         </a>
-        <div class="min-h-screen flex flex-col md:flex-row max-w-[1440px] mx-auto w-full border-x border-[var(--border-main)] pb-20 md:pb-0">
+        <!-- The side borders frame the centered column; below 1441px they would sit on the screen edges. -->
+        <!-- Below md, the bottom padding clears the fixed player and the iPhone home indicator. -->
+        <div class="min-h-screen flex flex-col md:flex-row max-w-[1440px] mx-auto w-full min-[1441px]:border-x border-[var(--border-main)] pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-0">
             <SiteSidebar />
             <main id="main-content" tabindex="-1" class="flex-1 min-w-0 w-full outline-none">
                 <slot />
@@ -74,7 +76,10 @@ const defaultTrackData = getDefaultAudioTrack();
         <script>
             function applyTheme() {
                 const html = document.documentElement;
-                html.classList.toggle("dark", localStorage.getItem("theme") !== "light");
+                const dark = localStorage.getItem("theme") !== "light";
+                html.classList.toggle("dark", dark);
+                // A page swap restores the built theme-color, so match the browser bar to the theme again.
+                document.querySelector('meta[name="theme-color"]')?.setAttribute("content", dark ? "#0a0a0a" : "#fafafa");
                 syncThemeControls();
             }
 

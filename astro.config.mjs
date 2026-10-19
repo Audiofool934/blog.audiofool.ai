@@ -6,6 +6,7 @@ import rehypeKatex from 'rehype-katex';
 import remarkMath from 'remark-math';
 
 import sitemap from '@astrojs/sitemap';
+import { rehypeAudioPreview } from './src/utils/rehypeAudioPreview.mjs';
 import { rehypeImgAttrs } from './src/utils/rehypeImages.mjs';
 import { rehypeKatexErrors } from './src/utils/rehypeKatexErrors.mjs';
 import { rehypeUnitSpaces } from './src/utils/rehypeUnitSpaces.mjs';
@@ -44,7 +45,7 @@ export default defineConfig({
     processor: unified({
       remarkPlugins: [remarkMath],
       // rehypeKatexErrors must follow rehypeKatex to see its error output.
-      rehypePlugins: [rehypeKatex, rehypeKatexErrors, rehypeUnitSpaces, rehypeImgAttrs],
+      rehypePlugins: [rehypeKatex, rehypeKatexErrors, rehypeUnitSpaces, rehypeImgAttrs, rehypeAudioPreview],
     }),
   },
   site: "https://blog.audiofool.ai",

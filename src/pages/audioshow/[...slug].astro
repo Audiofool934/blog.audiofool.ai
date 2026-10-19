@@ -32,7 +32,7 @@ const ogImage =
     ogType="article"
     datePublished={entry.data.pubDate}
 >
-    <div class="p-6 md:p-12 mb-20 max-w-5xl mx-auto" transition:animate="fade">
+    <div class="p-6 md:p-12 md:mb-20 max-w-5xl mx-auto" transition:animate="fade">
         <!-- Back Link -->
         <a
             href="/audioshow/"
@@ -89,6 +89,12 @@ const ogImage =
         margin-right: auto;
         margin-top: 1rem; /* Close to EP header above */
         margin-bottom: 4rem; /* More space before next EP */
+    }
+
+    /* Reserve a square while covers load; loaded art keeps its own ratio. Covers
+       carry a width attribute; wide lead images (EP 0) do not, so they keep theirs. */
+    .post-content :global(img[width]) {
+        aspect-ratio: auto 1 / 1;
     }
 
     /* AudioShow metadata lists: mono font, no indent, no bullets */

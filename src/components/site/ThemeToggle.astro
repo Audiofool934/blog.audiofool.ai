@@ -36,8 +36,11 @@ const { id } = Astro.props;
         transition: opacity 150ms ease;
     }
 
-    .theme-toggle:hover {
-        opacity: 0.6;
+    /* Match Tailwind's hoverOnlyWhenSupported so a tap does not leave the toggle dimmed. */
+    @media (hover: hover) and (pointer: fine) {
+        .theme-toggle:hover {
+            opacity: 0.6;
+        }
     }
 
     .theme-toggle:focus-visible {

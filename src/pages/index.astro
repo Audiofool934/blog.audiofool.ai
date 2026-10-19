@@ -25,14 +25,14 @@ const portraits = [
 		name: "audiofool-film-portrait",
 		width: 960,
 		height: 828,
-		sizes: "(min-width: 768px) 324px, min(calc(100vw - 4rem), 420px)",
+		sizes: "(min-width: 768px) 324px, min(calc(100vw - 3rem), 420px)",
 		class: "index-portrait-film block dark:hidden",
 	},
 ];
 ---
 
 <MinimalLayout title="Audiofool — Creative AI, Notes, AudioShow & Photography">
-	<div class="index-hero flex flex-col justify-start md:justify-center px-8 pt-6 pb-10 md:p-12" transition:animate="fade">
+	<div class="index-hero flex flex-col justify-start md:justify-center px-6 pt-6 pb-10 md:p-12" transition:animate="fade">
 		<!-- The sidebar and top bar already show "Audiofool", so the page heading is for screen readers only. -->
 		<h1 class="sr-only">Audiofool</h1>
 
@@ -155,9 +155,11 @@ const portraits = [
 		text-underline-offset: 3px;
 		transition: all 0.2s ease;
 	}
-	.index-intro a:hover {
-		background-color: var(--text-main);
-		color: var(--bg-body);
-		text-decoration: none;
+	@media (hover: hover) and (pointer: fine) {
+		.index-intro a:hover {
+			background-color: var(--text-main);
+			color: var(--bg-body);
+			text-decoration: none;
+		}
 	}
 </style>

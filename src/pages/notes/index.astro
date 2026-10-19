@@ -57,7 +57,7 @@ function getConnectionCount(id: string) {
 ---
 
 <MinimalLayout title="Notes | Audiofool" description="Personal notes and working ideas">
-    <div class="p-6 md:p-12 mb-20" transition:animate="fade">
+    <div class="p-6 md:p-12 md:mb-20" transition:animate="fade">
         <header class="mb-8">
             <h1 class="text-4xl font-bold font-heading mb-2">Notes</h1>
             <p
@@ -75,7 +75,7 @@ function getConnectionCount(id: string) {
                 type="button"
                 data-kind="all"
                 aria-pressed="true"
-                class="note-kind active whitespace-nowrap transition-colors"
+                class="note-kind active whitespace-nowrap py-1.5 -my-1.5 transition-colors"
             >
                 [ All <span class="text-[var(--text-faint)]">{sorted.length}</span> ]
             </button>
@@ -85,7 +85,7 @@ function getConnectionCount(id: string) {
                         type="button"
                         data-kind={key}
                         aria-pressed="false"
-                        class="note-kind whitespace-nowrap transition-colors"
+                        class="note-kind whitespace-nowrap py-1.5 -my-1.5 transition-colors"
                     >
                         [ {label}{" "}
                         <span class="text-[var(--text-faint)]">{count}</span> ]
@@ -160,12 +160,24 @@ function getConnectionCount(id: string) {
         text-underline-offset: 4px;
         text-decoration-thickness: 1px;
     }
+    /* Phones: kind and date share the first line; the title and tags use the full width below. */
     @media (max-width: 640px) {
         .note-entry > div {
-            grid-template-columns: 1fr auto;
+            grid-template-columns: minmax(0, 1fr) auto;
+            grid-template-areas:
+                "kind date"
+                "body body";
+            row-gap: 0.375rem;
         }
         .note-entry > div > span:first-child {
-            grid-column: 1 / -1;
+            grid-area: kind;
+            padding-top: 0;
+        }
+        .note-entry > div > div {
+            grid-area: body;
+        }
+        .note-entry > div > span:last-child {
+            grid-area: date;
             padding-top: 0;
         }
     }

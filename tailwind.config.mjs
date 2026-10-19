@@ -4,6 +4,10 @@ import typography from '@tailwindcss/typography';
 export default {
 	content: ['./src/**/*.{astro,html,js,md,ts}'],
 	darkMode: 'class',
+	// Touch taps leave :hover applied; only real pointers get hover styles.
+	future: {
+		hoverOnlyWhenSupported: true,
+	},
 	theme: {
 		extend: {
 			fontFamily: {

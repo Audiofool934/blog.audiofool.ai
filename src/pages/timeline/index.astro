@@ -60,7 +60,7 @@ const filters = filterOrder
                 type="button"
                 data-type="all"
                 aria-pressed="true"
-                class="timeline-filter active whitespace-nowrap transition-colors"
+                class="timeline-filter active whitespace-nowrap py-1.5 -my-1.5 transition-colors"
             >
                 [ All <span class="text-[var(--text-faint)]">{sortedPosts.length}</span> ]
             </button>
@@ -70,7 +70,7 @@ const filters = filterOrder
                         type="button"
                         data-type={type}
                         aria-pressed="false"
-                        class="timeline-filter whitespace-nowrap transition-colors"
+                        class="timeline-filter whitespace-nowrap py-1.5 -my-1.5 transition-colors"
                     >
                         [ {label} <span class="text-[var(--text-faint)]">{count}</span> ]
                     </button>

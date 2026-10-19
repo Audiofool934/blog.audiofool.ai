@@ -205,6 +205,39 @@ try {
     assert(scrolling.length > 0 && scrolling.every(Boolean), "Wide math and tables must scroll inside their containers");
     await screenshot("math-mobile-dark.png");
     console.log("PASS mobile layouts and contained math/table scrolling");
+
+    // Scroll-once titles: only the visible, overflowing line moves, one line at
+    // a time; a tap replays it, and reduced motion keeps every line still.
+    const motion = await browser.newContext({ viewport: { width: 360, height: 740 }, colorScheme: "dark", reducedMotion: "no-preference" });
+    await motion.route("**/*", (route) => (new URL(route.request().url()).origin === base ? route.continue() : route.abort()));
+    const motionPage = await motion.newPage();
+    motionPage.setDefaultTimeout(15000);
+    motionPage.on("pageerror", (error) => errors.push(error.message));
+    await motionPage.goto(`${base}/projects/`);
+    await motionPage.waitForFunction(() => window.__audioPlayerState?.initialized);
+    const setTrack = (title, artist) => motionPage.evaluate(([title, artist]) => {
+        window.__audioPlayerState.track = { type: "local", url: "/__qa-marquee.wav", title, artist };
+        return window.__audioPlayerInit();
+    }, [title, artist]);
+    const isScrolling = (selector) => motionPage.locator(selector).evaluate((el) => el.hasAttribute("data-scrolling"));
+    const longTitle = "A deliberately long fixture title for the bar";
+    await setTrack(longTitle, "An artist line that is long enough to overflow");
+    await motionPage.waitForFunction(() => document.querySelector("#player-track-name-mobile").hasAttribute("data-scrolling"));
+    assert.equal(await motionPage.locator("#player-track-name-mobile").textContent(), longTitle);
+    assert.equal(await isScrolling("#player-artist-name-mobile"), false, "Title and artist must not scroll together");
+    assert.equal(await isScrolling("#player-track-name"), false, "The hidden desktop player must stay still");
+    await motionPage.locator("#player-artist-name-mobile").click();
+    assert.equal(await isScrolling("#player-artist-name-mobile"), true, "A tap must replay the artist line");
+    assert.equal(await isScrolling("#player-track-name-mobile"), false);
+    await motionPage.waitForTimeout(800);
+    assert(await motionPage.locator("#player-artist-name-mobile > span").evaluate((text) => text.getBoundingClientRect().left < text.parentElement.getBoundingClientRect().left), "The artist line must move");
+    await motionPage.screenshot({ path: fileURLToPath(new URL("player-marquee-mobile.png", artifacts)) });
+    await motionPage.emulateMedia({ reducedMotion: "reduce" });
+    await setTrack(`${longTitle}, again`, "Artist");
+    await motionPage.waitForTimeout(2000);
+    assert.equal(await isScrolling("#player-track-name-mobile"), false, "Reduced motion must keep titles still");
+    await motion.close();
+    console.log("PASS scroll-once titles move one visible line at a time and respect reduced motion");
     assert.deepEqual(errors, [], "Uncaught browser errors");
     console.log(`Browser checks passed. Screenshots: ${fileURLToPath(artifacts)}`);
 } catch (error) {

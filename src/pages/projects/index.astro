@@ -49,10 +49,30 @@ function projectHref(project: (typeof sortedProjects)[number]) {
     return projectState(project).href;
 }
 
+// Status, type, and category can name the same thing (status "research", type "Research"),
+// so each label shows once per row.
+function uniqueLabels(labels: (string | undefined)[], shown: string[] = []) {
+    const seen = new Set(shown.map((label) => label.toLowerCase()));
+    return labels.filter((label): label is string => {
+        const key = label?.toLowerCase();
+        if (!key || seen.has(key)) return false;
+        seen.add(key);
+        return true;
+    });
+}
+
 function projectMeta(project: (typeof sortedProjects)[number]) {
-    return [project.data.category, projectState(project).status, project.data.type, projectState(project).fork ? "fork" : ""]
-        .filter(Boolean)
-        .join(" / ");
+    const state = projectState(project);
+    return uniqueLabels([project.data.category, state.status, project.data.type, state.fork ? "fork" : ""]).join(" / ");
+}
+
+// The category already has its own cell in the Latest row, so the tag line leaves it out.
+function projectTags(project: (typeof sortedProjects)[number]) {
+    const state = projectState(project);
+    return uniqueLabels(
+        [state.status, state.fork ? "fork" : "", project.data.type, ...project.data.stack.slice(0, 3)],
+        [project.data.category],
+    );
 }
 ---
 
@@ -132,7 +152,7 @@ function projectMeta(project: (typeof sortedProjects)[number]) {
                         type="button"
                         data-view="latest"
                         aria-pressed="true"
-                        class="project-view-filter active whitespace-nowrap transition-colors"
+                        class="project-view-filter active whitespace-nowrap py-1.5 -my-1.5 transition-colors"
                     >
                         [ Latest <span class="text-[var(--text-faint)]">{latestProjects.length}</span> ]
                     </button>
@@ -140,7 +160,7 @@ function projectMeta(project: (typeof sortedProjects)[number]) {
                         type="button"
                         data-view="all"
                         aria-pressed="false"
-                        class="project-view-filter whitespace-nowrap transition-colors"
+                        class="project-view-filter whitespace-nowrap py-1.5 -my-1.5 transition-colors"
                     >
                         [ All <span class="text-[var(--text-faint)]">{sortedProjects.length}</span> ]
                     </button>
@@ -156,14 +176,20 @@ function projectMeta(project: (typeof sortedProjects)[number]) {
                         <span class="absolute -left-[1.65rem] md:-left-[2.15rem] top-1 h-2 w-2 rounded-full bg-[var(--bg-body)] border border-[var(--text-main)] group-hover:bg-[var(--text-main)] transition-colors" />
 
                         <div class="grid gap-1 md:grid-cols-[8rem_8rem_minmax(0,1fr)] md:gap-4 md:items-baseline font-mono text-sm">
-                            <time datetime={projectState(project).date.toISOString()} class="text-xs uppercase tracking-wider text-[var(--text-faint)] transition-opacity">
-                                {formatDateCompact(projectState(project).date)}
-                                <span class="block mt-1 text-[10px]">{projectState(project).dateLabel}</span>
-                            </time>
+                            {/* Date and source share a line on mobile and the category sits on its own line (long
+                                categories never fit beside the date, and a wrapped "·" would start the line);
+                                md:contents hands both cells back to the desktop grid. */}
+                            <div class="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 md:contents">
+                                <div class="flex items-baseline gap-x-2 md:block text-xs uppercase tracking-wider text-[var(--text-faint)] transition-opacity">
+                                    <time datetime={projectState(project).date.toISOString()}>{formatDateCompact(projectState(project).date)}</time>
+                                    <span aria-hidden="true" class="md:hidden">·</span>
+                                    <span class="text-[10px] md:block md:mt-1">{projectState(project).dateLabel}</span>
+                                </div>
 
-                            <span class="text-[10px] uppercase tracking-wider text-[var(--text-faint)] transition-opacity">
-                                {project.data.category}
-                            </span>
+                                <div class="basis-full md:basis-auto text-[10px] uppercase tracking-wider text-[var(--text-faint)] transition-opacity">
+                                    <span>{project.data.category}</span>
+                                </div>
+                            </div>
 
                             <div class="min-w-0">
                                 <div class="flex flex-wrap items-baseline gap-x-2 gap-y-1">
@@ -182,11 +208,8 @@ function projectMeta(project: (typeof sortedProjects)[number]) {
                                     </p>
                                 )}
                                 <div class="mt-2 flex flex-wrap gap-x-3 gap-y-1 font-mono text-[10px] uppercase tracking-wider text-[var(--text-faint)]">
-                                    <span>{projectState(project).status}</span>
-                                    {projectState(project).fork && <span>fork</span>}
-                                    <span>{project.data.type}</span>
-                                    {project.data.stack.slice(0, 3).map((tech) => (
-                                        <span>{tech}</span>
+                                    {projectTags(project).map((label) => (
+                                        <span>{label}</span>
                                     ))}
                                 </div>
                             </div>
@@ -220,10 +243,12 @@ function projectMeta(project: (typeof sortedProjects)[number]) {
                                         <span class="absolute -left-[1.65rem] md:-left-[2.15rem] top-1 h-2 w-2 rounded-full bg-[var(--bg-body)] border border-[var(--text-main)] group-hover:bg-[var(--text-main)] transition-colors" />
 
                                         <div class="grid gap-1 md:grid-cols-[8rem_minmax(0,1fr)_7rem] md:gap-4 md:items-baseline font-mono text-sm">
-                                            <time datetime={projectState(project).date.toISOString()} class="text-xs uppercase tracking-wider text-[var(--text-faint)]">
-                                                {formatDateCompact(projectState(project).date)}
-                                                <span class="block mt-1 text-[10px]">{projectState(project).dateLabel}</span>
-                                            </time>
+                                            {/* One metadata line on mobile; md:block restacks the source label under the date. */}
+                                            <div class="flex items-baseline gap-x-2 md:block text-xs uppercase tracking-wider text-[var(--text-faint)]">
+                                                <time datetime={projectState(project).date.toISOString()}>{formatDateCompact(projectState(project).date)}</time>
+                                                <span aria-hidden="true" class="md:hidden">·</span>
+                                                <span class="text-[10px] md:block md:mt-1">{projectState(project).dateLabel}</span>
+                                            </div>
 
                                             <div class="min-w-0">
                                                 <div class="flex flex-wrap items-baseline gap-x-2 gap-y-1">

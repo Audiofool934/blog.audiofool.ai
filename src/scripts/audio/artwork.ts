@@ -12,7 +12,7 @@ export const desktopArtwork = window.matchMedia("(min-width: 768px)");
 export function playerArtworkUrl(url?: string) {
     var normalizedUrl = normalizeArtworkUrl(url);
     if (!desktopArtwork.matches && normalizedUrl.startsWith(GENERATED_AUDIO_IMAGE_PREFIX)) {
-        // The 48px mobile cover uses a 192px source, including on high-DPI screens.
+        // The 44px mobile cover uses a 192px source, including on high-DPI screens.
         return normalizedUrl.replace(/-320\.webp$/, "-192.webp");
     }
     return normalizedUrl;

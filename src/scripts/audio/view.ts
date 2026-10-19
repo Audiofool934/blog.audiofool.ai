@@ -1,5 +1,6 @@
 import type { AudioPlayerState } from "./types";
 import { desktopArtwork, playerArtworkUrl, setArtwork } from "./artwork";
+import { scrollPendingTitles, setMarqueeText } from "./marquee";
 
 export function getElements() {
     return {
@@ -47,10 +48,11 @@ export function renderPlayer(state: AudioPlayerState) {
     var playLabel = isPlaying ? "Pause" : "Play";
     var hasTrack = !!track?.url;
 
-    setText(els.trackNameEl, title);
-    setText(els.artistNameEl, artist);
-    setText(els.trackNameMobile, title);
-    setText(els.artistNameMobile, artist);
+    // Titles live in an inner span that scrolls once when it overflows.
+    setMarqueeText(els.trackNameEl, title);
+    setMarqueeText(els.artistNameEl, artist);
+    setMarqueeText(els.trackNameMobile, title);
+    setMarqueeText(els.artistNameMobile, artist);
     var artwork = playerArtworkUrl(track?.artwork);
     setArtwork(els.artImg, els.artPlaceholder, desktopArtwork.matches ? artwork : "");
     setArtwork(
@@ -132,6 +134,7 @@ export function bindPlayerControls(els: ReturnType<typeof getElements>, state: A
     audio.onplay = function () {
         state.isPlaying = true;
         actions.render();
+        scrollPendingTitles();
     };
     audio.onpause = function () {
         state.isPlaying = false;

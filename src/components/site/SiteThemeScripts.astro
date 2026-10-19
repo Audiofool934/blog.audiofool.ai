@@ -3,6 +3,8 @@
     const html = document.documentElement;
     const storedTheme = typeof localStorage !== "undefined" ? localStorage.getItem("theme") : null;
     html.classList.toggle("dark", storedTheme !== "light");
+    // SiteHead renders the theme-color meta before this script; match the browser bar to the theme.
+    document.querySelector('meta[name="theme-color"]')?.setAttribute("content", html.classList.contains("dark") ? "#0a0a0a" : "#fafafa");
 </script>
 <style is:global>
     ::view-transition-old(root),
