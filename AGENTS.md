@@ -7,6 +7,7 @@ Keep this guide current when project conventions change.
 ## Workflow
 
 - Inspect the working tree first and preserve unrelated edits.
+- `npm run build` deletes `.astro` and `node_modules/.astro`, which empties the content store of any dev server in the same checkout; when other agents may work here, use your own worktree with its own `npm ci`.
 - Do not hand-edit synced project READMEs without an explicit override request.
 - Keep generated images, `.astro`, `node_modules/.astro`, and local QA artifacts out of commits.
 - GitHub Actions deploys pushes to `main`; publishing requires clear user authorization.
@@ -137,6 +138,7 @@ Use `entry.id`, `render(entry)` from `astro:content`, and `getStaticPaths()` for
 
 - Run the relevant parser fixtures, Astro/TypeScript diagnostics, or production build from the command list above.
 - For rendered changes, inspect desktop and mobile in a dev or production preview, including the real interaction path.
+- The dev server can keep serving a component's previous `<style>` block after an edit; restart it before judging a style change.
 - For typography, check `/notes/policy-gradient/` with its math and table; verify document overflow and container scrolling separately.
 - For route or data changes, check both the relevant index and detail page.
 - Fix related failures and report unrelated failures without expanding scope.
