@@ -7,7 +7,7 @@ syncedAt: "2026-10-17T02:09:36.161Z"
 
 <div></div>
 
-<img referrerpolicy="no-referrer" decoding="async" loading="lazy" src="https://raw.githubusercontent.com/Audiofool934/Timbreloom/main/docs/assets/app-icon.png" width="112" alt="Timbreloom app icon" />
+<img referrerpolicy="no-referrer" decoding="async" loading="lazy" src="https://raw.githubusercontent.com/Audiofool934/Timbreloom/main/static/app-icon.png" width="112" alt="Timbreloom app icon" />
 
 # Timbreloom
 
