@@ -19,7 +19,6 @@ function initGalleryFilters() {
     let subject = "all";
 
     function applyFilters() {
-        const selection = items.filter((item) => !featuredOnly || item.dataset.featured === "true");
         let count = 0;
         items.forEach((item) => {
             const visible = (!featuredOnly || item.dataset.featured === "true")
@@ -32,12 +31,7 @@ function initGalleryFilters() {
             button.setAttribute("aria-pressed", String((button.dataset.galleryView === "featured") === featuredOnly));
         });
         subjects.forEach((button) => {
-            const category = button.dataset.gallerySubject!;
-            button.setAttribute("aria-pressed", String(category === subject));
-            const countLabel = button.querySelector("[data-subject-count]");
-            if (countLabel) {
-                countLabel.textContent = String(selection.filter((item) => item.dataset.category === category).length);
-            }
+            button.setAttribute("aria-pressed", String(button.dataset.gallerySubject === subject));
         });
 
         const kind = featuredOnly ? "featured photo" : "photo";

@@ -11,8 +11,6 @@ githubRepo: 'Audiofool934/dj-claw'
 githubReadme: true
 ---
 
-## Overview
-
 **DJ Claw** is a personal radio agent built around music generation, curation, feedback, and taste memory.
 
 The project started from a simple question: what happens when AI music is treated less like a file generator and more like a living station?

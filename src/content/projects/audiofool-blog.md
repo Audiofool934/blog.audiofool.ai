@@ -12,21 +12,9 @@ githubRepo: 'Audiofool934/blog.audiofool.ai'
 githubReadme: true
 ---
 
-## Overview
-
 **blog.audiofool.ai** is my personal site and public archive.
 
 It holds several kinds of work in one place: technical notes, essays, photography, music entries, project pages, and a curated timeline of site activity. The site is meant to feel like a personal museum rather than a portfolio template.
-
-## Sections
-
-The current structure is built around a few living sections:
-
-- **Notes** — compact essays and technical ideas,
-- **AudioShow** — a curated listening archive with playable previews,
-- **Gallery** — selected photographs with camera and film metadata,
-- **Projects** — larger systems and experiments,
-- **Timeline** — a public chronological record of updates.
 
 Each section has its own rhythm, but they share the same visual language: monochrome, archival, quiet, and personal.
 

@@ -12,8 +12,6 @@ githubRepo: 'Audiofool934/cmux'
 githubReadme: true
 ---
 
-## Overview
-
 **cmux** is a terminal interface designed around AI coding agents.
 
 It uses Ghostty as a foundation and adds an agent-oriented layer: vertical tabs, notification rings, unread states, and a workflow shaped around multiple coding sessions asking for attention at different times.

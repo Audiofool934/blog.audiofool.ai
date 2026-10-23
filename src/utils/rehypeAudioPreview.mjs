@@ -7,10 +7,14 @@
 // batch page the bare URL is noise, so drop the paragraph and let the cover play
 // the preview instead when it has no playback URL of its own. An episode without
 // a cover keeps its paragraph, so the preview stays reachable.
+//
+// The page also shows each episode heading as "EP 51" and drops the "Project Links"
+// label above a link list. The Markdown keeps both, because the parser reads them.
 const AUDIOSHOW_DOCUMENT = /[\\/]content[\\/]audioshow[\\/]/;
 // Episodes split at the same header as parseEpisodesFromMarkdown().
-const EPISODE_HEADING = /📻\s*Audioshow\s*-\s*EP_\d+/i;
+const EPISODE_HEADING = /📻\s*Audioshow\s*-\s*EP_(\d+)/i;
 const PREVIEW_PARAGRAPH = /^(?:Audio Preview|Preview Audio)\s+(https?:\/\/\S+)$/i;
+const PROJECT_LINKS_LABEL = /^Project Links$/i;
 const RAW_IMG = /<img\b[^>]*>/gi;
 const COVER_CLASS = /\sclass=(["'])[^"']*\baudioshow-image\b/i;
 // src/scripts/audio/batch.ts plays data-audio-url or a legacy toggleMusic() handler.
@@ -29,6 +33,9 @@ const previewUrl = (node) =>
   node.type === 'element' && node.tagName === 'p'
     ? textOf(node).trim().match(PREVIEW_PARAGRAPH)?.[1]
     : undefined;
+
+const isProjectLinksLabel = (node) =>
+  node.type === 'element' && node.tagName === 'p' && PROJECT_LINKS_LABEL.test(textOf(node).trim());
 
 const escapeAttribute = (value) => value.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
 
@@ -59,7 +66,19 @@ export function rehypeAudioPreview() {
       episodes.at(-1).push(node);
     }
 
+    // Rename headings only after the split, which matches their original text.
+    // Astro derives heading ids later, so they become "ep-51".
+    for (const [heading] of episodes.slice(1)) {
+      const number = textOf(heading).match(EPISODE_HEADING)[1];
+      heading.children = [{ type: 'text', value: `EP ${number}` }];
+    }
+
     const removed = new Set();
+    tree.children.forEach((node, index) => {
+      if (!isProjectLinksLabel(node)) return;
+      const next = tree.children.slice(index + 1).find((sibling) => sibling.type !== 'text');
+      if (next?.type === 'element' && next.tagName === 'ul') removed.add(node);
+    });
     for (const nodes of episodes) {
       const previews = nodes.filter((node) => previewUrl(node));
       if (previews.length === 0) continue;

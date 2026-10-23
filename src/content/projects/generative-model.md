@@ -11,8 +11,6 @@ githubRepo: 'Audiofool934/Generative-Model'
 githubReadme: true
 ---
 
-## Overview
-
 **Generative Model** is a study archive for probabilistic graphical models and deep generative models.
 
 It collects course material, notes, readings, and conceptual maps around generation: graphical models, discriminative versus generative framing, and the older foundations behind modern creative AI systems.

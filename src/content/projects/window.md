@@ -11,8 +11,6 @@ githubRepo: "Audiofool934/window"
 githubReadme: true
 ---
 
-## Overview
-
 A menu-bar app for the Mac. Turn it on and the desktop becomes a room looking out a window.
 
 See the public repository below for setup, usage, and current development status.

@@ -11,8 +11,6 @@ githubRepo: 'Audiofool934/Data-Side-of-the-Moon'
 githubReadme: true
 ---
 
-## Overview
-
 **Data Side of the Moon** asks whether a neural network can learn to hear musical structure without being given genre labels.
 
 The project trains an unsupervised convolutional autoencoder on mel-spectrograms, then studies the latent space it learns. Pink Floyd’s discography becomes the test object: a way to see whether learned audio representations can recover stylistic evolution without human labels.

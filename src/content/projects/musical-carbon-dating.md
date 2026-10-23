@@ -11,8 +11,6 @@ githubRepo: 'Audiofool934/musical-carbon-dating'
 githubReadme: true
 ---
 
-## Overview
-
 **Musical Carbon Dating** is a statistical audio analysis project.
 
 The project asks a playful but concrete question: can we timestamp a musical recording from its acoustic properties alone?

@@ -3,7 +3,7 @@ title: 'Policy Gradient: The Log-Derivative Trick'
 description: 'Policy gradient rests on the log-derivative trick, and everything after it, from baselines to actor-critic and GAE, is variance reduction.'
 kind: Method
 updatedDate: 2026-03-10
-tags: ["rl", "reinforcement learning", "probability", "ml"]
+tags: ["reinforcement learning", "probability", "ml"]
 parents: []
 related: ["martingales", "bias-variance"]
 ---

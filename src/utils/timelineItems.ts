@@ -3,6 +3,7 @@ import { getCollection } from "astro:content";
 import { getPostType } from "./postType";
 import githubProjects from "../data/github-projects.json";
 import { getProjectState } from "./projectState";
+import { batchEpisodeRange } from "./parseAudioshow";
 import { homepageSelected } from "../data/homepageSelected";
 
 export type TimelineItemKind = "log" | "project" | "note" | "audioshow" | "gallery";
@@ -15,7 +16,6 @@ export interface TimelineItem {
     href: string;
     description: string;
     sourceId: string;
-    dateLabel?: string;
     // Set when the title needs its own language tag, e.g. a Chinese photo title.
     lang?: string;
 }
@@ -66,7 +66,6 @@ export async function getTimelineItems(): Promise<TimelineItem[]> {
                 lane: "project",
                 title: entry.data.title,
                 date: state.date,
-                dateLabel: state.dateLabel,
                 href: state.href,
                 description: entry.data.description || "",
                 sourceId: entry.id,
@@ -87,7 +86,7 @@ export async function getTimelineItems(): Promise<TimelineItem[]> {
             kind: "audioshow" as const,
             lane: "music",
             // Every batch file shares the same authored title, so name it by its episode range.
-            title: `AudioShow EP ${entry.data.episode}`,
+            title: `AudioShow EP ${batchEpisodeRange(entry.body ?? "", entry.id, String(entry.data.episode))}`,
             date: entry.data.pubDate,
             href: `/audioshow/${entry.id}/`,
             description: entry.data.description || "",
@@ -99,7 +98,7 @@ export async function getTimelineItems(): Promise<TimelineItem[]> {
             title: entry.data.title,
             date: entry.data.date,
             href: `/gallery/${entry.id}/`,
-            description: [entry.data.location, entry.data.camera].filter(Boolean).join(" / "),
+            description: entry.data.location || "",
             sourceId: entry.id,
         })),
     ];

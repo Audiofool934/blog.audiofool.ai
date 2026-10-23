@@ -11,8 +11,6 @@ githubRepo: 'Audiofool934/Neural-Dawn'
 githubReadme: true
 ---
 
-## Overview
-
 **Neural Dawn** is an early generative-model project focused on Restricted Boltzmann Machines and Deep Belief Networks.
 
 It combines review notes with PyTorch implementation work: MCMC-based maximum likelihood, Contrastive Divergence, conditional generation, and RBM-based classification experiments.

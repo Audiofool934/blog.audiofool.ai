@@ -11,8 +11,6 @@ githubRepo: 'Audiofool934/WeaveWave'
 githubReadme: true
 ---
 
-## Overview
-
 **WeaveWave** explores multimodal music generation: turning text, images, and video into music through a shared generative process.
 
 The project uses a text-bridging strategy. A multimodal language model first translates non-audio inputs into rich musical descriptions. Those descriptions then condition a music generation model. This keeps the system modular: new input modalities can be added without rewriting the entire synthesis backend.

@@ -14,8 +14,6 @@ githubRepo: 'Audiofool934/moondog'
 githubReadme: true
 ---
 
-## Overview
-
 **Moondog** is a listening room in your terminal.
 It turns listening history into a taste profile you can open, question, and correct.
 

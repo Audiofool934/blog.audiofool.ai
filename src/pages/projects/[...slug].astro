@@ -2,8 +2,8 @@
 import { getCollection, render } from "astro:content";
 import MinimalLayout from "../../layouts/MinimalLayout.astro";
 import githubProjects from "../../data/github-projects.json";
-import { formatDateCompact } from "../../utils/formatDate";
-import { getProjectState } from "../../utils/projectState";
+import { formatDateLong } from "../../utils/formatDate";
+import { getProjectState, isExternalUrl, uniqueLabels } from "../../utils/projectState";
 import "../../style/post.css"; // Standard typography
 
 export async function getStaticPaths() {
@@ -39,11 +39,24 @@ const ogImageAlt =
 const repoUrl = unavailable ? "" : githubMeta?.url || (entry.data.githubRepo ? `https://github.com/${entry.data.githubRepo}` : "");
 const repoLabel = entry.data.githubRepo || githubMeta?.repo;
 const pushedDate = githubMeta?.pushedAt ? new Date(githubMeta.pushedAt) : null;
-const syncedDate = readme?.data.syncedAt || null;
+// Status and "fork" are lowercase enums; capitalise them to match the authored type.
+const metaLabels = uniqueLabels([
+    entry.data.type,
+    projectState.status,
+    projectState.fork ? "fork" : "",
+    String(entry.data.pubDate.getFullYear()),
+]).map((label) => label.charAt(0).toUpperCase() + label.slice(1));
 
-function compactDate(date: Date | null) {
-    return date ? formatDateCompact(date) : "—";
-}
+// Some projects use their repository as their website; link that address once, as Source.
+const normalizeUrl = (url: string) => url.toLowerCase().replace(/\/+$/, "");
+const websiteUrl = entry.data.url && normalizeUrl(entry.data.url) !== normalizeUrl(repoUrl) ? entry.data.url : "";
+const websiteExternal = websiteUrl !== "" && isExternalUrl(websiteUrl, Astro.site?.origin);
+
+// Most synced READMEs open with the project's name, which the page title already shows.
+const readmeHeading = readme?.body?.trimStart().match(/^(?:#[ \t]+([^\n]+)|<h1\b[^>]*>([\s\S]*?)<\/h1>)/i);
+const readmeRepeatsTitle = readmeHeading
+    ? (readmeHeading[1] ?? readmeHeading[2]).replace(/<[^>]*>/g, "").trim().toLowerCase() === entry.data.title.toLowerCase()
+    : false;
 ---
 
 <MinimalLayout
@@ -57,54 +70,14 @@ function compactDate(date: Date | null) {
     datePublished={entry.data.pubDate}
 >
     <article
-        class="p-6 md:p-12 max-w-4xl mx-auto anime-fade-in-up"
+        class="p-6 md:p-12 max-w-4xl mx-auto"
         transition:animate="fade"
     >
         <!-- Project Header -->
-        <header class="mb-12 border-b border-[var(--border-main)] pb-8">
-            <div
-                class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-6"
-            >
-                <div>
-                    <div
-                        class="font-mono text-xs text-[var(--accent)] mb-2 uppercase tracking-wider"
-                    >
-                        {entry.data.type || "Project"} / {projectState.status} / {
-                            entry.data.pubDate.getFullYear()
-                        }
-                    </div>
-                    <h1 class="text-4xl md:text-5xl font-bold font-heading">
-                        {entry.data.title}
-                    </h1>
-                </div>
-
-                <div class="flex flex-wrap gap-2">
-                    {
-                        entry.data.url && (
-                            <a
-                                href={entry.data.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                class="px-5 py-3 bg-[var(--text-main)] text-[var(--bg-body)] font-mono text-sm hover:opacity-80 transition-opacity"
-                            >
-                                [ Launch ] ↗
-                            </a>
-                        )
-                    }
-                    {
-                        repoUrl && (
-                            <a
-                                href={repoUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                class="px-5 py-3 border border-[var(--border-main)] font-mono text-sm hover:bg-[var(--text-main)] hover:text-[var(--bg-body)] transition-colors"
-                            >
-                                [ Source ] ↗
-                            </a>
-                        )
-                    }
-                </div>
-            </div>
+        <header class="mb-10">
+            <h1 class="text-3xl md:text-4xl font-bold font-heading mb-4">
+                {entry.data.title}
+            </h1>
 
             <p
                 class="text-xl text-[var(--text-muted)] leading-relaxed max-w-2xl"
@@ -112,83 +85,59 @@ function compactDate(date: Date | null) {
                 {entry.data.description}
             </p>
 
-            <!-- Tech Stack -->
-            <div class="flex flex-wrap gap-2 mt-6">
-                {
-                    entry.data.stack.map((tech) => (
-                        <span class="text-xs font-mono px-2 py-1 border border-[var(--border-main)] text-[var(--text-muted)]">
-                            {tech}
-                        </span>
-                    ))
-                }
-            </div>
-        </header>
+            {
+                (unavailable || stale) && (
+                    <p class="mt-4 max-w-2xl text-sm text-[var(--text-muted)]">
+                        {unavailable
+                            ? `The repository ${repoLabel} is not currently public at this address. The metadata and README below are the last saved public snapshot.`
+                            : "GitHub could not be refreshed. The metadata below are from the last successful sync."}
+                    </p>
+                )
+            }
 
-        {
-            (repoLabel || githubMeta) && (
-                <section class="mb-12 border border-[var(--border-main)]">
-                    {(unavailable || stale) && (
-                        <p class="p-4 border-b border-[var(--border-main)] text-sm text-[var(--text-muted)]">
-                            {unavailable
-                                ? "The repository is not currently public at this address. The metadata and README below are the last saved public snapshot."
-                                : "GitHub could not be refreshed. The metadata below are from the last successful sync."}
-                        </p>
-                    )}
-                    {projectState.fork && (
-                        <p class="p-4 border-b border-[var(--border-main)] text-sm text-[var(--text-muted)]">
-                            This repository is a fork of an upstream project.
-                        </p>
-                    )}
-                    <div class="grid md:grid-cols-[10rem_minmax(0,1fr)] border-b border-[var(--border-main)]">
-                        <div class="p-4 border-b md:border-b-0 md:border-r border-[var(--border-main)] font-mono text-xs uppercase tracking-wider text-[var(--text-muted)]">
-                            GitHub
-                        </div>
-                        <div class="p-4 font-mono text-sm break-words">
-                            {repoLabel}
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 md:grid-cols-4 text-sm font-mono">
-                        <div class="p-4 border-r border-b md:border-b-0 border-[var(--border-main)]">
-                            <div class="text-[10px] uppercase tracking-wider text-[var(--text-muted)] mb-1">
-                                Language
-                            </div>
-                            <div>{githubMeta?.language || "—"}</div>
-                        </div>
-                        <div class="p-4 md:border-r border-b md:border-b-0 border-[var(--border-main)]">
-                            <div class="text-[10px] uppercase tracking-wider text-[var(--text-muted)] mb-1">
-                                Stars
-                            </div>
-                            <div>{githubMeta?.stars ?? "—"}</div>
-                        </div>
-                        <div class="p-4 border-r border-[var(--border-main)]">
-                            <div class="text-[10px] uppercase tracking-wider text-[var(--text-muted)] mb-1">
-                                Last Push
-                            </div>
-                            <div>{compactDate(pushedDate)}</div>
-                        </div>
-                        <div class="p-4">
-                            <div class="text-[10px] uppercase tracking-wider text-[var(--text-muted)] mb-1">
-                                README Sync
-                            </div>
-                            <div>{compactDate(syncedDate)}</div>
-                        </div>
-                    </div>
-                    {
-                        githubMeta?.description && (
-                            <div class="p-4 border-t border-[var(--border-main)] text-sm text-[var(--text-muted)]">
-                                {githubMeta.description}
-                            </div>
-                        )
-                    }
-                </section>
-            )
-        }
+            {/* A no-break space before each "·" keeps the dot off the start of a wrapped line. */}
+            <p class="mt-6 font-mono text-xs text-[var(--text-faint)]">
+                {metaLabels.map((label, index) => <>{index > 0 && "\u00a0· "}<span class="whitespace-nowrap">{label}</span></>)}{pushedDate && <>{"\u00a0· "}<span class="whitespace-nowrap">Updated <time datetime={pushedDate.toISOString()}>{formatDateLong(pushedDate)}</time></span></>}
+            </p>
+            {
+                entry.data.stack.length > 0 && (
+                    <p class="mt-2 font-mono text-xs text-[var(--text-faint)]">
+                        {entry.data.stack.join(", ")}
+                    </p>
+                )
+            }
+
+            {
+                (websiteUrl || repoUrl) && (
+                    <p class="mt-4 font-mono text-sm text-[var(--text-muted)]">
+                        {websiteUrl && (
+                            <a
+                                href={websiteUrl}
+                                target={websiteExternal ? "_blank" : undefined}
+                                rel={websiteExternal ? "noopener noreferrer" : undefined}
+                                class="inline-block py-1.5 -my-1.5 underline decoration-1 underline-offset-4 hover:text-[var(--text-main)] transition-colors"
+                            >
+                                Website{websiteExternal && <><span aria-hidden="true"> ↗</span><span class="sr-only"> (external)</span></>}
+                            </a>
+                        )}
+                        {websiteUrl && repoUrl && " · "}
+                        {repoUrl && (
+                            <a
+                                href={repoUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="inline-block py-1.5 -my-1.5 underline decoration-1 underline-offset-4 hover:text-[var(--text-main)] transition-colors"
+                            >
+                                Source<span aria-hidden="true"> ↗</span><span class="sr-only"> (external)</span>
+                            </a>
+                        )}
+                    </p>
+                )
+            }
+        </header>
 
         <!-- Human-edited project brief -->
         <section class="mb-12">
-            <div class="font-mono text-xs uppercase tracking-widest text-[var(--text-muted)] mb-6">
-                [ Project Brief ]
-            </div>
             <div class="post-content project-brief-content">
                 <Content />
             </div>
@@ -196,28 +145,22 @@ function compactDate(date: Date | null) {
 
         {
             ReadmeContent && (
-                <section class="mt-16 pt-10 border-t border-[var(--border-main)]">
-                    <div class="flex flex-col md:flex-row md:items-end justify-between gap-2 mb-8">
-                        <div>
-                            <div class="font-mono text-xs uppercase tracking-widest text-[var(--text-muted)] mb-2">
-                                [ Synced from GitHub README ]
-                            </div>
-                            <h2 class="text-2xl font-bold font-heading">
-                                Repository Document
-                            </h2>
-                        </div>
+                <section class="mt-24">
+                    <h2 class="font-mono text-xs uppercase tracking-widest text-[var(--text-muted)] mb-3">
+                        README
+                        {repoUrl && " · "}
                         {repoUrl && (
                             <a
                                 href={repoUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                class="font-mono text-xs text-[var(--text-muted)] hover:text-[var(--text-main)] underline underline-offset-4"
+                                class="inline-block py-2 -my-2 underline decoration-1 underline-offset-4 hover:text-[var(--text-main)] transition-colors"
                             >
-                                source ↗
+                                on GitHub<span aria-hidden="true"> ↗</span><span class="sr-only"> (external)</span>
                             </a>
                         )}
-                    </div>
-                    <div class="post-content github-readme-content">
+                    </h2>
+                    <div class:list={["post-content github-readme-content", { "readme-same-title": readmeRepeatsTitle }]}>
                         <ReadmeContent />
                     </div>
                 </section>
@@ -231,6 +174,14 @@ function compactDate(date: Date | null) {
     .project-brief-content :global(h2:first-child),
     .github-readme-content :global(h1:first-child),
     .github-readme-content :global(h2:first-child) {
+        margin-top: 0 !important;
+    }
+
+    /* The README is never edited here; its opening heading is hidden when it repeats the page title. */
+    .github-readme-content.readme-same-title > :global(h1:first-child) {
+        display: none;
+    }
+    .github-readme-content.readme-same-title > :global(h1:first-child + *) {
         margin-top: 0 !important;
     }
 </style>

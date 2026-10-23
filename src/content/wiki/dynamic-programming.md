@@ -3,7 +3,7 @@ title: 'Dynamic Programming: Recursion Without Redundancy'
 description: 'Dynamic programming is a proof technique: choose a state that makes the future independent of the past, then decompose, remember, and combine.'
 kind: Method
 updatedDate: 2026-03-10
-tags: ["algorithm", "algorithms", "cs", "math"]
+tags: ["algorithms", "cs", "math"]
 parents: []
 related: ["renewal-process", "policy-gradient"]
 ---

@@ -3,7 +3,7 @@ title: 'Bias-Variance: The Irreducible Geometry of Prediction'
 description: 'Bias-variance is a property of estimation itself: bias is the distance to the model class, variance is sensitivity to the sample, and noise is a floor.'
 kind: Concept
 updatedDate: 2026-03-10
-tags: ["ml", "machine learning", "probability", "regression"]
+tags: ["machine learning", "probability", "regression"]
 parents: []
 related: ["conditional-expectation-variance", "svd"]
 ---

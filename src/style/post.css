@@ -22,19 +22,11 @@
 }
 
 /* Reading measure: keep running text near 75 characters per line.
- * Headings (whose rules must line up with full-width tables and code), tables,
- * code, display math, figures, and paragraphs that hold images keep the full
- * column. Blocks with an align attribute (README hero rows) and the centered
- * AudioShow batches keep their full-width centering. */
+ * Headings, tables, code, display math, figures, and paragraphs that hold
+ * images keep the full column. Blocks with an align attribute (README hero
+ * rows) and the centered AudioShow batches keep their full-width centering. */
 .post-content:not(.text-center) > :is(p, ul, ol, dl, blockquote):not([align]):not(:has(img, picture, video, iframe, table, pre, .katex-display)) {
   max-width: 38rem;
-}
-
-/* Keep #fragment targets clear of the sticky desktop breadcrumb. */
-@media (min-width: 768px) {
-  .post-content :is(h1, h2, h3, h4, h5, h6)[id] {
-    scroll-margin-top: 3.5rem;
-  }
 }
 
 /* Paragraphs */
@@ -53,8 +45,6 @@
   font-weight: 800 !important;
   margin-top: 2.75rem !important;
   margin-bottom: 1.2rem !important;
-  padding-bottom: 0.4rem;
-  border-bottom: 1px solid var(--border-main);
   color: var(--text-main);
   line-height: 1.2 !important;
 }
@@ -64,8 +54,6 @@
   font-weight: 700 !important;
   margin-top: 3rem !important;
   margin-bottom: 0.9rem !important;
-  padding-top: 1rem;
-  border-top: 1px solid var(--border-main);
   color: var(--text-main);
   line-height: 1.3 !important;
 }
@@ -169,20 +157,30 @@
   transition: all 0.2s ease;
 }
 
-.post-content a:hover {
-  background-color: var(--text-main);
-  color: var(--bg-body);
-  text-decoration: none;
+/* Touch taps leave :hover applied; only real pointers get the inverted link. */
+@media (hover: hover) and (pointer: fine) {
+  .post-content a:hover {
+    background-color: var(--text-main);
+    color: var(--bg-body);
+    text-decoration: none;
+  }
 }
 
 /* Images */
 .post-content img {
   max-width: 100%;
   height: auto;
-  border: 1px solid var(--border-main);
   margin: 1.75rem 0;
   display: block;
   background-color: var(--bg-body);
+}
+
+/* README badge rows: linked images that share a paragraph sit on one line.
+ * A lone linked image (a hero or download badge) stays a block. */
+.post-content p > a:not(:only-child) > img {
+  display: inline-block;
+  margin: 0 0.35rem 0.35rem 0;
+  vertical-align: middle;
 }
 
 /* Image Captions (using em tag after img) */
@@ -198,14 +196,15 @@
   padding: 0 1rem;
 }
 
-/* Blockquotes */
+/* Blockquotes. The left rule and weight are set explicitly because .prose
+ * (notes, gallery) adds its own wider grey border and weight 500. */
 .post-content blockquote {
-  border-left: 3px solid var(--text-main);
-  padding: 0.65rem 1rem;
+  border-left: 1px solid var(--border-main);
+  padding: 0 0 0 1rem;
   margin: 1.25rem 0;
-  background: rgba(128, 128, 128, 0.05);
   font-style: italic;
-  color: var(--text-main);
+  font-weight: 400;
+  color: var(--text-muted);
   line-height: 1.58;
 }
 
@@ -219,22 +218,28 @@
   content: none;
 }
 
-/* Code inline */
+/* Code inline. It takes the weight of the text around it, so code inside
+ * <strong> stays bold; this overrides the 600 that .prose (notes, gallery) sets. */
 .post-content code:not(pre code) {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.85em;
-  padding: 0.12em 0.32em;
-  border: 1px solid var(--border-main);
-  border-radius: 4px;
+  font-weight: inherit;
   background: transparent;
   color: var(--text-main);
 }
 
-/* Code blocks */
+/* .prose (notes, gallery) wraps inline code in backticks; the mono face
+ * already marks it. */
+.post-content code:not(pre code)::before,
+.post-content code:not(pre code)::after {
+  content: none;
+}
+
+/* Code blocks. The Prism fill is their only edge; square corners also
+ * override the rounded .prose pre. */
 .post-content pre {
   margin: 1.35rem 0;
   padding: 1rem;
-  border: 1px solid var(--border-main);
   border-radius: 0;
   overflow-x: auto;
   font-size: 0.875rem;
@@ -259,7 +264,6 @@
 .post-content table::-webkit-scrollbar-track,
 .post-content .katex-display::-webkit-scrollbar-track {
   background: var(--bg-body);
-  border: 1px solid var(--border-main);
 }
 
 .post-content pre::-webkit-scrollbar-thumb,
@@ -307,13 +311,33 @@
   }
 }
 
+/* One rule under the header and a faint hairline between rows. The outer
+ * cells carry no side padding, so the table lines up with the text edge. */
 .post-content th,
 .post-content td {
-  padding: 0.65rem 0.75rem;
-  border: 1px solid var(--border-main);
+  padding: 0.5rem 1rem 0.5rem 0;
+  border: 0;
+  border-bottom: 1px solid var(--border-subtle);
   text-align: left;
   vertical-align: top;
   font-variant-numeric: tabular-nums;
+}
+
+.post-content :is(th, td):last-child {
+  padding-right: 0;
+}
+
+.post-content thead th {
+  border-bottom-color: var(--border-main);
+}
+
+.post-content tbody tr:last-child > :is(th, td) {
+  border-bottom: 0;
+}
+
+/* .prose (notes, gallery) draws its own light-grey thead and row lines. */
+.post-content :is(thead, tbody tr) {
+  border-bottom: 0;
 }
 
 /* Respect Markdown column alignment (`:---:` and `---:`). */
@@ -326,37 +350,34 @@
 }
 
 .post-content th {
-  background: var(--border-subtle);
   color: var(--text-main);
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  font-size: 0.85rem;
-  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
 }
 
 .post-content td {
   color: var(--text-muted);
 }
 
-/* Phone tables still scroll sideways, but body cells wrap so long text stays
- * readable. Headers and inline code keep the table's nowrap. */
+/* Phone tables still scroll sideways, but cells wrap so long text stays
+ * readable. Headers wrap too, so most tables fit the column: without a frame,
+ * a whole column hidden past the edge gives no sign that the table scrolls.
+ * Inline code keeps the table's nowrap. */
 @media (max-width: 767px) {
   .post-content td {
     white-space: normal;
     min-width: 4rem;
   }
+
+  .post-content th {
+    white-space: normal;
+  }
 }
 
-.post-content tr:hover td {
-  background: rgba(128, 128, 128, 0.1);
-}
-
-/* Horizontal rule */
+/* Horizontal rule: an author-written break, kept as a faint line. */
 .post-content hr {
   border: none;
   height: 1px;
-  background: var(--border-main);
+  background: var(--border-subtle);
   margin: 2.5rem 0;
 }
 
@@ -416,8 +437,6 @@
 .wiki-content h2 {
   margin-top: 2rem !important;
   margin-bottom: 0.7rem !important;
-  padding-top: 0 !important;
-  border-top: none !important;
 }
 
 .wiki-content h3 {

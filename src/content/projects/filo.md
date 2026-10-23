@@ -11,8 +11,6 @@ githubRepo: "Audiofool934/filo"
 githubReadme: true
 ---
 
-## Overview
-
 Less setup. More listening. A free, open-source macOS menu bar app for Apple Music and your DAC.
 
 See the public repository below for setup, usage, and current development status.

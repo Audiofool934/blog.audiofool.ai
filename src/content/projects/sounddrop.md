@@ -12,8 +12,6 @@ githubRepo: 'Audiofool934/sounddrop-ui'
 githubReadme: true
 ---
 
-## Overview
-
 **SoundDrop** is a campus music map for generating and publishing place-based music.
 
 A user chooses a location on the map, uploads an image, writes a short memory or prompt, and receives a small set of generated music versions. The chosen version can be published to the public map or saved privately.

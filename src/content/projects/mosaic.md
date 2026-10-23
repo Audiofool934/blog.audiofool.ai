@@ -11,8 +11,6 @@ githubRepo: "Audiofool934/mosaic"
 githubReadme: true
 ---
 
-## Overview
-
 An old craft in a new hand: an open mosaic engine and the agent skill that lays it, in stones of glass, marble, and gold.
 
 See the public repository below for setup, usage, and current development status.

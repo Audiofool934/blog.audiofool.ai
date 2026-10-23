@@ -45,6 +45,17 @@ const galleryDescription =
     [entry.data.title, entry.data.location, entry.data.camera]
         .filter(Boolean)
         .join(" · ") + " - Photography by Audiofool";
+
+// Second header line: gear first, then the exposure values.
+const gear = [
+    entry.data.camera,
+    entry.data.lens,
+    entry.data.filmStock,
+    entry.data.focalLength,
+    entry.data.aperture,
+    entry.data.shutterSpeed,
+    entry.data.iso ? `ISO ${entry.data.iso}` : undefined,
+].filter(Boolean);
 ---
 
 <MinimalLayout
@@ -58,19 +69,16 @@ const galleryDescription =
     datePublished={entry.data.date}
 >
     <div class="p-6 md:p-12" transition:animate="fade">
-        <!-- Back Link -->
-        <a
-            href="/gallery/"
-            class="font-mono text-sm text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors mb-8 inline-block"
-        >
-            ← Back to Gallery
-        </a>
-
         <article class="max-w-4xl mx-auto">
-            <!-- Primary image -->
-            <div
-                class="mb-8 border border-[var(--border-main)] overflow-hidden flex justify-center bg-[var(--bg-body)]"
+            <!-- Back link on phones only; from md up the sidebar already marks and links the section. -->
+            <a
+                href="/gallery/"
+                class="md:hidden inline-block -mt-3 mb-5 py-3 font-mono text-sm text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors"
+                ><span aria-hidden="true">← </span>Gallery</a
             >
+
+            <!-- Primary image -->
+            <div class="mb-8 flex justify-center">
                 <Image
                     id="gallery-image"
                     data-gallery-image="true"
@@ -87,84 +95,39 @@ const galleryDescription =
                     aria-label="View photo 1 full screen"
                     decoding="async"
                     quality={78}
-                    class="max-h-[85vh] w-auto object-contain cursor-zoom-in transition-transform duration-300"
+                    class="max-h-[85vh] w-auto object-contain cursor-zoom-in"
                 />
             </div>
 
             <!-- Metadata -->
-            <header class="mb-8 border-b border-[var(--border-main)] pb-6">
+            <header class="mb-10">
                 <h1 class="text-3xl md:text-4xl font-bold font-heading mb-4">
                     {entry.data.title}
                 </h1>
 
-                <div
-                    class="flex flex-wrap gap-x-6 gap-y-2 text-sm font-mono text-[var(--text-muted)]"
-                >
-                    <div class="flex items-baseline gap-2">
-                        <span class="shrink-0 text-[var(--text-faint)]">Date:</span>
-                        <time>{formatDateLong(entry.data.date)}</time>
-                    </div>
+                {/* Fields are inline blocks, so lines break between fields and only an over-long field wraps inside.
+                    A no-break space ties each dot to the field before it, so a wrapped line never starts with one. */}
+                <div class="space-y-1 text-xs font-mono text-[var(--text-faint)]">
+                    <p>
+                        <time
+                            class="inline-block"
+                            datetime={entry.data.date.toISOString().slice(0, 10)}
+                            >{formatDateLong(entry.data.date)}</time
+                        >{
+                            entry.data.location && (
+                                <>{"\u00a0· "}<span class="inline-block">{entry.data.location}</span></>
+                            )
+                        }
+                    </p>
                     {
-                        entry.data.location && (
-                            <div class="flex items-baseline gap-2">
-                                <span class="shrink-0 text-[var(--text-faint)]">Location:</span>
-                                <span>{entry.data.location}</span>
-                            </div>
+                        gear.length > 0 && (
+                            <p>
+                                {gear.map((field, i) => (
+                                    <>{i > 0 && "\u00a0· "}<span class="inline-block">{field}</span></>
+                                ))}
+                            </p>
                         )
                     }
-                    {
-                        entry.data.camera && (
-                            <div class="flex items-baseline gap-2">
-                                <span class="shrink-0 text-[var(--text-faint)]">Camera:</span>
-                                <span>{entry.data.camera}</span>
-                            </div>
-                        )
-                    }
-                    {
-                        entry.data.lens && (
-                            <div class="flex items-baseline gap-2">
-                                <span class="shrink-0 text-[var(--text-faint)]">Lens:</span>
-                                <span>{entry.data.lens}</span>
-                            </div>
-                        )
-                    }
-                    {
-                        entry.data.filmStock && (
-                            <div class="flex items-baseline gap-2">
-                                <span class="shrink-0 text-[var(--text-faint)]">Film:</span>
-                                <span>{entry.data.filmStock}</span>
-                            </div>
-                        )
-                    }
-                    {
-                        (entry.data.iso ||
-                            entry.data.aperture ||
-                            entry.data.shutterSpeed) && (
-                            <div class="flex items-baseline gap-2">
-                                <span class="shrink-0 text-[var(--text-faint)]">EXIF:</span>
-                                <span>
-                                    {[
-                                        entry.data.focalLength,
-                                        entry.data.aperture,
-                                        entry.data.shutterSpeed,
-                                        entry.data.iso
-                                            ? `ISO ${entry.data.iso}`
-                                            : null,
-                                    ]
-                                        .filter(Boolean)
-                                        .join(" · ")}
-                                </span>
-                            </div>
-                        )
-                    }
-                    <div class="flex items-baseline gap-2">
-                        <span class="shrink-0 text-[var(--text-faint)]">Category:</span>
-                        <span
-                            class="px-2 py-0.5 border border-[var(--border-main)] text-xs"
-                        >
-                            {entry.data.category}
-                        </span>
-                    </div>
                 </div>
             </header>
 
@@ -180,7 +143,7 @@ const galleryDescription =
                         {detailImages.slice(1).map((src, index) => {
                             const imageIndex = index + 1;
                             return (
-                                <div class="border border-[var(--border-main)] overflow-hidden flex justify-center bg-[var(--bg-body)]">
+                                <div class="flex justify-center">
                                     <Image
                                         data-gallery-image="true"
                                         data-lightbox-src={lightboxSources[imageIndex]}
@@ -196,7 +159,7 @@ const galleryDescription =
                                         aria-label={`View photo ${imageIndex + 1} full screen`}
                                         decoding="async"
                                         quality={78}
-                                        class="max-h-[85vh] w-auto object-contain cursor-zoom-in transition-transform duration-300"
+                                        class="max-h-[85vh] w-auto object-contain cursor-zoom-in"
                                     />
                                 </div>
                             );
@@ -210,7 +173,7 @@ const galleryDescription =
     <!-- Lightbox Overlay (Moved outside transition container) -->
     <div
         id="lightbox"
-        class="fixed inset-0 z-[9999] bg-black/95 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 cursor-zoom-out backdrop-blur-sm"
+        class="fixed inset-0 z-[9999] bg-black/95 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 cursor-zoom-out"
     >
         <img
             id="lightbox-image"
@@ -218,7 +181,7 @@ const galleryDescription =
             alt={entry.data.title}
             loading="lazy"
             decoding="async"
-            class="max-h-[95vh] max-w-[95vw] object-contain shadow-2xl"
+            class="max-h-[95vh] max-w-[95vw] object-contain"
         />
     </div>
 

@@ -9,8 +9,6 @@ stack: ['Python', 'Agents', 'Music Generation', 'Intent Modeling', 'Literature R
 type: 'Research'
 ---
 
-## Overview
-
 **MultiTake** is a research project on agent-driven evolving-intent music generation.
 
 The project imagines music generation as a sequence of takes rather than a single prompt-to-file transaction. An external reasoning agent listens to partial generated audio, updates an intent state, and conditions the next continuation step.

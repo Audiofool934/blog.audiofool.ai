@@ -1,3 +1,6 @@
+import { statSync } from "node:fs";
+import path from "node:path";
+
 interface ProjectEntry {
     id: string;
     data: {
@@ -30,9 +33,36 @@ export function getProjectState(project: ProjectEntry, snapshots: GitHubProject[
 
     return {
         date: hasPush ? pushedAt : project.data.pubDate,
-        dateLabel: hasPush ? "GitHub push" : "Published",
         href: project.data.pinned && project.data.url ? project.data.url : `/projects/${project.id}/`,
         status: current && github.archived ? "archived" : project.data.status,
         fork: current && Boolean(github.fork),
     };
+}
+
+// Status, type, and category can name the same thing (status "research", type "Research"),
+// so each label shows once per line; labels in `shown` are already on screen and are skipped.
+export function uniqueLabels(labels: (string | undefined)[], shown: string[] = []) {
+    const seen = new Set(shown.map((label) => label.toLowerCase()));
+    return labels.filter((label): label is string => {
+        const key = label?.toLowerCase();
+        if (!key || seen.has(key)) return false;
+        seen.add(key);
+        return true;
+    });
+}
+
+// Pinned projects and project websites can point off the site. A site path also leaves the site
+// when public/ serves it as a standalone file, such as the "/muse/" poster: it has no site shell,
+// so opening it in the same tab stops the audio player.
+export function isExternalUrl(href: string, siteOrigin?: string) {
+    if (/^https?:\/\//i.test(href)) {
+        const url = new URL(href);
+        return url.origin !== siteOrigin || isPublicFile(url.pathname);
+    }
+    return href.startsWith("/") && isPublicFile(href.split(/[?#]/)[0]);
+}
+
+function isPublicFile(pathname: string) {
+    const file = path.join(process.cwd(), "public", pathname, pathname.endsWith("/") ? "index.html" : "");
+    return statSync(file, { throwIfNoEntry: false })?.isFile() ?? false;
 }

@@ -80,9 +80,9 @@ There is a precise duality between **smoothness** of $f$ in time and **decay** o
 
 | Smoothness of $f$ | Decay of $\hat{f}$ |
 |-------------------|-------------------|
-| $f$ is $C^k$ (k-times differentiable) | $|\hat{f}(\xi)| = O(|\xi|^{-k})$ |
-| $f$ is $C^\infty$ (infinitely smooth) | $|\hat{f}(\xi)|$ decays faster than any polynomial |
-| $f$ is analytic | $|\hat{f}(\xi)|$ decays exponentially |
+| $f$ is $C^k$ (k-times differentiable) | $\lvert\hat{f}(\xi)\rvert = O(\lvert\xi\rvert^{-k})$ |
+| $f$ is $C^\infty$ (infinitely smooth) | $\lvert\hat{f}(\xi)\rvert$ decays faster than any polynomial |
+| $f$ is analytic | $\lvert\hat{f}(\xi)\rvert$ decays exponentially |
 
 The mechanism: differentiation in time becomes multiplication by $2\pi i \xi$ in frequency. If $f$ is $k$-times differentiable, then $\hat{f}(\xi) \cdot (2\pi i \xi)^k = \widehat{f^{(k)}}(\xi)$, which must be integrable. This forces $\hat{f}$ to decay at rate $|\xi|^{-k}$.
 

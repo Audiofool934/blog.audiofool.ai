@@ -14,8 +14,6 @@ stack: ['Python', 'Flow Matching', 'Retrieval', 'MuQ', 'Multimodal']
 type: 'Research'
 ---
 
-## Overview
-
 **MERIC** is a music generation and retrieval research project built around a shared music semantic anchor.
 
 The core idea is to separate multimodal understanding from acoustic synthesis. Text, image, or video inputs are mapped into a music-aligned semantic space, then a generative audio model turns that anchor into sound.
@@ -28,8 +26,3 @@ MERIC connects two tasks that are often treated separately:
 - **retrieval** — finding music through the same semantic space.
 
 That shared representation makes the system more than a one-way generator. It becomes a bridge between musical meaning and musical sound.
-
-## Public Status
-
-The [current project homepage](https://meric.audiofool.ai/) presents the research and listening examples.
-The [public repository](https://github.com/Audiofool934/meric) contains the source and setup instructions.

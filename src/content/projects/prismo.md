@@ -11,8 +11,6 @@ githubRepo: "Audiofool934/prismo"
 githubReadme: true
 ---
 
-## Overview
-
 A floating prism companion with white and rainbow hands. Animated artwork and sprite sheets for ChatGPT Pets.
 
 See the public repository below for setup, usage, and current development status.

@@ -16,6 +16,14 @@ const sortedRanges = Object.keys(groupedEpisodes).sort((a, b) => {
     return startA - startB;
 });
 
+// Label each range by the episodes it holds, so a partial range reads "EP 201-225".
+const rangeLabel = (range: string) => {
+    const episodes = groupedEpisodes[range];
+    const first = episodes[0].number;
+    const last = episodes[episodes.length - 1].number;
+    return first === last ? `EP ${first}` : `EP ${first}-${last}`;
+};
+
 // Placeholder image
 const placeholderImage = "/images/placeholder-album.svg";
 ---
@@ -26,52 +34,50 @@ const placeholderImage = "/images/placeholder-album.svg";
 >
     <div class="p-6 md:p-12 md:mb-20" transition:animate="fade">
         <!-- Header -->
-        <div class="mb-8">
+        <div class="mb-10">
             <h1 class="text-4xl font-bold font-heading mb-2">AudioShow Archive</h1>
-            <p class="font-mono text-sm text-[var(--text-muted)] tracking-wider">
+            <p class="font-mono text-sm text-[var(--text-muted)]">
                 The long shelf of what still answers.
             </p>
         </div>
 
         <!-- Navigation -->
-        <div class="flex gap-4 mb-10 text-sm font-mono border-b border-[var(--border-main)] pb-4">
+        <div class="flex flex-wrap gap-x-3 gap-y-3 mb-10 font-mono text-sm">
             <a 
                 href="/audioshow/"
                 class="py-1.5 -my-1.5 text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors"
             >
-                [ Recent ]
+                <span aria-hidden="true">[ </span>Recent<span aria-hidden="true"> ]</span>
             </a>
             <a
                 href="/audioshow/crates/"
                 class="py-1.5 -my-1.5 text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors"
             >
-                [ Crates ]
+                <span aria-hidden="true">[ </span>Crates<span aria-hidden="true"> ]</span>
             </a>
-            <span class="text-[var(--text-main)] underline decoration-1 underline-offset-4">
-                [ Archive ]
+            <span class="text-[var(--text-main)] underline decoration-1 underline-offset-4" aria-current="page">
+                <span aria-hidden="true">[ </span>Archive<span aria-hidden="true"> ]</span>
             </span>
         </div>
 
         <!-- Episode Ranges -->
-        <div class="space-y-8" data-audioshow-archive>
+        <div class="space-y-2" data-audioshow-archive>
             {sortedRanges.map((range) => (
-                <section class="border border-[var(--border-main)]" data-range={range}>
-                    <details class="group">
-                        <summary class="cursor-pointer p-4 flex items-center justify-between hover:bg-[var(--text-main)]/5 transition-colors">
-                            <h2 class="text-lg font-bold font-heading flex items-center gap-3">
-                                <span class="text-xs font-mono text-[var(--text-muted)]">
-                                    [{groupedEpisodes[range].length}]
-                                </span>
-                                EP {range}
+                <section data-range={range}>
+                    <details class="group open:pb-8">
+                        <summary class="cursor-pointer py-3 flex items-center justify-between">
+                            <h2 class="text-lg font-bold font-heading">
+                                {rangeLabel(range)}
                             </h2>
                             <div class="flex items-center gap-4">
                                 <!-- Toggle All Lyrics Button -->
                                 <button 
-                                    class="text-xs font-mono text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors px-2 py-1 border border-[var(--border-main)] hover:bg-[var(--text-main)]/5"
+                                    class="text-xs font-mono text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors py-2 -my-2"
                                     data-toggle-all={range}
                                     type="button"
+                                    aria-expanded="false"
                                 >
-                                    [lyrics]
+                                    Show lyrics
                                 </button>
                                 <span class="font-mono text-xs text-[var(--text-muted)] group-open:rotate-90 transition-transform">
                                     →
@@ -79,7 +85,7 @@ const placeholderImage = "/images/placeholder-album.svg";
                             </div>
                         </summary>
 
-                        <div class="border-t border-[var(--border-main)]" data-episodes={range}>
+                        <div data-episodes={range}>
                             {groupedEpisodes[range].map((ep) => {
                                 const cover = ep.imageUrl || placeholderImage;
                                 const artwork = audioImage(cover, 320) || placeholderImage;
@@ -159,24 +165,27 @@ const placeholderImage = "/images/placeholder-album.svg";
                                     </div>
 
                                     <!-- Lyrics (Hidden by default) -->
-                                    <div class="lyrics-content hidden px-4 pb-4">
+                                    <div class="lyrics-content hidden pb-4">
                                         <div class="lyrics-body">
                                             <p class="episode-lyric">
                                                 {`"${ep.lyricExcerpt}"`}
                                             </p>
                                             {ep.projectLinks.length > 0 && (
-                                                <div class="flex flex-wrap gap-2 pt-1">
-                                                    {ep.projectLinks.map((link) => (
-                                                        <a
-                                                            href={link.url}
-                                                            target="_blank"
-                                                            rel="noreferrer"
-                                                            class="text-xs font-mono border border-[var(--border-main)] px-2 py-1 text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--text-main)]/5 transition-colors"
-                                                        >
-                                                            {link.label}
-                                                        </a>
+                                                <p class="font-mono text-sm text-[var(--text-muted)]">
+                                                    {ep.projectLinks.map((link, index) => (
+                                                        <>
+                                                            {index > 0 && " · "}
+                                                            <a
+                                                                href={link.url}
+                                                                target="_blank"
+                                                                rel="noreferrer"
+                                                                class="inline-block py-1.5 -my-1.5 underline decoration-1 underline-offset-4 hover:text-[var(--text-main)] transition-colors"
+                                                            >
+                                                                {link.label}<span aria-hidden="true"> ↗</span><span class="sr-only"> (external)</span>
+                                                            </a>
+                                                        </>
                                                     ))}
-                                                </div>
+                                                </p>
                                             )}
                                         </div>
                                     </div>
@@ -192,20 +201,9 @@ const placeholderImage = "/images/placeholder-album.svg";
         <!-- Empty State -->
         {allEpisodes.length === 0 && (
             <div class="py-16 text-center text-[var(--text-muted)]">
-                <p class="text-4xl mb-4">📻</p>
                 <p>No episodes found. The show hasn't started yet.</p>
             </div>
         )}
-
-        <!-- Back Link -->
-        <div class="mt-12 pt-8 border-t border-[var(--border-main)]">
-            <a 
-                href="/audioshow/"
-                class="text-sm font-mono text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors"
-            >
-                ← Back to Recent
-            </a>
-        </div>
     </div>
 </MinimalLayout>
 
@@ -215,6 +213,16 @@ const placeholderImage = "/images/placeholder-album.svg";
         const toggle = episode.querySelector<HTMLButtonElement>('[data-ep-toggle]');
         lyrics?.classList.toggle('hidden', !expanded);
         toggle?.setAttribute('aria-expanded', String(expanded));
+    }
+
+    // The range button reads "Hide lyrics" only while every row in its range is open.
+    function syncRangeToggle(section: Element | null) {
+        const allToggle = section?.querySelector<HTMLButtonElement>('[data-toggle-all]');
+        if (!section || !allToggle) return;
+        const toggles = Array.from(section.querySelectorAll('[data-ep-toggle]'));
+        const allOpen = toggles.length > 0 && toggles.every((toggle) => toggle.getAttribute('aria-expanded') === 'true');
+        allToggle.textContent = allOpen ? 'Hide lyrics' : 'Show lyrics';
+        allToggle.setAttribute('aria-expanded', String(allOpen));
     }
 
     document.addEventListener("astro:page-load", () => {
@@ -228,10 +236,11 @@ const placeholderImage = "/images/placeholder-album.svg";
             if (allToggle) {
                 event.preventDefault();
                 const section = allToggle.closest('section');
-                const episodes = Array.from(section?.querySelectorAll<HTMLElement>('.episode-item') ?? []);
-                const expand = episodes.every((episode) => episode.querySelector('.lyrics-content')?.classList.contains('hidden'));
-                episodes.forEach((episode) => setEpisodeExpanded(episode, expand));
-                allToggle.textContent = expand ? '[collapse]' : '[lyrics]';
+                const expand = allToggle.getAttribute('aria-expanded') !== 'true';
+                // Showing lyrics also opens a collapsed range, so the reader sees what the label says.
+                if (expand) allToggle.closest('details')?.setAttribute('open', '');
+                section?.querySelectorAll<HTMLElement>('.episode-item').forEach((episode) => setEpisodeExpanded(episode, expand));
+                syncRangeToggle(section);
                 return;
             }
 
@@ -246,21 +255,23 @@ const placeholderImage = "/images/placeholder-album.svg";
             if (episode) {
                 const expand = !!episode.querySelector('.lyrics-content')?.classList.contains('hidden');
                 setEpisodeExpanded(episode, expand);
+                syncRangeToggle(episode.closest('section'));
             }
         };
     });
 </script>
 
 <style>
-    .episode-item { @apply border-b border-[var(--border-main)] last:border-b-0; }
-    .episode-row { @apply flex items-center gap-4 p-4 transition-colors cursor-pointer; }
+    .episode-row { @apply flex items-center gap-4 py-2.5 px-2 -mx-2 transition-colors cursor-pointer; }
     .episode-row:hover { background-color: color-mix(in srgb, var(--text-main) 5%, transparent); }
-    .episode-thumbnail { @apply w-12 h-12 flex-shrink-0 border border-[var(--border-main)] overflow-hidden; }
+    .episode-thumbnail { @apply w-12 h-12 flex-shrink-0 bg-[var(--border-subtle)] overflow-hidden; }
     .episode-number { @apply w-12 font-mono text-sm text-[var(--text-faint)] text-right; }
     .episode-album { @apply text-xs text-[var(--text-muted)] truncate; }
     .episode-artist { @apply hidden md:block text-sm text-[var(--text-muted)] truncate max-w-[200px]; }
     .episode-play { @apply w-8 text-center opacity-50 hover:opacity-100 transition-opacity; }
-    .lyrics-body { @apply ml-[76px] pl-4 border-l-2 border-[var(--border-main)] space-y-3; }
+    /* Lyrics start under the number on phones, to keep a usable measure, and under the title
+       from md up: 48px thumbnail + 16px gap + 48px number + 16px gap. */
+    .lyrics-body { @apply ml-16 md:ml-[128px] space-y-3; }
     .episode-lyric { @apply text-sm italic text-[var(--text-muted)] whitespace-pre-line; }
     .lyrics-arrow {
         @apply w-6 text-center text-[var(--text-muted)];

@@ -67,6 +67,19 @@
             return JSON.parse(script.textContent || "{}");
         }
 
+        // The metadata row fades its right edge only while it overflows and scrolls.
+        function updateMetaClip() {
+            if (!modalFooterMeta) return;
+            modalFooterMeta.classList.toggle(
+                "is-clipped",
+                modalFooterMeta.scrollWidth > modalFooterMeta.clientWidth,
+            );
+        }
+
+        function onResize() {
+            if (currentIndex !== -1) updateMetaClip();
+        }
+
         function setModalImage(src, alt) {
             const requestId = ++imageRequestId;
             modalImage.onload = null;
@@ -139,7 +152,7 @@
             // Footer info
             modalTitleMobile.textContent = meta.title;
             modalCounterMobile.textContent = counterText;
-            modalDateMobile.textContent = meta.date || "";
+            modalDateMobile.textContent = meta.dateLabel || meta.date || "";
             modalDateMobile.style.display = meta.date
                 ? ""
                 : "none";
@@ -169,6 +182,7 @@
                 ? ""
                 : "none";
             if (modalFooterMeta) modalFooterMeta.scrollLeft = 0;
+            updateMetaClip();
 
             const hasPrev = currentIndex > 0 || currentFrameIndex > 0;
             const hasNext =
@@ -405,6 +419,7 @@
             }
         }
         document.addEventListener("keydown", onKeydown);
+        window.addEventListener("resize", onResize);
 
         // Cleanup
         cleanupFn = function () {
@@ -413,6 +428,7 @@
                 item.removeEventListener("keydown", onItemKeydown);
             });
             document.removeEventListener("keydown", onKeydown);
+            window.removeEventListener("resize", onResize);
             modalContent.removeEventListener(
                 "touchstart",
                 onTouchStart,

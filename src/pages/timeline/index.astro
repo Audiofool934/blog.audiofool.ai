@@ -1,6 +1,7 @@
 ---
 import MinimalLayout from "../../layouts/MinimalLayout.astro";
 import { formatDateCompact } from "../../utils/formatDate";
+import { isExternalUrl } from "../../utils/projectState";
 import { getTimelineItems } from "../../utils/timelineItems";
 import type { TimelineItem } from "../../utils/timelineItems";
 
@@ -17,8 +18,6 @@ for (const post of sortedPosts) {
 
 // Pinned projects link to their own sites; mark those rows so they don't pass for internal pages.
 const siteOrigin = Astro.site?.origin;
-const isExternal = (href: string) =>
-    /^https?:\/\//i.test(href) && new URL(href).origin !== siteOrigin;
 
 const typeLabels: Record<string, string> = {
     note: "Notes",
@@ -26,17 +25,14 @@ const typeLabels: Record<string, string> = {
     music: "Music",
     photo: "Photos",
     project: "Projects",
-    site: "Site Changes",
+    site: "Site",
 };
 
 const filterOrder = ["note", "post", "music", "photo", "project", "site"];
-const typeCounts = new Map<string, number>();
-for (const post of sortedPosts) {
-    typeCounts.set(post.lane, (typeCounts.get(post.lane) || 0) + 1);
-}
+const lanes = new Set(sortedPosts.map((post) => post.lane));
 const filters = filterOrder
-    .filter((type) => typeCounts.has(type))
-    .map((type) => ({ type, label: typeLabels[type], count: typeCounts.get(type)! }));
+    .filter((type) => lanes.has(type))
+    .map((type) => ({ type, label: typeLabels[type] }));
 ---
 
 <MinimalLayout
@@ -44,88 +40,65 @@ const filters = filterOrder
     description="A chronological record of notes, posts, music, photos, and site changes."
 >
     <div class="p-6 md:p-12" transition:animate="fade">
-        <header class="mb-8">
-            <h1 class="text-4xl font-bold font-heading mb-2">Timeline</h1>
-            <p
-                class="font-mono text-sm text-[var(--text-muted)] tracking-wider uppercase"
-            >
-                A chronological record
-            </p>
+        <header class="mb-10">
+            <h1 class="text-4xl font-bold font-heading">Timeline</h1>
         </header>
 
-        <div
-            class="flex flex-wrap gap-3 pb-4 mb-8 border-b border-[var(--border-main)] text-sm font-mono"
-        >
+        <div class="flex flex-wrap gap-x-3 gap-y-3 mb-10 font-mono text-sm">
             <button
                 type="button"
                 data-type="all"
                 aria-pressed="true"
                 class="timeline-filter active whitespace-nowrap py-1.5 -my-1.5 transition-colors"
             >
-                [ All <span class="text-[var(--text-faint)]">{sortedPosts.length}</span> ]
+                <span aria-hidden="true">[ </span>All<span aria-hidden="true"> ]</span>
             </button>
             {
-                filters.map(({ type, label, count }) => (
+                filters.map(({ type, label }) => (
                     <button
                         type="button"
                         data-type={type}
                         aria-pressed="false"
                         class="timeline-filter whitespace-nowrap py-1.5 -my-1.5 transition-colors"
                     >
-                        [ {label} <span class="text-[var(--text-faint)]">{count}</span> ]
+                        <span aria-hidden="true">[ </span>{label}<span aria-hidden="true"> ]</span>
                     </button>
                 ))
             }
         </div>
 
-        <div class="max-w-4xl border-l border-[var(--border-main)] pl-5 md:pl-8">
+        <!-- The line and dots give the stacked entries a spine to read down. -->
+        <div class="spine max-w-2xl">
             {
                 years.map(({ year, posts }) => (
-                    <section class="timeline-year pt-4 first:pt-0">
-                        <h2 class="relative mb-6 font-mono text-sm font-semibold tracking-widest text-[var(--text-main)]">
-                            <span aria-hidden="true" class="absolute -left-5 md:-left-8 top-1/2 w-3 md:w-5 border-t border-[var(--border-main)]" />
+                    <section class="timeline-year pt-12 first:pt-0">
+                        <h2 class="mb-4 font-mono text-sm font-semibold text-[var(--text-main)]">
                             {year}
                         </h2>
 
                         {posts.map((post) => {
                             const type = post.lane;
-                            const external = isExternal(post.href);
+                            const external = isExternalUrl(post.href, siteOrigin);
                             return (
                                 <a
                                     href={post.href}
-                                    class="timeline-entry group relative block pb-8 text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors"
+                                    class="timeline-entry group relative block mb-8"
                                     data-type={type}
                                 >
-                                    <span class="absolute -left-[1.65rem] md:-left-[2.15rem] top-1 h-2 w-2 rounded-full bg-[var(--bg-body)] border border-[var(--text-main)] group-hover:bg-[var(--text-main)] transition-colors" />
-
-                                    <div class="grid gap-1 md:grid-cols-[8rem_5rem_minmax(0,1fr)] md:gap-4 md:items-baseline font-mono text-sm">
-                                        {/* One metadata line on mobile; md:contents hands both cells back to the desktop grid. */}
-                                        <div class="flex flex-wrap items-baseline gap-x-2 md:contents">
-                                            <div class="flex items-baseline gap-x-2 md:block text-xs uppercase tracking-wider text-[var(--text-faint)] transition-opacity">
-                                                <time datetime={post.date.toISOString()}>{formatDateCompact(post.date)}</time>
-                                                {post.dateLabel && <span aria-hidden="true" class="md:hidden">·</span>}
-                                                {post.dateLabel && <span class="text-[10px] md:block md:mt-1">{post.dateLabel}</span>}
-                                            </div>
-
-                                            <div class="flex items-baseline gap-x-2 text-[10px] uppercase tracking-wider text-[var(--text-faint)] transition-opacity">
-                                                <span aria-hidden="true" class="md:hidden">·</span>
-                                                <span>{type}</span>
-                                            </div>
-                                        </div>
-
-                                        <div class="min-w-0">
-                                            <h3 lang={post.lang} class="font-sans text-base font-semibold text-[var(--text-main)] group-hover:underline decoration-1 underline-offset-4">
-                                                {post.title}
-                                                {external && <span aria-hidden="true"> ↗</span>}
-                                                {external && <span class="sr-only"> (external)</span>}
-                                            </h3>
-                                            {post.description && (
-                                                <p class="mt-1 font-sans text-sm leading-relaxed text-[var(--text-faint)]">
-                                                    {post.description}
-                                                </p>
-                                            )}
-                                        </div>
-                                    </div>
+                                    <span aria-hidden="true" class="spine-dot" />
+                                    <p class="font-mono text-xs uppercase tracking-wider text-[var(--text-faint)]">
+                                        <time datetime={post.date.toISOString()}>{formatDateCompact(post.date)}</time> · {type}
+                                    </p>
+                                    <h3 lang={post.lang} class="mt-2 font-sans text-base font-semibold text-[var(--text-main)] group-hover:underline decoration-1 underline-offset-4">
+                                        {post.title}
+                                        {external && <span aria-hidden="true"> ↗</span>}
+                                        {external && <span class="sr-only"> (external)</span>}
+                                    </h3>
+                                    {post.description && (
+                                        <p class="mt-1 font-sans text-sm leading-relaxed text-[var(--text-muted)]">
+                                            {post.description}
+                                        </p>
+                                    )}
                                 </a>
                             );
                         })}

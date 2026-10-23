@@ -14,8 +14,6 @@ githubRepo: 'Audiofool934/latent'
 githubReadme: true
 ---
 
-## Overview
-
 **Latent** is a macOS workspace for browsing, searching, and curating a personal photo archive.
 It indexes previews and metadata while originals stay on local disks, external drives, or mounted cloud drives.
 

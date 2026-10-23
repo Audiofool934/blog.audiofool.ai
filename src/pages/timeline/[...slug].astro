@@ -76,46 +76,30 @@ const shareImage =
             math={hasMath}
             datePublished={entry.data.pubDate}
         >
-            {/* Breadcrumb: a sticky band from md up only (on phones it would slide under the sticky site header); below md, a quiet back link, since the H1 names the page. */}
-            <div
-                class="md:border-b border-[var(--border-main)] bg-[var(--bg-body)] md:sticky md:top-0 md:z-10 px-6 md:px-12"
-            >
-                <div
-                    class="max-w-[38rem] mx-auto pt-3 md:py-3 font-mono text-xs text-[var(--text-muted)] flex items-center gap-2"
-                >
+            {/* Back link on phones only; from md up the sticky sidebar already marks and links the section. */}
+            <div class="md:hidden px-6">
+                <div class="max-w-[38rem] mx-auto pt-3 font-mono text-sm text-[var(--text-muted)]">
                     <a
                         href="/timeline/"
-                        class="py-3 md:py-0 hover:text-[var(--text-main)] transition-colors"
-                        ><span aria-hidden="true" class="md:hidden">← </span>Timeline</a
-                    >
-                    <span class="hidden md:block opacity-30">/</span>
-                    <span class="hidden md:block text-[var(--text-main)] truncate"
-                        >{entry.data.title}</span
+                        class="inline-block py-3 hover:text-[var(--text-main)] transition-colors"
+                        ><span aria-hidden="true">← </span>Timeline</a
                     >
                 </div>
             </div>
 
             <div class="p-6 md:p-12 flex justify-center" transition:animate="fade">
-                <article class="max-w-[38rem] w-full anime-fade-in-up">
+                <article class="max-w-[38rem] w-full">
                     <!-- Timeline Header -->
-                    <header
-                        class="mb-10 text-center border-b border-[var(--border-main)] pb-8"
-                    >
+                    <header class="mb-10">
+                        <h1 class="text-3xl md:text-4xl font-bold font-heading mb-4">
+                            {entry.data.title}
+                        </h1>
                         <time
                             datetime={entry.data.pubDate.toISOString().slice(0, 10)}
-                            class="font-mono text-xs text-[var(--text-muted)] uppercase tracking-widest mb-4 block"
+                            class="block font-mono text-xs text-[var(--text-faint)]"
                         >
                             {formatDateLong(entry.data.pubDate)}
                         </time>
-                        <h1 class="text-3xl md:text-5xl font-bold font-heading mb-6">
-                            {entry.data.title}
-                        </h1>
-
-                        {entry.data.tags.length > 0 && (
-                            <p class="text-xs font-mono text-[var(--text-muted)]">
-                                {entry.data.tags.map((tag) => tag.toLowerCase()).join(" · ")}
-                            </p>
-                        )}
                     </header>
 
                     <!-- Content -->
@@ -126,11 +110,11 @@ const shareImage =
                     {(older || newer) && (
                         <nav
                             aria-label="More from the timeline"
-                            class="mt-16 pt-6 border-t border-[var(--border-main)] grid gap-6 md:grid-cols-2"
+                            class="mt-16 grid gap-6 md:grid-cols-2"
                         >
                             {older && (
                                 <a href={`/timeline/${older.id}/`} rel="prev" class="group block">
-                                    <span class="block font-mono text-xs uppercase tracking-wider text-[var(--text-faint)]">
+                                    <span class="block font-mono text-xs text-[var(--text-faint)]">
                                         ← Older
                                     </span>
                                     <span class="mt-1 block text-[var(--text-main)] group-hover:underline decoration-1 underline-offset-4">
@@ -140,7 +124,7 @@ const shareImage =
                             )}
                             {newer && (
                                 <a href={`/timeline/${newer.id}/`} rel="next" class="group block md:col-start-2 md:text-right">
-                                    <span class="block font-mono text-xs uppercase tracking-wider text-[var(--text-faint)]">
+                                    <span class="block font-mono text-xs text-[var(--text-faint)]">
                                         Newer →
                                     </span>
                                     <span class="mt-1 block text-[var(--text-main)] group-hover:underline decoration-1 underline-offset-4">

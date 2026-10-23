@@ -59,10 +59,7 @@
     font-size: 16px;
   }
 
-  /*
-   * The "Line" Aesthetic
-   * All borders are solid 1px by default
-   */
+  /* Default colour for Tailwind border utilities (tailwind.config sets #000000). */
   *,
   *::before,
   *::after {
@@ -82,28 +79,6 @@
 
 @layer components {
 
-  /* 
-   * Structural Grid 
-   * A utility to create the "spreadsheet" or "blueprint" look 
-   */
-  .grid-lines {
-    @apply border-l border-t border-main;
-  }
-
-  .grid-lines>* {
-    @apply border-r border-b border-main;
-  }
-
-  /* Minimalist Interactive Elements */
-  .hover-invert {
-    @apply transition-colors duration-200;
-  }
-
-  .hover-invert:hover {
-    background-color: var(--text-main);
-    color: var(--bg-body);
-  }
-
   /* Hide legacy iframes in markdown content since we have a global player */
   .post-content iframe {
     display: none !important;
@@ -119,21 +94,6 @@
     display: none;
   }
 
-  .anime-fade-in-up {
-    animation: fadeInUp 0.5s ease-out;
-  }
-
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
   /*
    * Bottom padding that clears the iOS/Android home indicator for the fixed
    * mobile audio player. Requires viewport-fit=cover (set in the layout head).
@@ -141,11 +101,47 @@
   .safe-area-inset-bottom {
     padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
   }
+
+  /*
+   * A vertical line with one dot per entry, for dated lists (timeline, project
+   * updates). Each entry is position: relative; its dot sits on the line, level
+   * with the entry's 12px date line, and fills on hover.
+   */
+  .spine {
+    --spine-gap: 1.25rem;
+    border-left: 1px solid var(--border-main);
+    padding-left: var(--spine-gap);
+  }
+
+  @media (min-width: 768px) {
+    .spine {
+      --spine-gap: 2rem;
+    }
+  }
+
+  .spine-dot {
+    position: absolute;
+    top: 0.25rem;
+    /* Back across the padding, the 1px border, and half the 8px dot. */
+    left: calc(-1 * var(--spine-gap) - 4.5px);
+    width: 8px;
+    height: 8px;
+    border: 1px solid var(--text-main);
+    border-radius: 9999px;
+    background: var(--bg-body);
+    transition: background-color 0.2s ease;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    a:hover > .spine-dot {
+      background: var(--text-main);
+    }
+  }
 }
 
 /*
- * Respect users who ask for less motion: neutralize entry animations,
- * view-transition crossfades, hover scaling, and smooth scrolling.
+ * Respect users who ask for less motion: neutralize animations, transitions,
+ * view-transition crossfades, and smooth scrolling.
  */
 @media (prefers-reduced-motion: reduce) {
   *,

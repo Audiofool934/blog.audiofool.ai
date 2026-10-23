@@ -5,6 +5,7 @@ import { Image, getImage } from "astro:assets";
 import GalleryToolbar from "../../components/gallery/GalleryToolbar.astro";
 import GalleryViewer from "../../components/gallery/GalleryViewer.astro";
 import { galleryCategories } from "../../data/galleryCategories";
+import { formatDateCompact } from "../../utils/formatDate";
 
 const galleryItems = await getCollection("gallery");
 
@@ -48,11 +49,6 @@ const featuredCount = sortedGallery.filter(
     (item) => item.data.featured,
 ).length;
 
-const categories = galleryCategories.map((name) => ({
-    name,
-    count: sortedGallery.filter((item) => item.data.category === name).length,
-}));
-
 // Build metadata JSON for modal
 function buildMeta(item: (typeof sortedGallery)[0], modalImages: string[]) {
     const d = item.data;
@@ -68,7 +64,9 @@ function buildMeta(item: (typeof sortedGallery)[0], modalImages: string[]) {
         title: d.title,
         image: modalImages[0],
         images: modalImages,
+        // ISO for sorting; the label matches the cards.
         date: d.date.toISOString().split("T")[0],
+        dateLabel: formatDateCompact(d.date),
         location: d.location || "",
         camera: d.camera || "",
         lens: d.lens || "",
@@ -82,16 +80,18 @@ function buildMeta(item: (typeof sortedGallery)[0], modalImages: string[]) {
 <MinimalLayout title="Gallery | Audiofool" description="Obscured by Clouds">
     <div class="p-6 md:p-12" transition:animate="fade">
         <!-- Header -->
-        <div class="mb-4 md:mb-8">
+        <div class="mb-10">
             <h1 class="text-4xl font-bold font-heading mb-2">Gallery</h1>
-            <p
-                class="font-mono text-sm text-[var(--text-muted)] tracking-wider uppercase"
-            >
+            <p class="font-mono text-sm text-[var(--text-muted)]">
                 Obscured by Clouds
             </p>
         </div>
 
-        <GalleryToolbar total={sortedGallery.length} {featuredCount} {categories} />
+        <GalleryToolbar
+            total={sortedGallery.length}
+            {featuredCount}
+            categories={galleryCategories}
+        />
 
         <!-- Masonry Layout -->
         <div class="gallery-masonry">
@@ -105,7 +105,7 @@ function buildMeta(item: (typeof sortedGallery)[0], modalImages: string[]) {
                         role="button"
                         tabindex="0"
                         aria-label={`View ${item.data.title}`}
-                        class="gallery-item group block mb-4 break-inside-avoid border border-[var(--border-main)] overflow-hidden cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--text-main)]"
+                        class="gallery-item block mb-8 break-inside-avoid cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--text-main)]"
                     >
                         <Image
                             src={item.data.image}
@@ -113,28 +113,22 @@ function buildMeta(item: (typeof sortedGallery)[0], modalImages: string[]) {
                             width={640}
                             widths={[320, 480, 640, 960]}
                             sizes="(min-width: 1440px) 350px, (min-width: 1024px) calc((100vw - 388px) / 3), (min-width: 768px) calc((100vw - 372px) / 2), (min-width: 640px) calc((100vw - 68px) / 2), calc(100vw - 52px)"
-                            class="w-full h-auto block transition-transform duration-300 group-hover:scale-[1.03]"
+                            class="w-full h-auto block bg-[var(--border-subtle)]"
                             loading={i === 0 ? "eager" : "lazy"}
                             fetchpriority={i === 0 ? "high" : "auto"}
                             decoding="async"
                             quality={76}
                         />
-                        <div class="p-3 border-t border-[var(--border-main)]">
+                        <div class="pt-2">
                             <h3 class="font-bold text-sm truncate">
                                 {item.data.title}
                             </h3>
-                            <div class="flex items-center justify-between mt-1">
-                                <span class="font-mono text-[10px] text-[var(--text-muted)]">
-                                    {item.data.date
-                                        .toISOString()
-                                        .split("T")[0]}
-                                </span>
-                                {item.data.location && (
-                                    <span class="font-mono text-[10px] text-[var(--text-muted)] truncate ml-2">
-                                        {item.data.location}
-                                    </span>
+                            {/* The date stays whole and keeps its dot; a long location wraps between words. */}
+                            <p class="mt-1 font-mono text-xs text-[var(--text-faint)]">
+                                <time class="whitespace-nowrap" datetime={item.data.date.toISOString().slice(0, 10)}>{formatDateCompact(item.data.date)}</time>{item.data.location && (
+                                    <>{"\u00a0· "}{item.data.location}</>
                                 )}
-                            </div>
+                            </p>
                         </div>
                         {/* Hidden body for modal */}
                         <div class="gallery-body hidden">

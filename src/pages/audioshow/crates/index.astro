@@ -11,43 +11,40 @@ const crateCount = audioshowCrates.length;
     description="Is there anybody in there?"
 >
     <div class="p-6 md:p-12 md:mb-20" transition:animate="fade">
-        <div class="mb-8">
+        <div class="mb-10">
             <h1 class="text-4xl font-bold font-heading mb-2">AudioShow Crates</h1>
-            <p class="font-mono text-sm text-[var(--text-muted)] tracking-wider">
+            <p class="font-mono text-sm text-[var(--text-muted)]">
                 Is there anybody in there?
             </p>
         </div>
 
-        <div class="flex gap-4 mb-10 text-sm font-mono border-b border-[var(--border-main)] pb-4">
+        <div class="flex flex-wrap gap-x-3 gap-y-3 mb-10 font-mono text-sm">
             <a
                 href="/audioshow/"
                 class="py-1.5 -my-1.5 text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors"
             >
-                [ Recent ]
+                <span aria-hidden="true">[ </span>Recent<span aria-hidden="true"> ]</span>
             </a>
-            <span class="text-[var(--text-main)] underline decoration-1 underline-offset-4">
-                [ Crates ]
+            <span class="text-[var(--text-main)] underline decoration-1 underline-offset-4" aria-current="page">
+                <span aria-hidden="true">[ </span>Crates<span aria-hidden="true"> ]</span>
             </span>
             <a
                 href="/audioshow/archive/"
                 class="py-1.5 -my-1.5 text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors"
             >
-                [ Archive ]
+                <span aria-hidden="true">[ </span>Archive<span aria-hidden="true"> ]</span>
             </a>
         </div>
 
-        <section class="space-y-6">
+        <section class="space-y-10 md:space-y-12">
             {audioshowCrates.map((crate, index) => (
                 <article
-                    class="crate-card cursor-pointer border border-[var(--border-main)] bg-[var(--bg-body)] transition-colors"
+                    class="group cursor-pointer"
                     data-crate-card
                     data-crate-url={`/audioshow/crates/${crate.slug}/`}
-                    tabindex="0"
-                    role="link"
-                    aria-label={`Open ${crate.title}`}
                 >
-                    <div class="grid gap-5 md:p-4 md:grid-cols-[160px_1fr] md:gap-6">
-                        <div class="aspect-square overflow-hidden border border-[var(--border-main)] bg-neutral-100 dark:bg-neutral-900">
+                    <div class="grid gap-5 md:grid-cols-[160px_1fr] md:gap-6">
+                        <div class="aspect-square overflow-hidden bg-neutral-100 dark:bg-neutral-900">
                             <img
                                 src={audioImage(crate.cover, 320) || crate.cover}
                                 srcset={audioImageSrcset(crate.cover, [96, 320])}
@@ -64,39 +61,35 @@ const crateCount = audioshowCrates.length;
                         </div>
 
                         <div class="min-w-0">
-                            <div class="mb-3 flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-xs uppercase tracking-wider text-[var(--text-muted)]">
-                                <span>Crate {crate.number}</span>
-                                <span>{crate.trackCount} {crate.trackCount === 1 ? "track" : "tracks"}</span>
-                                <span>{crate.duration}</span>
-                                <span>{crate.updated}</span>
-                            </div>
+                            <p class="mb-2 font-mono text-xs text-[var(--text-faint)]">
+                                <span class="whitespace-nowrap">Crate {crate.number}</span> · <span class="whitespace-nowrap">{crate.trackCount} {crate.trackCount === 1 ? "track" : "tracks"}</span> · <span class="whitespace-nowrap">{crate.duration}</span> · <span class="whitespace-nowrap">{crate.updated}</span>
+                            </p>
 
                             <h2 class="mb-2 text-2xl font-bold font-heading leading-tight">
-                                {crate.title}
+                                <a
+                                    href={`/audioshow/crates/${crate.slug}/`}
+                                    class="group-hover:underline focus-visible:underline decoration-1 underline-offset-4"
+                                >
+                                    {crate.title}
+                                </a>
                             </h2>
 
                             <p class="mb-4 max-w-3xl text-sm md:text-base text-[var(--text-muted)] leading-relaxed">
                                 {crate.premise}
                             </p>
 
-                            <div class="mb-5 flex flex-wrap gap-2">
-                                {crate.tags.map((tag) => (
-                                    <span class="border border-[var(--border-main)] px-2 py-1 font-mono text-xs text-[var(--text-muted)]">
-                                        {tag}
-                                    </span>
-                                ))}
-                            </div>
+                            <p class="mb-4 font-mono text-xs text-[var(--text-faint)]">
+                                {crate.tags.join(", ")}
+                            </p>
 
-                            <div class="flex flex-wrap gap-3 font-mono text-xs">
-                                <a
-                                    href={crate.spotifyUrl}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    class="py-2 -my-2 text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors"
-                                >
-                                    Spotify ->
-                                </a>
-                            </div>
+                            <a
+                                href={crate.spotifyUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                class="inline-block py-1.5 -my-1.5 font-mono text-sm text-[var(--text-muted)] underline decoration-1 underline-offset-4 hover:text-[var(--text-main)] transition-colors"
+                            >
+                                Spotify<span aria-hidden="true"> ↗</span><span class="sr-only"> (external)</span>
+                            </a>
                         </div>
                     </div>
                 </article>
@@ -108,65 +101,21 @@ const crateCount = audioshowCrates.length;
                 <p>No crates filed yet.</p>
             </div>
         )}
-
-        <div class="mt-12 pt-8 border-t border-[var(--border-main)]">
-            <a
-                href="/audioshow/"
-                class="text-sm font-mono text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors"
-            >
-                Back to Recent
-            </a>
-        </div>
     </div>
 </MinimalLayout>
 
 <script>
     import { navigate } from "astro:transitions/client";
 
+    // The title is the crate link; a click elsewhere on the crate opens it too, as a pointer convenience.
     document.addEventListener("astro:page-load", () => {
         document.querySelectorAll<HTMLElement>("[data-crate-card]").forEach((card) => {
-            const openCrate = () => {
-                const url = card.dataset.crateUrl;
-                if (url) navigate(url);
-            };
-
             card.addEventListener("click", (event) => {
                 const target = event.target;
                 if (target instanceof Element && target.closest("a")) return;
-                openCrate();
-            });
-
-            card.addEventListener("keydown", (event) => {
-                const keyboardEvent = event as KeyboardEvent;
-                if (keyboardEvent.key !== "Enter" && keyboardEvent.key !== " ") return;
-                event.preventDefault();
-                openCrate();
+                const url = card.dataset.crateUrl;
+                if (url) navigate(url);
             });
         });
     });
 </script>
-
-<style>
-    /* Phones: the cover keeps the only frame; a top rule separates crates. */
-    @media (max-width: 767px) {
-        .crate-card {
-            border-width: 1px 0 0;
-            padding-top: 1.5rem;
-        }
-        .crate-card:first-child {
-            border-top-width: 0;
-            padding-top: 0;
-        }
-    }
-
-    @media (min-width: 768px) {
-        .crate-card:hover {
-            border-color: var(--text-main);
-        }
-    }
-
-    .crate-card:focus-visible {
-        outline: 2px solid var(--text-main);
-        outline-offset: 4px;
-    }
-</style>

@@ -88,7 +88,13 @@ Use `entry.id`, `render(entry)` from `astro:content`, and `getStaticPaths()` for
 
 ## UI, Theme, and Accessibility
 
-- Preserve the minimal archival style: thin borders, compact metadata, square cards, and restrained interaction.
+- Keep the minimal style: content sits directly on the page, and whitespace, size, weight, and the three text tokens do the separating; do not add borders, rules, boxes, chips, shadows, framed cards, or decorative hover effects.
+  Keep a line only where it gives structure the reader uses, such as the `.spine` line and entry dots on dated lists (Timeline, Projects; `src/style/global.css`); remove lines that are only visual effect.
+- Titles use `--text-main`, sentences `--text-muted`, and metadata `--text-faint`; visible text is at least 12px.
+- Metadata is one line: fields joined by ` · `, items within a field by `, `; uppercase and tracking only for dates and short enums (lane, kind, status); authored text keeps its case. Lists use `formatDateCompact`, detail headers `formatDateLong`.
+- Do not show counts of items already visible, provenance labels (GitHub push, README sync), or labels that restate a value or the page title; section labels use the homepage "Selected" style.
+- Mark the current filter, tab, or view with `--text-main` and a 1px underline, never a fill, box, or weight change; buttons expose `aria-pressed`, and tab links `aria-current="page"`.
+- Filter, view, and tab controls use the sidebar's `[ Label ]` form, with the brackets `aria-hidden`; standalone links use plain words, and off-site links end with ↗ plus sr-only "(external)".
 - Use existing CSS variables for colors: `--bg-body`, `--text-main`, `--text-muted`, `--text-faint`, `--border-main`, `--border-subtle`, and `--accent`.
 - Resolve theme before first paint: dark by default, regardless of system preference; only an explicit `localStorage.theme` of `light` from the toggle overrides it.
 - Keep both themes working and initialization consistent with transition handling in `MinimalLayout.astro`.
@@ -100,7 +106,9 @@ Use `entry.id`, `render(entry)` from `astro:content`, and `getStaticPaths()` for
 - Use `.post-content` for rendered Markdown and `.wiki-content` for denser notes; extend shared styles before adding one-off rules.
 - Text blocks in `.post-content` are capped at about 38rem for a 70-80 character measure; tables, code, images, and display math keep the full column.
 - Keep tables, code, and display math horizontally scrollable within their containers, without page overflow.
-- Preserve custom scrollbar styling and `.post-content .katex { position: relative; }`, which contains hidden MathML inside scrolling equations and tables.
+- Markdown tables use one header rule and faint row lines, with no vertical lines, fills, or uppercase headers; headings, images, inline code, and code blocks have no borders, and the Prism fill is a code block's only edge.
+- Notes and Gallery also apply Tailwind Typography `prose`; `post.css` sets explicit values for the borders and pseudo-content `prose` adds (table rows, blockquote border, inline-code backticks).
+- Preserve custom scrollbar colors, size, and thumb (the track has no border), and `.post-content .katex { position: relative; }`, which contains hidden MathML inside scrolling equations and tables.
 - Pass `math={hasMath}` for math notes so `SiteHead` loads local, package-matched KaTeX CSS and font preloads only when needed; keep fonts out of inline CSS.
 - `src/utils/rehypeImages.mjs`, registered in `astro.config.mjs`, adds lazy loading and async decoding to Markdown and raw HTML images, plus responsive local AudioShow variants and remote referrer policies.
   Local Markdown images get srcset widths and `sizes`; the first image in a document loads eagerly with high fetch priority.
@@ -124,7 +132,7 @@ Use `entry.id`, `render(entry)` from `astro:content`, and `getStaticPaths()` for
 - Optional batch fields include `Audio Preview` / `Preview Audio`, `Project Links`, and a fourth metadata bullet for composer.
 - The player UI is `src/components/AudioPlayer.astro`; `src/scripts/audioPlayer.ts` coordinates the typed queue, provider, artwork, and view modules in `src/scripts/audio/`.
 - Player title and artist text live in one inner span; write it with `setMarqueeText()` from `src/scripts/audio/marquee.ts`, which scrolls overflowing text once per track and never moves under reduced motion.
-- `src/utils/rehypeAudioPreview.mjs` moves an episode's `Audio Preview` URL onto its cover as `data-audio-url` and removes the raw link paragraph.
+- `src/utils/rehypeAudioPreview.mjs` moves an episode's `Audio Preview` URL onto its cover as `data-audio-url` and removes the raw link paragraph; it also renders episode headings as "EP 51" and drops the "Project Links" label above a link list, leaving the Markdown unchanged for the parser.
 - Author artwork with `data-audio-url`; `src/scripts/audio/batch.ts` binds accessible playback after page load.
 - Keep each crate in `src/data/audioshow-crates/`, using its shared types; register it in `src/data/audioshowCrates.ts`.
 - Preserve `transition:persist` on `#audio-player-bar` and state on `window.__audioPlayerState` across navigation.
@@ -139,7 +147,7 @@ Use `entry.id`, `render(entry)` from `astro:content`, and `getStaticPaths()` for
 - Run the relevant parser fixtures, Astro/TypeScript diagnostics, or production build from the command list above.
 - For rendered changes, inspect desktop and mobile in a dev or production preview, including the real interaction path.
 - The dev server can keep serving a component's previous `<style>` block after an edit; restart it before judging a style change.
-- For typography, check `/notes/policy-gradient/` with its math and table; verify document overflow and container scrolling separately.
+- For typography, check `/notes/policy-gradient/` with its math and table, and `/projects/muse/` for README tables, code, and rules; verify document overflow and container scrolling separately.
 - For route or data changes, check both the relevant index and detail page.
 - Fix related failures and report unrelated failures without expanding scope.
 - Pull-request CI runs types, parser and unit checks, a production build, route validation, browser interactions, and performance budgets before deployment is eligible.

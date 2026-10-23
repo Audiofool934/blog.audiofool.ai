@@ -159,6 +159,19 @@ export function parseEpisodesFromMarkdown(markdown: string, sourceFile: string):
 }
 
 /**
+ * Name a batch by the episodes it holds ("201-225"), as the archive names its
+ * ranges, so a partial batch does not promise episodes that do not exist.
+ * Falls back to the authored range when no episode parses (EP 0).
+ */
+export function batchEpisodeRange(markdown: string, sourceFile: string, fallback: string): string {
+    const numbers = parseEpisodesFromMarkdown(markdown, sourceFile).map((episode) => episode.number);
+    if (numbers.length === 0) return fallback;
+    const first = Math.min(...numbers);
+    const last = Math.max(...numbers);
+    return first === last ? `${first}` : `${first}-${last}`;
+}
+
+/**
  * Sort episodes by number descending (most recent first)
  */
 export function sortEpisodesDesc(episodes: Episode[]): Episode[] {

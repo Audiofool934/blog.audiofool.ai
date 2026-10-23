@@ -11,8 +11,6 @@ githubRepo: 'Audiofool934/Can-You-See-The-Music'
 githubReadme: true
 ---
 
-## Overview
-
 **Can You See The Music** is a music data visualization project.
 
 It studies music through direct and indirect attributes: lyrics, audio features, albums, artists, release time, sentiment, genre, playlists, and popularity. The project treats music as both sound and data, then asks what becomes visible when those layers are organized together.

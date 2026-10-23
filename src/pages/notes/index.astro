@@ -1,6 +1,7 @@
 ---
 import MinimalLayout from "../../layouts/MinimalLayout.astro";
 import { getCollection } from "astro:content";
+import { formatDateCompact } from "../../utils/formatDate";
 
 const wikiEntries = await getCollection("wiki");
 
@@ -19,118 +20,74 @@ const sorted = [...wikiEntries].sort((a, b) => {
     return dateB - dateA;
 });
 
-// Entry lookup
-const entryMap = new Map(sorted.map((e) => [e.id, e]));
-
-// Bidirectional connection count
-const connections = new Map<string, Set<string>>();
-for (const entry of sorted) {
-    if (!connections.has(entry.id)) connections.set(entry.id, new Set());
-    for (const id of [
-        ...(entry.data.parents || []),
-        ...(entry.data.related || []),
-    ]) {
-        if (!entryMap.has(id)) continue;
-        connections.get(entry.id)!.add(id);
-        if (!connections.has(id)) connections.set(id, new Set());
-        connections.get(id)!.add(entry.id);
-    }
-}
-
 const kindOrder = ["Concept", "Method", "Model", "Essay", "Reference"];
-const kindCounts = new Map<string, number>();
-for (const entry of sorted) {
-    kindCounts.set(entry.data.kind, (kindCounts.get(entry.data.kind) || 0) + 1);
-}
+const kinds = new Set<string>(sorted.map((entry) => entry.data.kind));
 const filters = kindOrder
-    .filter((kind) => kindCounts.has(kind))
-    .map((kind) => ({ key: kind.toLowerCase(), label: kind, count: kindCounts.get(kind)! }));
+    .filter((kind) => kinds.has(kind))
+    .map((kind) => ({ key: kind.toLowerCase(), label: kind }));
 
 function getDate(entry: (typeof sorted)[0]) {
-    const d = entry.data.updatedDate || entry.data.pubDate;
-    return d ? d.toISOString().split("T")[0] : "";
-}
-
-function getConnectionCount(id: string) {
-    return connections.get(id)?.size || 0;
+    return entry.data.updatedDate || entry.data.pubDate;
 }
 ---
 
 <MinimalLayout title="Notes | Audiofool" description="Personal notes and working ideas">
     <div class="p-6 md:p-12 md:mb-20" transition:animate="fade">
-        <header class="mb-8">
-            <h1 class="text-4xl font-bold font-heading mb-2">Notes</h1>
-            <p
-                class="font-mono text-sm text-[var(--text-muted)] tracking-wider uppercase"
-            >
-                {sorted.length} entries · personal notes and working ideas
-            </p>
+        <header class="mb-10">
+            <h1 class="text-4xl font-bold font-heading">Notes</h1>
         </header>
 
         <!-- Kind Filters -->
-        <div
-            class="flex flex-wrap gap-3 pb-4 mb-8 border-b border-[var(--border-main)] text-sm font-mono"
-        >
+        <div class="flex flex-wrap gap-x-3 gap-y-3 mb-10 font-mono text-sm">
             <button
                 type="button"
                 data-kind="all"
                 aria-pressed="true"
                 class="note-kind active whitespace-nowrap py-1.5 -my-1.5 transition-colors"
             >
-                [ All <span class="text-[var(--text-faint)]">{sorted.length}</span> ]
+                <span aria-hidden="true">[ </span>All<span aria-hidden="true"> ]</span>
             </button>
             {
-                filters.map(({ key, label, count }) => (
+                filters.map(({ key, label }) => (
                     <button
                         type="button"
                         data-kind={key}
                         aria-pressed="false"
                         class="note-kind whitespace-nowrap py-1.5 -my-1.5 transition-colors"
                     >
-                        [ {label}{" "}
-                        <span class="text-[var(--text-faint)]">{count}</span> ]
+                        <span aria-hidden="true">[ </span>{label}<span aria-hidden="true"> ]</span>
                     </button>
                 ))
             }
         </div>
 
         <!-- Entry List -->
-        <div id="note-entries">
+        <div id="note-entries" class="max-w-2xl">
             {
                 sorted.map((entry) => {
-                    const connCount = getConnectionCount(entry.id);
+                    const date = getDate(entry);
                     return (
                         <a
                             href={`/notes/${entry.id}/`}
-                            class="note-entry group block py-3.5 border-b border-[var(--border-subtle)] hover:border-[var(--border-main)] transition-colors"
+                            class="note-entry group block mb-8"
                             data-kind={entry.data.kind.toLowerCase()}
                         >
-                            <div class="grid grid-cols-[5.5rem_minmax(0,1fr)_auto] gap-4 items-start">
-                                <span class="font-mono text-[11px] uppercase tracking-wider text-[var(--text-faint)] pt-1">
-                                    {entry.data.kind}
-                                </span>
-                                <div class="min-w-0">
-                                    <h2 class="font-bold text-[15px] group-hover:underline decoration-1 underline-offset-4">
-                                        {entry.data.title}
-                                    </h2>
-                                    <div class="flex flex-wrap items-baseline gap-x-2 gap-y-1 mt-1.5 font-mono text-[11px] text-[var(--text-faint)]">
-                                        {/* Commas end each tag, so a wrapped row always starts with a tag. */}
-                                        {entry.data.tags.map((tag, i) => (
-                                            <span class="whitespace-nowrap">
-                                                {tag.toLowerCase()}{i < entry.data.tags.length - 1 && ","}
-                                            </span>
-                                        ))}
-                                        {connCount > 0 && (
-                                            <span class="whitespace-nowrap">
-                                                ({connCount} {connCount === 1 ? "link" : "links"})
-                                            </span>
-                                        )}
-                                    </div>
-                                </div>
-                                <span class="flex-shrink-0 font-mono text-[11px] text-[var(--text-faint)] pt-0.5">
-                                    {getDate(entry)}
-                                </span>
-                            </div>
+                            <p class="font-mono text-xs uppercase tracking-wider text-[var(--text-faint)]">
+                                {date && (
+                                    <>
+                                        <time datetime={date.toISOString().split("T")[0]}>{formatDateCompact(date)}</time> ·{" "}
+                                    </>
+                                )}
+                                {entry.data.kind}
+                            </p>
+                            <h2 class="mt-2 font-sans text-base font-semibold text-[var(--text-main)] group-hover:underline decoration-1 underline-offset-4">
+                                {entry.data.title}
+                            </h2>
+                            {entry.data.description && (
+                                <p class="mt-1 font-sans text-sm leading-relaxed text-[var(--text-muted)]">
+                                    {entry.data.description}
+                                </p>
+                            )}
                         </a>
                     );
                 })
@@ -159,27 +116,6 @@ function getConnectionCount(id: string) {
         text-decoration: underline;
         text-underline-offset: 4px;
         text-decoration-thickness: 1px;
-    }
-    /* Phones: kind and date share the first line; the title and tags use the full width below. */
-    @media (max-width: 640px) {
-        .note-entry > div {
-            grid-template-columns: minmax(0, 1fr) auto;
-            grid-template-areas:
-                "kind date"
-                "body body";
-            row-gap: 0.375rem;
-        }
-        .note-entry > div > span:first-child {
-            grid-area: kind;
-            padding-top: 0;
-        }
-        .note-entry > div > div {
-            grid-area: body;
-        }
-        .note-entry > div > span:last-child {
-            grid-area: date;
-            padding-top: 0;
-        }
     }
 </style>
 

@@ -11,8 +11,6 @@ githubRepo: "Audiofool934/sketches"
 githubReadme: true
 ---
 
-## Overview
-
 Coded animation sketches. One independent branch per piece. 2D canvas by default.
 
 See the public repository below for setup, usage, and current development status.

@@ -11,8 +11,6 @@ githubRepo: 'Audiofool934/dsp-final'
 githubReadme: true
 ---
 
-## Overview
-
 **ESC-50 Sound Classification & Retrieval** is a hands-on audio DSP project.
 
 The project implements the feature pipeline from scratch — FFT, STFT, mel filterbanks, log-mel features, and MFCCs — then compares those hand-built representations with pretrained audio models on classification and retrieval tasks.

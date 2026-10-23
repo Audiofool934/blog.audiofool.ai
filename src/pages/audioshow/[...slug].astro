@@ -12,9 +12,12 @@ export async function getStaticPaths() {
 }
 
 import { formatDateLong } from "../../utils/formatDate";
+import { batchEpisodeRange } from "../../utils/parseAudioshow";
 
 const { entry } = Astro.props;
 const { Content } = await render(entry);
+
+const episodeLabel = batchEpisodeRange(entry.body ?? "", entry.id, String(entry.data.episode));
 
 const ogImage =
     (typeof entry.data.image === "string"
@@ -23,47 +26,40 @@ const ogImage =
 ---
 
 <MinimalLayout
-    title={`EP ${entry.data.episode}: ${entry.data.title}`}
+    title={`EP ${episodeLabel}: ${entry.data.title}`}
     section="AudioShow"
     description={entry.data.description ??
-        `AudioShow Episode ${entry.data.episode} — ${entry.data.title}`}
+        `AudioShow Episode ${episodeLabel} — ${entry.data.title}`}
     image={ogImage}
-    imageAlt={`AudioShow EP ${entry.data.episode} cover art`}
+    imageAlt={`AudioShow EP ${episodeLabel} cover art`}
     ogType="article"
     datePublished={entry.data.pubDate}
 >
-    <div class="p-6 md:p-12 md:mb-20 max-w-5xl mx-auto" transition:animate="fade">
-        <!-- Back Link -->
+    <div class="p-6 md:p-12 md:mb-20 max-w-4xl mx-auto" transition:animate="fade">
+        <!-- Back link on phones only; from md up the sidebar marks and links the section. -->
         <a
             href="/audioshow/"
-            class="font-mono text-sm text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors mb-8 inline-block"
+            class="md:hidden inline-block py-3 -mt-3 mb-6 font-mono text-sm text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors"
         >
-            ← Back to Episodes
+            <span aria-hidden="true">← </span>AudioShow
         </a>
 
-        <article class="max-w-4xl mx-auto">
+        <article>
             <!-- Header -->
-            <header
-                class="mb-10 border-b border-[var(--border-main)] pb-8 text-center"
-            >
-                <div class="flex items-center justify-center gap-4 mb-4">
-                    <span
-                        class="font-mono text-xs px-3 py-1 border border-[var(--border-main)]"
-                    >
-                        EP {entry.data.episode}
-                    </span>
-                    <time class="font-mono text-xs text-[var(--text-muted)]">
-                        {formatDateLong(entry.data.pubDate)}
-                    </time>
-                </div>
-
-                <h1 class="text-3xl md:text-4xl font-bold font-heading mb-4">
-                    {entry.data.title}
+            <header class="mb-10 text-center">
+                <h1 class="text-3xl md:text-4xl font-bold font-heading mb-2">
+                    EP {episodeLabel}
                 </h1>
+                <time
+                    datetime={entry.data.pubDate.toISOString().slice(0, 10)}
+                    class="block font-mono text-xs text-[var(--text-faint)]"
+                >
+                    {formatDateLong(entry.data.pubDate)}
+                </time>
 
                 {
                     entry.data.description && (
-                        <p class="text-lg text-[var(--text-muted)] leading-relaxed max-w-2xl mx-auto">
+                        <p class="mt-4 text-lg text-[var(--text-muted)] leading-relaxed max-w-2xl mx-auto">
                             {entry.data.description}
                         </p>
                     )
@@ -83,8 +79,9 @@ const ogImage =
 </script>
 
 <style>
-    /* Center images in AudioShow posts */
+    /* Center images in AudioShow posts. No frame; the fill marks a cover's slot while it loads. */
     .post-content :global(img) {
+        background-color: var(--border-subtle);
         margin-left: auto;
         margin-right: auto;
         margin-top: 1rem; /* Close to EP header above */

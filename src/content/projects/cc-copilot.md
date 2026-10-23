@@ -14,8 +14,6 @@ githubRepo: 'Audiofool934/cc-copilot'
 githubReadme: true
 ---
 
-## Overview
-
 **CC-Copilot** is a supervision layer for AI coding agents.
 
 It treats long-running coding sessions as something that needs its own cockpit: a way to see what happened, ask grounded questions, compare sessions, and decide whether the work is ready for a human move.

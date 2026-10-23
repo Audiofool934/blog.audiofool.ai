@@ -33,39 +33,32 @@ const cratePlaylist = crate.tracks.map((track) => ({
     ogType="music.playlist"
 >
     <div class="p-6 md:p-12 md:mb-20" transition:animate="fade">
-        <!-- Index heading: kept on desktop for continuity, hidden on phones so the crate title leads the first screen. -->
-        <div class="mb-8 hidden md:block">
-            <p class="text-4xl font-bold font-heading mb-2">AudioShow Crates</p>
-            <p class="font-mono text-sm text-[var(--text-muted)] tracking-wider">
-                Is there anybody in there?
-            </p>
-        </div>
-
-        <div class="flex gap-4 mb-10 text-sm font-mono border-b border-[var(--border-main)] pb-4">
+        <div class="flex flex-wrap gap-x-3 gap-y-3 mb-10 font-mono text-sm">
             <a
                 href="/audioshow/"
-                class="text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors"
+                class="py-1.5 -my-1.5 text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors"
             >
-                [ Recent ]
+                <span aria-hidden="true">[ </span>Recent<span aria-hidden="true"> ]</span>
             </a>
             <a
                 href="/audioshow/crates/"
-                class="text-[var(--text-main)] underline decoration-1 underline-offset-4"
+                class="py-1.5 -my-1.5 text-[var(--text-main)] underline decoration-1 underline-offset-4"
+                aria-current="true"
             >
-                [ Crates ]
+                <span aria-hidden="true">[ </span>Crates<span aria-hidden="true"> ]</span>
             </a>
             <a
                 href="/audioshow/archive/"
-                class="text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors"
+                class="py-1.5 -my-1.5 text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors"
             >
-                [ Archive ]
+                <span aria-hidden="true">[ </span>Archive<span aria-hidden="true"> ]</span>
             </a>
         </div>
 
         <article data-audio-crate>
             <script is:inline type="application/json" id="crate-playlist" set:html={JSON.stringify(cratePlaylist).replace(/</g, "\\u003c")} />
-            <header class="mb-10 grid gap-6 border-b border-[var(--border-main)] pb-8 md:grid-cols-[220px_1fr] md:gap-8">
-                <div class="aspect-square overflow-hidden border border-[var(--border-main)] bg-neutral-100 dark:bg-neutral-900">
+            <header class="mb-10 grid gap-6 md:grid-cols-[220px_1fr] md:gap-8">
+                <div class="aspect-square overflow-hidden bg-neutral-100 dark:bg-neutral-900">
                     <img
                         src={audioImage(crate.cover, 320) || crate.cover}
                         srcset={audioImageSrcset(crate.cover, [96, 320])}
@@ -82,16 +75,13 @@ const cratePlaylist = crate.tracks.map((track) => ({
                 </div>
 
                 <div class="min-w-0 self-end">
-                    <div class="mb-3 flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-xs uppercase tracking-wider text-[var(--text-muted)]">
-                        <span>Crate {crate.number}</span>
-                        <span>{crate.trackCount} {crate.trackCount === 1 ? "track" : "tracks"}</span>
-                        <span>{crate.duration}</span>
-                        <span>{crate.updated}</span>
-                    </div>
-
-                    <h1 class="mb-3 text-3xl md:text-5xl font-bold font-heading leading-tight">
+                    <h1 class="mb-2 text-3xl md:text-4xl font-bold font-heading leading-tight">
                         {crate.title}
                     </h1>
+
+                    <p class="mb-5 font-mono text-xs text-[var(--text-faint)]">
+                        <span class="whitespace-nowrap">Crate {crate.number}</span> · <span class="whitespace-nowrap">{crate.trackCount} {crate.trackCount === 1 ? "track" : "tracks"}</span> · <span class="whitespace-nowrap">{crate.duration}</span> · <span class="whitespace-nowrap">{crate.updated}</span>
+                    </p>
 
                     <p class="mb-5 max-w-3xl text-base md:text-lg text-[var(--text-muted)] leading-relaxed">
                         {crate.premise}
@@ -101,37 +91,24 @@ const cratePlaylist = crate.tracks.map((track) => ({
                         {crate.curatorNote}
                     </p>
 
-                    <div class="flex flex-wrap gap-3 font-mono text-xs">
-                        <a
-                            href={crate.spotifyUrl}
-                            target="_blank"
-                            rel="noreferrer"
-                            class="border border-[var(--border-main)] px-3 py-2 text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--text-main)]/5 transition-colors"
-                        >
-                            Open full crate on Spotify
-                        </a>
-                        <a
-                            href="/audioshow/crates/"
-                            class="border border-[var(--border-main)] px-3 py-2 text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--text-main)]/5 transition-colors"
-                        >
-                            Back to Crates
-                        </a>
-                    </div>
+                    <a
+                        href={crate.spotifyUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        class="inline-block py-1.5 -my-1.5 font-mono text-sm text-[var(--text-muted)] underline decoration-1 underline-offset-4 hover:text-[var(--text-main)] transition-colors"
+                    >
+                        Open full crate on Spotify<span aria-hidden="true"> ↗</span><span class="sr-only"> (external)</span>
+                    </a>
                 </div>
             </header>
 
-            <div class="space-y-8">
+            <div class="space-y-12">
                 {groupedTracks.map((section) => (
-                    <section class="border border-[var(--border-main)]">
-                        <div class="border-b border-[var(--border-main)] p-4">
-                            <div class="flex flex-wrap items-baseline justify-between gap-3">
-                                <h2 class="text-xl font-bold font-heading">
-                                    {section.title}
-                                </h2>
-                                <span class="font-mono text-xs text-[var(--text-muted)]">
-                                    {section.tracks.length} {section.tracks.length === 1 ? "track" : "tracks"}
-                                </span>
-                            </div>
+                    <section>
+                        <div class="mb-3">
+                            <h2 class="text-xl font-bold font-heading">
+                                {section.title}
+                            </h2>
                             <p class="mt-2 max-w-3xl text-sm text-[var(--text-muted)] leading-relaxed">
                                 {section.note}
                             </p>
@@ -140,13 +117,13 @@ const cratePlaylist = crate.tracks.map((track) => ({
                         <div>
                             {section.tracks.map((track) => (
                                 <div
-                                    class="track-row group grid cursor-pointer grid-cols-[48px_minmax(0,1fr)_32px] gap-x-4 gap-y-1 border-b border-[var(--border-main)] p-4 transition-colors last:border-b-0 md:grid-cols-[56px_56px_minmax(0,1fr)_220px_40px] md:items-center md:gap-4"
+                                    class="track-row group grid cursor-pointer grid-cols-[48px_minmax(0,1fr)_32px] gap-x-4 gap-y-1 py-2.5 px-2 -mx-2 transition-colors md:grid-cols-[56px_56px_minmax(0,1fr)_220px_40px] md:items-center md:gap-4"
                                     data-crate-index={crate.tracks.indexOf(track)}
                                     tabindex="0"
                                     role="button"
                                     aria-label={`Play preview: ${track.title}`}
                                 >
-                                    <div class="row-span-2 h-12 w-12 overflow-hidden border border-[var(--border-main)] md:row-span-1 md:h-14 md:w-14">
+                                    <div class="row-span-2 h-12 w-12 overflow-hidden bg-[var(--border-subtle)] md:row-span-1 md:h-14 md:w-14">
                                         <img
                                             src={audioImage(track.cover, 96) || track.cover}
                                             srcset={audioImageSrcset(track.cover, [96, 192])}
@@ -166,16 +143,8 @@ const cratePlaylist = crate.tracks.map((track) => ({
                                     </div>
 
                                     <div class="min-w-0">
-                                        <div class="flex items-baseline gap-2 md:hidden">
-                                            <span class="font-mono text-xs text-[var(--text-muted)]">
-                                                {track.number.toString().padStart(2, "0")}
-                                            </span>
-                                            <h3 class="truncate font-bold leading-tight">
-                                                {track.title}
-                                            </h3>
-                                        </div>
-                                        <h3 class="hidden truncate font-bold leading-tight md:block">
-                                            {track.title}
+                                        <h3 class="truncate font-bold leading-tight">
+                                            <span class="font-mono text-xs font-normal text-[var(--text-muted)] md:hidden">{track.number.toString().padStart(2, "0")}</span> {track.title}
                                         </h3>
                                         <div class="truncate text-xs text-[var(--text-muted)]">
                                             {track.album} ({track.year})

@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from "astro:content";
 import MinimalLayout from "../../layouts/MinimalLayout.astro";
+import { formatDateLong } from "../../utils/formatDate";
 import "../../style/post.css";
 
 export async function getStaticPaths() {
@@ -39,31 +40,13 @@ const referencedBy = allWiki.filter(
             .includes(entry.id),
 );
 
-// Deduplicate across all three
+// Deduplicate across all three, parents first
 const seen = new Set<string>();
-const allConnections: {
-    entry: (typeof allWiki)[number];
-    type: "parent" | "related" | "incoming";
-}[] = [];
-
-for (const e of parentEntries) {
-    if (!seen.has(e.id)) {
-        seen.add(e.id);
-        allConnections.push({ entry: e, type: "parent" });
-    }
-}
-for (const e of relatedEntries) {
-    if (!seen.has(e.id)) {
-        seen.add(e.id);
-        allConnections.push({ entry: e, type: "related" });
-    }
-}
-for (const e of referencedBy) {
-    if (!seen.has(e.id)) {
-        seen.add(e.id);
-        allConnections.push({ entry: e, type: "incoming" });
-    }
-}
+const allConnections = [...parentEntries, ...relatedEntries, ...referencedBy].filter((e) => {
+    if (seen.has(e.id)) return false;
+    seen.add(e.id);
+    return true;
+});
 
 const noteDescription =
     entry.data.description ??
@@ -80,14 +63,13 @@ const ogImageAlt = ogImage
 
 // Header dates: "Published" only when it adds information beyond "Updated".
 const toISODate = (date: Date) => date.toISOString().split("T")[0];
-const updatedISO = entry.data.updatedDate && toISODate(entry.data.updatedDate);
-const publishedISO = entry.data.pubDate && toISODate(entry.data.pubDate);
-const headerDates: { label: string; date: string }[] = [];
-if (publishedISO && publishedISO !== updatedISO) {
-    headerDates.push({ label: "Published", date: publishedISO });
+const { pubDate, updatedDate, tags } = entry.data;
+const headerDates: { label: string; date: Date }[] = [];
+if (pubDate && (!updatedDate || toISODate(pubDate) !== toISODate(updatedDate))) {
+    headerDates.push({ label: "Published", date: pubDate });
 }
-if (updatedISO) {
-    headerDates.push({ label: "Updated", date: updatedISO });
+if (updatedDate) {
+    headerDates.push({ label: "Updated", date: updatedDate });
 }
 ---
 
@@ -102,23 +84,15 @@ if (updatedISO) {
     datePublished={entry.data.pubDate}
     dateModified={entry.data.updatedDate}
 >
-    <!-- Breadcrumb: a sticky band from md up; a quiet back link on phones, where the H1 already names the page. -->
+    <!-- Back link on phones only; from md up the sidebar marks and links the section. -->
     <div
-        class="md:border-b border-[var(--border-main)] bg-[var(--bg-body)] md:sticky md:top-0 md:z-10"
+        class="md:hidden max-w-[44rem] mx-auto px-6 pt-3 font-mono text-sm text-[var(--text-muted)]"
     >
-        <div
-            class="max-w-[44rem] mx-auto px-6 md:px-12 pt-3 md:py-3 font-mono text-xs text-[var(--text-muted)] flex items-center gap-2"
+        <a
+            href="/notes/"
+            class="inline-block py-3 hover:text-[var(--text-main)] transition-colors"
+            ><span aria-hidden="true">← </span>Notes</a
         >
-            <a
-                href="/notes/"
-                class="py-3 md:py-0 hover:text-[var(--text-main)] transition-colors"
-                ><span aria-hidden="true" class="md:hidden">← </span>Notes</a
-            >
-            <span class="hidden md:block opacity-30">/</span>
-            <span class="hidden md:block text-[var(--text-main)] truncate"
-                >{entry.data.title}</span
-            >
-        </div>
     </div>
 
     <!-- Main Content -->
@@ -126,38 +100,32 @@ if (updatedISO) {
         class="p-6 md:p-12 max-w-[44rem] mx-auto"
         transition:animate="fade"
     >
-        <header class="mb-12 border-b border-[var(--border-main)] pb-6">
+        <header class="mb-10">
             <h1 class="text-3xl md:text-4xl font-bold font-heading mb-4">
                 {entry.data.title}
             </h1>
 
-            <div class="flex flex-wrap gap-3 items-center justify-between">
-                <div class="flex flex-wrap items-center gap-2">
+            {/* One line in reading order: kind · tags · dates. Separators end each field, so a wrapped line never starts with one. */}
+            <div class="flex flex-wrap items-baseline gap-x-2 gap-y-2 font-mono text-xs text-[var(--text-faint)]">
+                <span class="whitespace-nowrap">
                     <a
                         href={`/notes/?kind=${entry.data.kind.toLowerCase()}`}
-                        class="text-xs font-mono text-[var(--text-main)] px-1.5 py-0.5 border border-[var(--border-main)] hover:bg-[var(--text-main)] hover:text-[var(--bg-body)] transition-colors"
-                    >
-                        {entry.data.kind}
-                    </a>
-                    {
-                        entry.data.tags.map((tag) => (
-                            <span class="text-xs font-mono text-[var(--text-faint)] px-1 py-0.5">
-                                {tag.toLowerCase()}
-                            </span>
-                        ))
-                    }
-                </div>
-
+                        class="inline-block py-1 -my-1 text-[var(--text-muted)] underline decoration-1 underline-offset-4 hover:text-[var(--text-main)] transition-colors"
+                    >{entry.data.kind}</a>{(tags.length > 0 || headerDates.length > 0) && " ·"}
+                </span>
                 {
-                    headerDates.length > 0 && (
-                        <div class="flex flex-wrap gap-x-3 gap-y-1 font-mono text-xs text-[var(--text-faint)]">
-                            {headerDates.map(({ label, date }) => (
-                                <span>
-                                    {label} <time datetime={date}>{date}</time>
-                                </span>
-                            ))}
-                        </div>
-                    )
+                    tags.map((tag, i) => (
+                        <span class="whitespace-nowrap">
+                            {tag}{i < tags.length - 1 ? "," : headerDates.length > 0 && " ·"}
+                        </span>
+                    ))
+                }
+                {
+                    headerDates.map(({ label, date }, i) => (
+                        <span class="whitespace-nowrap">
+                            {label} <time datetime={toISODate(date)}>{formatDateLong(date)}</time>{i < headerDates.length - 1 && " ·"}
+                        </span>
+                    ))
                 }
             </div>
         </header>
@@ -168,31 +136,21 @@ if (updatedISO) {
             <Content />
         </div>
 
-        <!-- Connected Nodes -->
+        <!-- Related notes -->
         {
             allConnections.length > 0 && (
-                <div class="mt-20 pt-8 border-t border-[var(--border-main)]">
-                    <h2 class="font-mono text-xs uppercase mb-6 text-[var(--text-muted)] tracking-wider">
-                        Connected Nodes · {allConnections.length}
+                <div class="mt-16">
+                    <h2 class="font-mono text-xs uppercase tracking-widest mb-3 text-[var(--text-muted)]">
+                        Related notes
                     </h2>
                     <div class="space-y-1">
-                        {allConnections.map(({ entry: e, type }) => (
+                        {allConnections.map((e) => (
                             <a
                                 href={`/notes/${e.id}/`}
-                                class="flex items-center gap-3 py-2.5 px-3 -mx-3 text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors group border-b border-transparent hover:border-[var(--border-subtle)]"
+                                class="group block py-2.5 text-sm text-[var(--text-main)]"
                             >
-                                <span class="font-mono text-[10px] text-[var(--text-faint)] w-4 flex-shrink-0">
-                                    {type === "parent"
-                                        ? "↑"
-                                        : type === "related"
-                                          ? "↔"
-                                          : "←"}
-                                </span>
-                                <span class="text-sm group-hover:underline decoration-1 underline-offset-4">
+                                <span class="group-hover:underline decoration-1 underline-offset-4">
                                     {e.data.title}
-                                </span>
-                                <span class="font-mono text-[11px] text-[var(--text-faint)] ml-auto flex-shrink-0">
-                                    {type}
                                 </span>
                             </a>
                         ))}

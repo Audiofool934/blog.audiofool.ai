@@ -3,7 +3,7 @@ import MinimalLayout from "../../layouts/MinimalLayout.astro";
 import { getCollection } from "astro:content";
 import { formatDateCompact } from "../../utils/formatDate";
 import githubProjects from "../../data/github-projects.json";
-import { getProjectState } from "../../utils/projectState";
+import { getProjectState, isExternalUrl, uniqueLabels } from "../../utils/projectState";
 
 const projects = await getCollection("projects");
 const projectState = (project: (typeof projects)[number]) => getProjectState(project, githubProjects.projects);
@@ -45,35 +45,8 @@ const sortedCategories = Object.keys(categorizedProjects).sort((a, b) => {
     return (indexA === -1 ? 999 : indexA) - (indexB === -1 ? 999 : indexB);
 });
 
-function projectHref(project: (typeof sortedProjects)[number]) {
-    return projectState(project).href;
-}
-
-// Status, type, and category can name the same thing (status "research", type "Research"),
-// so each label shows once per row.
-function uniqueLabels(labels: (string | undefined)[], shown: string[] = []) {
-    const seen = new Set(shown.map((label) => label.toLowerCase()));
-    return labels.filter((label): label is string => {
-        const key = label?.toLowerCase();
-        if (!key || seen.has(key)) return false;
-        seen.add(key);
-        return true;
-    });
-}
-
-function projectMeta(project: (typeof sortedProjects)[number]) {
-    const state = projectState(project);
-    return uniqueLabels([project.data.category, state.status, project.data.type, state.fork ? "fork" : ""]).join(" / ");
-}
-
-// The category already has its own cell in the Latest row, so the tag line leaves it out.
-function projectTags(project: (typeof sortedProjects)[number]) {
-    const state = projectState(project);
-    return uniqueLabels(
-        [state.status, state.fork ? "fork" : "", project.data.type, ...project.data.stack.slice(0, 3)],
-        [project.data.category],
-    );
-}
+// Pinned projects link to their own sites; mark those rows so they don't pass for internal pages.
+const siteOrigin = Astro.site?.origin;
 ---
 
 <MinimalLayout
@@ -83,150 +56,101 @@ function projectTags(project: (typeof sortedProjects)[number]) {
     <div class="p-6 md:p-12" transition:animate="fade">
         <header class="mb-10">
             <h1 class="text-4xl font-bold font-heading mb-2">Projects</h1>
-            <p
-                class="font-mono text-sm text-[var(--text-muted)] tracking-wider uppercase"
-            >
+            <p class="font-mono text-sm text-[var(--text-muted)]">
                 Welcome to the Machine
             </p>
         </header>
 
         {
             pinnedProjects.length > 0 && (
-                <section class="mb-14">
-                    <div class="flex items-baseline justify-between gap-4 mb-5 border-b border-[var(--border-main)] pb-3">
-                        <h2 class="text-sm font-mono uppercase tracking-widest text-[var(--text-muted)]">
-                            Pinned
-                        </h2>
-                        <span class="font-mono text-xs text-[var(--text-faint)]">
-                            {pinnedProjects.length} selected
-                        </span>
-                    </div>
+                <section class="mb-16">
+                    <h2 class="font-mono text-xs uppercase tracking-widest text-[var(--text-muted)] mb-3">
+                        Pinned
+                    </h2>
 
-                    <div class="grid gap-3 md:grid-cols-2">
-                        {pinnedProjects.map((project, index) => (
-                            <a
-                                href={projectHref(project)}
-                                class="group border border-[var(--border-main)] p-5 hover:bg-[var(--text-main)] hover:text-[var(--bg-body)] transition-colors"
-                            >
-                                <div class="flex items-start justify-between gap-4 mb-5">
-                                    <span class="font-mono text-xs text-[var(--text-faint)] group-hover:text-[var(--bg-body)]">
-                                        PIN {String(index + 1).padStart(2, "0")}
-                                    </span>
-                                    <span class="font-mono text-xs text-[var(--text-faint)] group-hover:text-[var(--bg-body)]">
-                                        {projectState(project).dateLabel} · {formatDateCompact(projectState(project).date)}
-                                    </span>
-                                </div>
-                                <h2 class="text-2xl font-bold font-heading mb-3">
-                                    {project.data.title}
-                                </h2>
-                                <p class="text-sm leading-relaxed text-[var(--text-faint)] group-hover:text-[var(--bg-body)] mb-5">
-                                    {project.data.description}
-                                </p>
-                                <div class="flex flex-wrap gap-x-3 gap-y-1 font-mono text-[10px] uppercase tracking-wider text-[var(--text-faint)] group-hover:text-[var(--bg-body)]">
-                                    <span>{project.data.category}</span>
-                                    <span>/</span>
-                                    <span>{projectState(project).status}</span>
-                                    <span>/</span>
-                                    <span>{project.data.stack[0]}</span>
-                                </div>
-                            </a>
-                        ))}
+                    <div class="grid gap-x-10 gap-y-8 lg:grid-cols-2">
+                        {pinnedProjects.map((project) => {
+                            const state = projectState(project);
+                            const external = isExternalUrl(state.href, siteOrigin);
+                            return (
+                                <a href={state.href} class="group block">
+                                    {/* A no-break space before each "·" keeps the dot off the start of a wrapped line. */}
+                                    <p class="font-mono text-xs uppercase tracking-wider text-[var(--text-faint)]">
+                                        <time datetime={state.date.toISOString()}>{formatDateCompact(state.date)}</time>{uniqueLabels([project.data.category, state.status, state.fork ? "fork" : ""]).map((label) => <>{"\u00a0· "}<span class="whitespace-nowrap">{label}</span></>)}
+                                    </p>
+                                    <h3 class="mt-2 text-lg font-bold font-heading text-[var(--text-main)] group-hover:underline decoration-1 underline-offset-4">
+                                        {project.data.title}
+                                        {external && <span aria-hidden="true"> ↗</span>}
+                                        {external && <span class="sr-only"> (external)</span>}
+                                    </h3>
+                                    <p class="mt-1 text-sm leading-relaxed text-[var(--text-muted)]">
+                                        {project.data.description}
+                                    </p>
+                                </a>
+                            );
+                        })}
                     </div>
                 </section>
             )
         }
 
         <section>
-            <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between pb-4 mb-8 border-b border-[var(--border-main)]">
-                <div>
-                    <h2 class="text-sm font-mono uppercase tracking-widest text-[var(--text-muted)] mb-2">
-                        Project Index
-                    </h2>
-                    <p class="text-sm text-[var(--text-muted)] max-w-2xl">
-                        Latest follows GitHub updates, or publication dates for projects without public activity. All keeps the categorized archive.
-                    </p>
-                </div>
-
-                <div class="flex flex-wrap gap-3 text-sm font-mono">
-                    <button
-                        type="button"
-                        data-view="latest"
-                        aria-pressed="true"
-                        class="project-view-filter active whitespace-nowrap py-1.5 -my-1.5 transition-colors"
-                    >
-                        [ Latest <span class="text-[var(--text-faint)]">{latestProjects.length}</span> ]
-                    </button>
-                    <button
-                        type="button"
-                        data-view="all"
-                        aria-pressed="false"
-                        class="project-view-filter whitespace-nowrap py-1.5 -my-1.5 transition-colors"
-                    >
-                        [ All <span class="text-[var(--text-faint)]">{sortedProjects.length}</span> ]
-                    </button>
-                </div>
+            <div class="flex flex-wrap items-baseline gap-x-3 gap-y-3 mb-6 font-mono">
+                <h2 class="text-xs uppercase tracking-widest text-[var(--text-muted)]">
+                    Project Index
+                </h2>
+                <button
+                    type="button"
+                    data-view="latest"
+                    aria-pressed="true"
+                    class="project-view-filter active whitespace-nowrap text-sm py-1.5 -my-1.5 transition-colors"
+                >
+                    <span aria-hidden="true">[ </span>Latest<span aria-hidden="true"> ]</span>
+                </button>
+                <button
+                    type="button"
+                    data-view="all"
+                    aria-pressed="false"
+                    class="project-view-filter whitespace-nowrap text-sm py-1.5 -my-1.5 transition-colors"
+                >
+                    <span aria-hidden="true">[ </span>All<span aria-hidden="true"> ]</span>
+                </button>
             </div>
 
-            <div data-project-view="latest" class="project-view-panel max-w-4xl border-l border-[var(--border-main)] pl-5 md:pl-8">
-                {latestProjects.map((project) => (
-                    <a
-                        href={projectHref(project)}
-                        class="group relative block pb-8 text-[var(--text-main)] transition-colors"
-                    >
-                        <span class="absolute -left-[1.65rem] md:-left-[2.15rem] top-1 h-2 w-2 rounded-full bg-[var(--bg-body)] border border-[var(--text-main)] group-hover:bg-[var(--text-main)] transition-colors" />
-
-                        <div class="grid gap-1 md:grid-cols-[8rem_8rem_minmax(0,1fr)] md:gap-4 md:items-baseline font-mono text-sm">
-                            {/* Date and source share a line on mobile and the category sits on its own line (long
-                                categories never fit beside the date, and a wrapped "·" would start the line);
-                                md:contents hands both cells back to the desktop grid. */}
-                            <div class="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 md:contents">
-                                <div class="flex items-baseline gap-x-2 md:block text-xs uppercase tracking-wider text-[var(--text-faint)] transition-opacity">
-                                    <time datetime={projectState(project).date.toISOString()}>{formatDateCompact(projectState(project).date)}</time>
-                                    <span aria-hidden="true" class="md:hidden">·</span>
-                                    <span class="text-[10px] md:block md:mt-1">{projectState(project).dateLabel}</span>
-                                </div>
-
-                                <div class="basis-full md:basis-auto text-[10px] uppercase tracking-wider text-[var(--text-faint)] transition-opacity">
-                                    <span>{project.data.category}</span>
-                                </div>
-                            </div>
-
-                            <div class="min-w-0">
-                                <div class="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-                                    <h3 class="font-sans text-base font-semibold text-[var(--text-main)] group-hover:underline decoration-1 underline-offset-4">
-                                        {project.data.title}
-                                    </h3>
-                                    {project.data.pinned && (
-                                        <span class="font-mono text-[10px] uppercase tracking-wider text-[var(--text-faint)]">
-                                            pinned
-                                        </span>
-                                    )}
-                                </div>
-                                {project.data.description && (
-                                    <p class="mt-1 font-sans text-sm leading-relaxed text-[var(--text-faint)]">
-                                        {project.data.description}
-                                    </p>
-                                )}
-                                <div class="mt-2 flex flex-wrap gap-x-3 gap-y-1 font-mono text-[10px] uppercase tracking-wider text-[var(--text-faint)]">
-                                    {projectTags(project).map((label) => (
-                                        <span>{label}</span>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                ))}
+            <div data-project-view="latest" class="project-view-panel spine max-w-2xl">
+                {latestProjects.map((project) => {
+                    const state = projectState(project);
+                    const external = isExternalUrl(state.href, siteOrigin);
+                    return (
+                        <a href={state.href} class="group relative block mb-8">
+                            <span aria-hidden="true" class="spine-dot" />
+                            {/* Only an archived status or a fork is worth a word here; Pinned and All show every status. */}
+                            <p class="font-mono text-xs uppercase tracking-wider text-[var(--text-faint)]">
+                                <time datetime={state.date.toISOString()}>{formatDateCompact(state.date)}</time>{uniqueLabels([project.data.category, state.status === "archived" ? state.status : "", state.fork ? "fork" : ""]).map((label) => <>{"\u00a0· "}<span class="whitespace-nowrap">{label}</span></>)}
+                            </p>
+                            <h3 class="mt-2 font-sans text-base font-semibold text-[var(--text-main)] group-hover:underline decoration-1 underline-offset-4">
+                                {project.data.title}
+                                {external && <span aria-hidden="true"> ↗</span>}
+                                {external && <span class="sr-only"> (external)</span>}
+                            </h3>
+                            {/* Pinned projects already show their description above. */}
+                            {project.data.description && !project.data.pinned && (
+                                <p class="mt-1 font-sans text-sm leading-relaxed text-[var(--text-muted)]">
+                                    {project.data.description}
+                                </p>
+                            )}
+                        </a>
+                    );
+                })}
             </div>
 
-            <div data-project-view="all" class="project-view-panel hidden max-w-5xl">
+            <div data-project-view="all" class="project-view-panel hidden max-w-2xl">
                 {sortedCategories.map((category) => (
-                    <section class="mb-10 border-t border-[var(--border-main)] pt-5 first:border-t-0 first:pt-0">
-                        <details open>
+                    <section class="mb-12">
+                        {/* Rows are spaced by margin so a focus ring wraps only the row; open:pb-8 keeps the gap after the last row. */}
+                        <details open class="open:pb-8">
                             <summary class="cursor-pointer list-none flex items-center justify-between mb-5">
-                                <h3 class="text-lg font-bold font-heading flex items-center gap-3">
-                                    <span class="text-xs font-mono text-[var(--text-muted)]">
-                                        [{categorizedProjects[category].length}]
-                                    </span>
+                                <h3 class="text-lg font-bold font-heading">
                                     {category}
                                 </h3>
                                 <span class="font-mono text-xs text-[var(--text-muted)]">
@@ -234,55 +158,36 @@ function projectTags(project: (typeof sortedProjects)[number]) {
                                 </span>
                             </summary>
 
-                            <div class="border-l border-[var(--border-main)] pl-5 md:pl-8">
-                                {categorizedProjects[category].map((project) => (
-                                    <a
-                                        href={projectHref(project)}
-                                        class="group relative block pb-6 text-[var(--text-main)] transition-colors"
-                                    >
-                                        <span class="absolute -left-[1.65rem] md:-left-[2.15rem] top-1 h-2 w-2 rounded-full bg-[var(--bg-body)] border border-[var(--text-main)] group-hover:bg-[var(--text-main)] transition-colors" />
-
-                                        <div class="grid gap-1 md:grid-cols-[8rem_minmax(0,1fr)_7rem] md:gap-4 md:items-baseline font-mono text-sm">
-                                            {/* One metadata line on mobile; md:block restacks the source label under the date. */}
-                                            <div class="flex items-baseline gap-x-2 md:block text-xs uppercase tracking-wider text-[var(--text-faint)]">
-                                                <time datetime={projectState(project).date.toISOString()}>{formatDateCompact(projectState(project).date)}</time>
-                                                <span aria-hidden="true" class="md:hidden">·</span>
-                                                <span class="text-[10px] md:block md:mt-1">{projectState(project).dateLabel}</span>
-                                            </div>
-
-                                            <div class="min-w-0">
-                                                <div class="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-                                                    <h4 class="font-sans text-base font-semibold text-[var(--text-main)] group-hover:underline decoration-1 underline-offset-4">
-                                                        {project.data.title}
-                                                    </h4>
-                                                    {project.data.pinned && (
-                                                        <span class="font-mono text-[10px] uppercase tracking-wider text-[var(--text-faint)]">
-                                                            pinned
-                                                        </span>
-                                                    )}
-                                                </div>
-                                                {project.data.description && (
-                                                    <p class="mt-1 font-sans text-sm leading-relaxed text-[var(--text-faint)]">
-                                                        {project.data.description}
-                                                    </p>
-                                                )}
-                                            </div>
-
-                                            <span class="hidden md:block text-[10px] uppercase tracking-wider text-[var(--text-faint)] text-right">
-                                                {projectMeta(project)}
-                                            </span>
-                                        </div>
-                                    </a>
-                                ))}
+                            <div class="spine">
+                                {categorizedProjects[category].map((project) => {
+                                    const state = projectState(project);
+                                    const external = isExternalUrl(state.href, siteOrigin);
+                                    return (
+                                        <a href={state.href} class="group relative block mb-8 last:mb-0">
+                                            <span aria-hidden="true" class="spine-dot" />
+                                            {/* The category heading above already names the category. */}
+                                            <p class="font-mono text-xs uppercase tracking-wider text-[var(--text-faint)]">
+                                                <time datetime={state.date.toISOString()}>{formatDateCompact(state.date)}</time>{uniqueLabels([state.status, state.fork ? "fork" : ""], [category]).map((label) => <>{"\u00a0· "}<span class="whitespace-nowrap">{label}</span></>)}
+                                            </p>
+                                            <h4 class="mt-2 font-sans text-base font-semibold text-[var(--text-main)] group-hover:underline decoration-1 underline-offset-4">
+                                                {project.data.title}
+                                                {external && <span aria-hidden="true"> ↗</span>}
+                                                {external && <span class="sr-only"> (external)</span>}
+                                            </h4>
+                                            {project.data.description && (
+                                                <p class="mt-1 font-sans text-sm leading-relaxed text-[var(--text-muted)]">
+                                                    {project.data.description}
+                                                </p>
+                                            )}
+                                        </a>
+                                    );
+                                })}
                             </div>
                         </details>
                     </section>
                 ))}
             </div>
         </section>
-
-
-
 
         {
             sortedProjects.length === 0 && (

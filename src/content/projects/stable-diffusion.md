@@ -11,8 +11,6 @@ githubRepo: 'Audiofool934/Stable-Diffusion'
 githubReadme: false
 ---
 
-## Overview
-
 **Stable Diffusion** is an archive of diffusion-model learning and experimentation.
 
 It sits in the course-project shelf as part of the broader generative-model path: understanding how denoising, latent spaces, and image synthesis became the working grammar of modern creative AI.

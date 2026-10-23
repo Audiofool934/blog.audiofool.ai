@@ -12,7 +12,7 @@
     >
     </div>
 
-    <!-- Unified viewer: image first, metadata footer only as tall as needed -->
+    <!-- Unified viewer: image first, then a fixed-height footer so the photo does not resize between entries -->
     <div
         id="modal-scroll"
         class="absolute inset-0 flex items-stretch justify-center overflow-hidden"
@@ -65,14 +65,14 @@
             <!-- Info footer -->
             <div
                 id="modal-info"
-                class="modal-info-area flex-shrink-0 overflow-y-auto border-t border-[var(--border-main)] flex flex-col bg-[var(--bg-body)] dark:bg-black"
+                class="modal-info-area flex-shrink-0 overflow-y-auto flex flex-col bg-[var(--bg-body)] dark:bg-black"
             >
                 <div
-                    class="modal-footer-grid mx-auto w-full max-w-4xl"
+                    class="modal-footer-grid mx-auto w-full max-w-6xl"
                 >
                     <span
                         id="modal-counter-mobile"
-                        class="modal-footer-counter font-mono text-[10px] md:text-xs text-[var(--text-faint)]"
+                        class="modal-footer-counter font-mono text-xs text-[var(--text-faint)]"
                     ></span>
                     <div class="modal-footer-main">
                         <h2
@@ -86,15 +86,16 @@
                     </div>
 
                     <div class="modal-footer-rail">
+                        <!-- Location last: it may hold its own " · " between places. -->
                         <div
-                            class="modal-footer-meta flex flex-wrap gap-x-3 gap-y-1 font-mono text-[10px] md:text-xs text-[var(--text-muted)]"
+                            class="modal-footer-meta flex flex-wrap gap-x-2 gap-y-1 font-mono text-xs text-[var(--text-muted)]"
                         >
                             <span id="modal-date-mobile"></span>
-                            <span id="modal-location-mobile"></span>
                             <span id="modal-camera-mobile"></span>
                             <span id="modal-lens-mobile"></span>
                             <span id="modal-film-mobile"></span>
                             <span id="modal-exif-mobile"></span>
+                            <span id="modal-location-mobile"></span>
                         </div>
                     </div>
                 </div>
@@ -138,7 +139,6 @@
         color: rgb(255 255 255 / 0.72);
         font-family: var(--font-mono, "JetBrains Mono", monospace);
         font-size: 1rem;
-        transition: background-color 150ms ease;
     }
 
     .modal-nav-zone span {
@@ -175,22 +175,6 @@
     }
 
     @media (hover: hover) {
-        .modal-nav-zone-prev:hover {
-            background: linear-gradient(
-                to right,
-                rgb(255 255 255 / 0.06),
-                transparent 55%
-            );
-        }
-
-        .modal-nav-zone-next:hover {
-            background: linear-gradient(
-                to left,
-                rgb(255 255 255 / 0.06),
-                transparent 55%
-            );
-        }
-
         .modal-nav-zone:hover span {
             opacity: 0.72;
         }
@@ -286,8 +270,27 @@
         -webkit-overflow-scrolling: touch;
     }
 
+    /* Fade the right edge only when the row scrolls (set by galleryViewer.js), so a row that fits stays whole. */
+    .modal-footer-meta.is-clipped {
+        -webkit-mask-image: linear-gradient(
+            to right,
+            #000 calc(100% - 1.5rem),
+            transparent
+        );
+        mask-image: linear-gradient(
+            to right,
+            #000 calc(100% - 1.5rem),
+            transparent
+        );
+    }
+
     .modal-footer-meta span {
         flex: 0 0 auto;
+    }
+
+    /* Hidden fields are display:none, and the date is always present, so no field starts with a stray dot. */
+    .modal-footer-meta span + span::before {
+        content: "· ";
     }
 
     .modal-footer-meta::-webkit-scrollbar {
@@ -318,23 +321,13 @@
             right: 2rem;
         }
 
+        /* Centre the row like the title above it; "safe" keeps its start reachable when it scrolls. */
+        .modal-footer-meta {
+            justify-content: safe center;
+        }
+
         .modal-footer-body {
             -webkit-line-clamp: 2;
-        }
-    }
-
-    @media (max-width: 767px) {
-        .modal-footer-meta {
-            -webkit-mask-image: linear-gradient(
-                to right,
-                #000 calc(100% - 1.5rem),
-                transparent
-            );
-            mask-image: linear-gradient(
-                to right,
-                #000 calc(100% - 1.5rem),
-                transparent
-            );
         }
     }
 

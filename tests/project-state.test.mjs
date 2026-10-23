@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { getProjectState } from "../src/utils/projectState.ts";
+import { getProjectState, isExternalUrl, uniqueLabels } from "../src/utils/projectState.ts";
 
 const project = {
     id: "meric",
@@ -25,7 +25,6 @@ const snapshot = {
 test("project views use the public push date and keep the curated primary destination", () => {
     const state = getProjectState(project, [snapshot]);
     assert.equal(state.date.toISOString(), snapshot.pushedAt.replace("Z", ".000Z"));
-    assert.equal(state.dateLabel, "GitHub push");
     assert.equal(state.href, "https://meric.audiofool.ai/");
     assert.equal(project.data.pubDate.toISOString(), "2026-05-13T00:00:00.000Z");
 });
@@ -42,7 +41,6 @@ test("missing, stale, unavailable, private, invalid, or mismatched snapshots can
     ]) {
         const state = getProjectState(project, snapshots);
         assert.equal(state.date, project.data.pubDate);
-        assert.equal(state.dateLabel, "Published");
     }
 });
 
@@ -57,4 +55,20 @@ test("GitHub archive and fork flags apply only to the matching current public sn
 
 test("unpinning keeps the archived detail route available", () => {
     assert.equal(getProjectState({ ...project, data: { ...project.data, pinned: false } }, [snapshot]).href, "/projects/meric/");
+});
+
+test("project labels print each value once, ignoring case and labels already shown", () => {
+    assert.deepEqual(uniqueLabels(["Research", "research", "", undefined, "fork"]), ["Research", "fork"]);
+    assert.deepEqual(uniqueLabels(["Course Project", "archived"], ["course project"]), ["archived"]);
+});
+
+test("links to another origin or to a standalone public page count as external", () => {
+    const site = "https://blog.audiofool.ai";
+    assert.equal(isExternalUrl("https://meric.audiofool.ai/", site), true);
+    assert.equal(isExternalUrl("https://blog.audiofool.ai/projects/", site), false);
+    assert.equal(isExternalUrl("/", site), false);
+    assert.equal(isExternalUrl("/projects/muse/", site), false);
+    // public/muse/index.html is a static poster outside the site shell.
+    assert.equal(isExternalUrl("/muse/", site), true);
+    assert.equal(isExternalUrl("https://blog.audiofool.ai/muse/", site), true);
 });

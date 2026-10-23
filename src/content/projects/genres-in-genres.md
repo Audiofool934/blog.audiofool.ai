@@ -11,8 +11,6 @@ githubRepo: 'Audiofool934/genres-in-genres'
 githubReadme: true
 ---
 
-## Overview
-
 **Genres in Genres** studies style evolution inside a music collection.
 
 The project uses MuQ-MuLan embeddings to map songs into a semantic music space, then clusters and visualizes how an artist's sound changes across albums and years.

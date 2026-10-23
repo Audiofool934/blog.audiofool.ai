@@ -11,8 +11,6 @@ githubRepo: 'Audiofool934/Dialect-Classification'
 githubReadme: true
 ---
 
-## Overview
-
 **Dialect Classification** is a speech-audio classification project.
 
 It studies Chinese dialect recognition through audio preprocessing, feature extraction, visualization, and neural-network training. The project uses mel-spectrograms and model architectures such as ResNet-style classifiers to compare speech patterns across dialect regions.

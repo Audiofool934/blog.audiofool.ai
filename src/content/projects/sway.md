@@ -14,8 +14,6 @@ githubRepo: 'Audiofool934/sway'
 githubReadme: true
 ---
 
-## Overview
-
 **Sway** is an instrument you play with your hands.
 One hand plays the melody, while the other shapes the band's energy and loops what you played.
 

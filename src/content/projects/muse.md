@@ -6,7 +6,7 @@ author: 'Audiofool'
 category: 'Music Generation'
 status: 'research'
 featured: true
-stack: ['PyTorch', 'Flow Matching', 'T2M', 'MuQ-MuLan', 'DiT']
+stack: ['PyTorch', 'Flow Matching', 'T2M', 'MuQ-MuLan', 'DiT', 'Gradio', 'torchaudio', 'Plotly', 'UMAP']
 type: 'Lib'
 url: '/muse/'
 githubRepo: 'Audiofool934/muse'
@@ -15,8 +15,6 @@ image:
     url: '/images/projects/muse/muse.png'
     alt: 'MUSE Logo'
 ---
-
-## Overview
 
 **MUSE** is a text-to-music generation system built as a final project for the Parallel Computation course. It addresses the fundamental "one-to-many" problem in creative AI: a single text prompt like *"a sad piano melody"* can correspond to infinitely many valid musical interpretations.
 
@@ -86,10 +84,3 @@ The full-stack application includes:
 
 ![Latent Space](/images/projects/muse/2d-density-heatmap.png)
 *Diverse samples visualized in MuQ-MuLan latent space*
-
-## Tech Stack
-`Gradio` · `PyTorch` · `torchaudio` · `Plotly` · `UMAP`
-
----
-
-📎 [View Research Poster](/muse/) | 🔗 [GitHub Repository](https://github.com/Audiofool934/t2m)
