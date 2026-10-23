@@ -9,7 +9,7 @@ pinned: true
 pinOrder: 3
 stack: ['JavaScript', 'Python', 'Hand Tracking', 'Music Generation']
 type: 'Product'
-url: 'https://github.com/Audiofool934/sway'
+url: 'https://sway.audiofool.ai'
 githubRepo: 'Audiofool934/sway'
 githubReadme: true
 ---
