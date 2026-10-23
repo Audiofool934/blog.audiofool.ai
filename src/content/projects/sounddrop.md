@@ -2,7 +2,7 @@
 title: 'SoundDrop'
 pubDate: '2026-05-20'
 description: 'A campus music map where people turn places, images, and short stories into generated music.'
-category: 'Music Generation'
+category: 'Music'
 status: 'active'
 featured: true
 stack: ['React', 'TypeScript', 'Leaflet', 'Express', 'PostgreSQL', 'MERIC']

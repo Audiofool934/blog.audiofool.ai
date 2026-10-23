@@ -103,6 +103,47 @@
   }
 
   /*
+   * A row of filter or tab controls. It wraps on larger screens; below md it
+   * stays on one line that scrolls sideways, because one row reads better on a
+   * phone than a stack of wrapped ones. On phones it bleeds past the 1.5rem
+   * page gutter, the spacers put its first and last items on the gutter line,
+   * and the block padding keeps hit areas and focus rings inside the scroll
+   * clip (the negative margin cancels it). src/scripts/scrollRow.ts reveals the
+   * current item when it starts off screen.
+   */
+  .scroll-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.75rem;
+  }
+
+  @media (max-width: 767px) {
+    .scroll-row {
+      flex-wrap: nowrap;
+      margin: -0.625rem -1.5rem;
+      padding-block: 0.625rem;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scrollbar-width: none;
+    }
+
+    .scroll-row::-webkit-scrollbar {
+      display: none;
+    }
+
+    .scroll-row::before,
+    .scroll-row::after {
+      content: "";
+      flex: 0 0 0.75rem;
+    }
+
+    .scroll-row > * {
+      flex: none;
+    }
+  }
+
+  /*
    * A vertical line with one dot per entry, for dated lists (timeline, project
    * updates). Each entry is position: relative; its dot sits on the line, level
    * with the entry's 12px date line, and fills on hover.

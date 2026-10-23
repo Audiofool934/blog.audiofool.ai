@@ -2,7 +2,7 @@
 title: 'Stable Diffusion'
 pubDate: '2025-02-10'
 description: 'A course-project archive around diffusion models, image generation, and the generative-model wave that shaped modern creative AI.'
-category: 'Course Project'
+category: 'Coursework'
 status: 'archived'
 featured: false
 stack: ['Jupyter Notebook', 'Diffusion Models', 'Image Generation', 'Generative AI']

@@ -2,7 +2,7 @@
 title: "window"
 pubDate: "2026-10-02"
 description: "A menu-bar app for the Mac. Turn it on and the desktop becomes a room looking out a window."
-category: "Dev"
+category: "Tool"
 status: 'active'
 stack: ["Swift", "macOS"]
 type: "Product"

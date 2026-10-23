@@ -6,7 +6,7 @@ category: 'Agent'
 status: 'active'
 featured: true
 pinned: true
-pinOrder: 4
+pinOrder: 3
 stack: ['TypeScript', 'Pi', 'Music', 'TUI']
 type: 'Product'
 url: 'https://moondog.audiofool.ai/'

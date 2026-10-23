@@ -2,7 +2,7 @@
 title: 'Generative Model'
 pubDate: '2025-03-31'
 description: 'A course and knowledge archive for probabilistic graphical models, deep generative models, readings, and notes.'
-category: 'Course Project'
+category: 'Coursework'
 status: 'archived'
 featured: false
 stack: ['HTML', 'PGM', 'Generative Models', 'Notes', 'Readings']

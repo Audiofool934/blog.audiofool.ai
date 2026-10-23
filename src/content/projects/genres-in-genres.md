@@ -2,7 +2,7 @@
 title: 'Genres in Genres'
 pubDate: '2026-01-15'
 description: 'A music style evolution project that uses MuQ-MuLan embeddings to find sub-genres inside an artist discography.'
-category: 'Course Project'
+category: 'Coursework'
 status: 'archived'
 featured: false
 stack: ['Jupyter Notebook', 'MuQ-MuLan', 'Music Analysis', 'Clustering', 'Visualization']

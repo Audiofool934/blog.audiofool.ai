@@ -2,7 +2,7 @@
 title: 'Musical Carbon Dating'
 pubDate: '2025-12-26'
 description: 'A statistical course project that estimates the era of a recording from acoustic and perceptual audio features.'
-category: 'Course Project'
+category: 'Coursework'
 status: 'archived'
 featured: false
 stack: ['TeX', 'Statistics', 'Regression', 'Audio Features', 'Spotify Data']

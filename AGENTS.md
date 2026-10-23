@@ -63,6 +63,7 @@ Timeline lanes follow the source collection; a log post is `site` when tagged Me
 The homepage shows a curated "Selected" list: edit `src/data/homepageSelected.ts` (kind and entry id); `getSelectedItems()` resolves it newest first and fails the build on a missing entry.
 Project metadata lives in `src/content/projects/`, synced READMEs in `src/content/project-readmes/`, and the GitHub catalog in `src/data/github-projects.json`.
 Pinned projects use `pinOrder` for display order and `url` for their primary destination in the project index.
+A project's `category` is one of the one-word classes in `categoryOrder` in `src/pages/projects/index.astro`; the Project Index filters show each class (plural where countable, such as `[ Agents ]`), and `?view=<class>` links to one.
 `src/utils/projectState.ts` shares project update dates, primary links, and GitHub archive status across Project Index and Timeline.
 Use current public GitHub `pushedAt` for update ordering; keep authored `pubDate` as the fallback and preserve project RSS GUIDs when links change.
 The GitHub sync keeps unavailable public snapshots with a status notice and never imports private README content.
@@ -95,6 +96,7 @@ Use `entry.id`, `render(entry)` from `astro:content`, and `getStaticPaths()` for
 - Do not show counts of items already visible, provenance labels (GitHub push, README sync), or labels that restate a value or the page title; section labels use the homepage "Selected" style.
 - Mark the current filter, tab, or view with `--text-main` and a 1px underline, never a fill, box, or weight change; buttons expose `aria-pressed`, and tab links `aria-current="page"`.
 - Filter, view, and tab controls use the sidebar's `[ Label ]` form, with the brackets `aria-hidden`; standalone links use plain words, and off-site links end with ↗ plus sr-only "(external)".
+- On phones, avoid stacking controls in several rows: filter and tab bars use `.scroll-row` (`src/style/global.css`), one line that scrolls sideways below md and wraps above it; call `revealInRow()` from `src/scripts/scrollRow.ts` when the current control changes so it stays in view.
 - Use existing CSS variables for colors: `--bg-body`, `--text-main`, `--text-muted`, `--text-faint`, `--border-main`, `--border-subtle`, and `--accent`.
 - Resolve theme before first paint: dark by default, regardless of system preference; only an explicit `localStorage.theme` of `light` from the toggle overrides it.
 - Keep both themes working and initialization consistent with transition handling in `MinimalLayout.astro`.

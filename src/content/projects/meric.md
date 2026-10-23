@@ -2,11 +2,11 @@
 title: 'MERIC'
 pubDate: '2026-05-13'
 description: 'A research project on unified multimodal music generation and retrieval through a shared music semantic anchor.'
-category: 'Music Generation'
+category: 'Music'
 status: 'research'
 featured: true
 pinned: true
-pinOrder: 1
+pinOrder: 2
 url: 'https://meric.audiofool.ai/'
 githubRepo: 'Audiofool934/meric'
 githubReadme: true

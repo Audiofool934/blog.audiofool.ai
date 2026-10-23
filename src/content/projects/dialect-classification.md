@@ -2,7 +2,7 @@
 title: 'Dialect Classification'
 pubDate: '2024-09-16'
 description: 'A speech-classification course project using audio preprocessing, mel-spectrograms, and neural networks for Chinese dialect recognition.'
-category: 'Course Project'
+category: 'Coursework'
 status: 'archived'
 featured: false
 stack: ['Jupyter Notebook', 'Speech', 'Mel Spectrogram', 'ResNet', 'Classification']

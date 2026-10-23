@@ -27,23 +27,21 @@ const categorizedProjects = sortedProjects.reduce(
     {} as Record<string, typeof projects>,
 );
 
-const categoryOrder = [
-    "Personal Website",
-    "Music Generation",
-    "Agent",
-    "Course Project",
-    "Audio",
-    "Web",
-    "Dev",
-    "Research",
-    "Art",
-    "Other",
-];
+// One-word classes in display order; any other category follows them in the All view.
+const categoryOrder = ["Music", "Agent", "Tool", "Art", "Web", "Coursework"];
 const sortedCategories = Object.keys(categorizedProjects).sort((a, b) => {
     const indexA = categoryOrder.indexOf(a);
     const indexB = categoryOrder.indexOf(b);
     return (indexA === -1 ? 999 : indexA) - (indexB === -1 ? 999 : indexB);
 });
+
+// A class view narrows the All panel to one category; ?view=<class> deep-links to it.
+const classView = (category: string) => category.toLowerCase();
+// Filters name countable classes in the plural, like the Timeline's [ Notes ].
+const classLabels: Record<string, string> = { Agent: "Agents", Tool: "Tools" };
+const classFilters = categoryOrder
+    .filter((category) => categorizedProjects[category])
+    .map((category) => ({ view: classView(category), label: classLabels[category] ?? category }));
 
 // Pinned projects link to their own sites; mark those rows so they don't pass for internal pages.
 const siteOrigin = Astro.site?.origin;
@@ -95,26 +93,41 @@ const siteOrigin = Astro.site?.origin;
         }
 
         <section>
-            <div class="flex flex-wrap items-baseline gap-x-3 gap-y-3 mb-6 font-mono">
-                <h2 class="text-xs uppercase tracking-widest text-[var(--text-muted)]">
-                    Project Index
-                </h2>
-                <button
-                    type="button"
-                    data-view="latest"
-                    aria-pressed="true"
-                    class="project-view-filter active whitespace-nowrap text-sm py-1.5 -my-1.5 transition-colors"
-                >
-                    <span aria-hidden="true">[ </span>Latest<span aria-hidden="true"> ]</span>
-                </button>
-                <button
-                    type="button"
-                    data-view="all"
-                    aria-pressed="false"
-                    class="project-view-filter whitespace-nowrap text-sm py-1.5 -my-1.5 transition-colors"
-                >
-                    <span aria-hidden="true">[ </span>All<span aria-hidden="true"> ]</span>
-                </button>
+            {/* On phones the label and filters are one scrolling row; wider, the label heads the row and wrapped filters align after it. */}
+            <div class="mb-6">
+                <div class="scroll-row font-mono">
+                    <h2 id="project-index-label" class="shrink-0 text-xs uppercase tracking-widest text-[var(--text-muted)]">
+                        Project Index
+                    </h2>
+                    <div role="group" aria-labelledby="project-index-label" class="flex gap-3 md:flex-1 md:min-w-0 md:flex-wrap">
+                        <button
+                            type="button"
+                            data-view="latest"
+                            aria-pressed="true"
+                            class="project-view-filter active whitespace-nowrap text-sm py-1.5 -my-1.5 transition-colors"
+                        >
+                            <span aria-hidden="true">[ </span>Latest<span aria-hidden="true"> ]</span>
+                        </button>
+                        <button
+                            type="button"
+                            data-view="all"
+                            aria-pressed="false"
+                            class="project-view-filter whitespace-nowrap text-sm py-1.5 -my-1.5 transition-colors"
+                        >
+                            <span aria-hidden="true">[ </span>All<span aria-hidden="true"> ]</span>
+                        </button>
+                        {classFilters.map(({ view, label }) => (
+                            <button
+                                type="button"
+                                data-view={view}
+                                aria-pressed="false"
+                                class="project-view-filter whitespace-nowrap text-sm py-1.5 -my-1.5 transition-colors"
+                            >
+                                <span aria-hidden="true">[ </span>{label}<span aria-hidden="true"> ]</span>
+                            </button>
+                        ))}
+                    </div>
+                </div>
             </div>
 
             <div data-project-view="latest" class="project-view-panel spine max-w-2xl">
@@ -146,7 +159,7 @@ const siteOrigin = Astro.site?.origin;
 
             <div data-project-view="all" class="project-view-panel hidden max-w-2xl">
                 {sortedCategories.map((category) => (
-                    <section class="mb-12">
+                    <section class="mb-12" data-category={classView(category)}>
                         {/* Rows are spaced by margin so a focus ring wraps only the row; open:pb-8 keeps the gap after the last row. */}
                         <details open class="open:pb-8">
                             <summary class="cursor-pointer list-none flex items-center justify-between mb-5">
@@ -165,7 +178,7 @@ const siteOrigin = Astro.site?.origin;
                                     return (
                                         <a href={state.href} class="group relative block mb-8 last:mb-0">
                                             <span aria-hidden="true" class="spine-dot" />
-                                            {/* The category heading above already names the category. */}
+                                            {/* The category heading above, or the class filter, already names the category. */}
                                             <p class="font-mono text-xs uppercase tracking-wider text-[var(--text-faint)]">
                                                 <time datetime={state.date.toISOString()}>{formatDateCompact(state.date)}</time>{uniqueLabels([state.status, state.fork ? "fork" : ""], [category]).map((label) => <>{"\u00a0· "}<span class="whitespace-nowrap">{label}</span></>)}
                                             </p>
@@ -215,6 +228,8 @@ const siteOrigin = Astro.site?.origin;
 </style>
 
 <script>
+    import { revealInRow } from "../../scripts/scrollRow";
+
     (function () {
         let cleanupFn: (() => void) | null = null;
 
@@ -226,7 +241,9 @@ const siteOrigin = Astro.site?.origin;
 
             const filters = document.querySelectorAll<HTMLElement>(".project-view-filter");
             const panels = document.querySelectorAll<HTMLElement>(".project-view-panel");
+            const sections = document.querySelectorAll<HTMLElement>('[data-project-view="all"] [data-category]');
             if (!filters.length || !panels.length) return;
+            const views = new Set(Array.from(filters, (filter) => filter.dataset.view));
 
             function applyView(view: string) {
                 filters.forEach((item) => {
@@ -239,10 +256,29 @@ const siteOrigin = Astro.site?.origin;
                 if (btn) {
                     btn.classList.add("active");
                     btn.setAttribute("aria-pressed", "true");
+                    revealInRow(btn);
                 }
 
+                // A class view is the All panel with only that category's section, open and without its heading.
+                const category = view === "latest" || view === "all" ? null : view;
                 panels.forEach((panel) => {
-                    panel.classList.toggle("hidden", panel.dataset.projectView !== view);
+                    panel.classList.toggle("hidden", panel.dataset.projectView !== (category ? "all" : view));
+                });
+                sections.forEach((section) => {
+                    const details = section.querySelector("details");
+                    const summary = details?.querySelector("summary");
+                    if (!details || !summary) return;
+                    const shown = !category || section.dataset.category === category;
+                    section.classList.toggle("hidden", !shown);
+                    summary.classList.toggle("hidden", category !== null);
+                    if (category && shown) {
+                        // Keep the reader's open or closed choice for the All view.
+                        if (details.dataset.allOpen === undefined) details.dataset.allOpen = String(details.open);
+                        details.open = true;
+                    } else if (!category && details.dataset.allOpen !== undefined) {
+                        details.open = details.dataset.allOpen === "true";
+                        delete details.dataset.allOpen;
+                    }
                 });
             }
 
@@ -255,8 +291,9 @@ const siteOrigin = Astro.site?.origin;
                 filter.addEventListener("click", onClick);
             });
 
-            const urlView = new URLSearchParams(window.location.search).get("view");
-            if (urlView === "all" || urlView === "latest") applyView(urlView);
+            // ?view=all or ?view=<class> selects that view; anything else stays on Latest.
+            const urlView = new URLSearchParams(window.location.search).get("view")?.toLowerCase();
+            if (urlView && views.has(urlView)) applyView(urlView);
 
             cleanupFn = function () {
                 filters.forEach((filter) =>

@@ -3,7 +3,7 @@ title: 'MUSE / T2M'
 pubDate: '2025-12-20'
 description: 'A text-to-music research line around probabilistic generation, Flow Matching, MuQ-MuLan anchors, and Diffusion Transformers.'
 author: 'Audiofool'
-category: 'Music Generation'
+category: 'Music'
 status: 'research'
 featured: true
 stack: ['PyTorch', 'Flow Matching', 'T2M', 'MuQ-MuLan', 'DiT', 'Gradio', 'torchaudio', 'Plotly', 'UMAP']

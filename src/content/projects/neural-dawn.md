@@ -2,7 +2,7 @@
 title: 'Neural Dawn'
 pubDate: '2025-04-10'
 description: 'A review and implementation project around Restricted Boltzmann Machines and Deep Belief Networks in PyTorch.'
-category: 'Course Project'
+category: 'Coursework'
 status: 'archived'
 featured: false
 stack: ['Jupyter Notebook', 'PyTorch', 'RBM', 'DBN', 'Generative Models']

@@ -2,7 +2,7 @@
 title: 'MultiTake'
 pubDate: '2026-05-14'
 description: 'An agent-driven music generation research project where intent evolves through listening, critique, and iterative continuation.'
-category: 'Music Generation'
+category: 'Music'
 status: 'research'
 featured: true
 stack: ['Python', 'Agents', 'Music Generation', 'Intent Modeling', 'Literature Review']

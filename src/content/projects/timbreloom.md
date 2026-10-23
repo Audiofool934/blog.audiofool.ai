@@ -2,7 +2,7 @@
 title: "Timbreloom"
 pubDate: "2026-09-10"
 description: "Local-first voice cloning, conversion, transcription, and dubbing for Apple Silicon."
-category: "Audio"
+category: "Tool"
 status: 'active'
 stack: ["Python", "Apple Silicon", "Voice"]
 type: "Product"

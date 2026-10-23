@@ -38,27 +38,29 @@ function getDate(entry: (typeof sorted)[0]) {
         </header>
 
         <!-- Kind Filters -->
-        <div class="flex flex-wrap gap-x-3 gap-y-3 mb-10 font-mono text-sm">
-            <button
-                type="button"
-                data-kind="all"
-                aria-pressed="true"
-                class="note-kind active whitespace-nowrap py-1.5 -my-1.5 transition-colors"
-            >
-                <span aria-hidden="true">[ </span>All<span aria-hidden="true"> ]</span>
-            </button>
-            {
-                filters.map(({ key, label }) => (
-                    <button
-                        type="button"
-                        data-kind={key}
-                        aria-pressed="false"
-                        class="note-kind whitespace-nowrap py-1.5 -my-1.5 transition-colors"
-                    >
-                        <span aria-hidden="true">[ </span>{label}<span aria-hidden="true"> ]</span>
-                    </button>
-                ))
-            }
+        <div class="mb-10">
+            <div class="scroll-row font-mono text-sm">
+                <button
+                    type="button"
+                    data-kind="all"
+                    aria-pressed="true"
+                    class="note-kind active whitespace-nowrap py-1.5 -my-1.5 transition-colors"
+                >
+                    <span aria-hidden="true">[ </span>All<span aria-hidden="true"> ]</span>
+                </button>
+                {
+                    filters.map(({ key, label }) => (
+                        <button
+                            type="button"
+                            data-kind={key}
+                            aria-pressed="false"
+                            class="note-kind whitespace-nowrap py-1.5 -my-1.5 transition-colors"
+                        >
+                            <span aria-hidden="true">[ </span>{label}<span aria-hidden="true"> ]</span>
+                        </button>
+                    ))
+                }
+            </div>
         </div>
 
         <!-- Entry List -->
@@ -120,6 +122,8 @@ function getDate(entry: (typeof sorted)[0]) {
 </style>
 
 <script>
+    import { revealInRow } from "../../scripts/scrollRow";
+
     (function () {
         let cleanupFn: (() => void) | null = null;
 
@@ -144,6 +148,7 @@ function getDate(entry: (typeof sorted)[0]) {
                 if (btn) {
                     btn.classList.add("active");
                     btn.setAttribute("aria-pressed", "true");
+                    revealInRow(btn);
                 }
 
                 entries.forEach((entry) => {

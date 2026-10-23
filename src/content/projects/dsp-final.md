@@ -2,7 +2,7 @@
 title: 'ESC-50 Sound Classification & Retrieval'
 pubDate: '2026-03-13'
 description: 'A DSP course project implementing FFT, STFT, mel filterbanks, and MFCCs from scratch, then benchmarking audio classifiers and retrieval models.'
-category: 'Course Project'
+category: 'Coursework'
 status: 'archived'
 featured: false
 stack: ['Python', 'DSP', 'MFCC', 'CLAP', 'Audio Retrieval']

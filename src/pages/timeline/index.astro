@@ -44,27 +44,29 @@ const filters = filterOrder
             <h1 class="text-4xl font-bold font-heading">Timeline</h1>
         </header>
 
-        <div class="flex flex-wrap gap-x-3 gap-y-3 mb-10 font-mono text-sm">
-            <button
-                type="button"
-                data-type="all"
-                aria-pressed="true"
-                class="timeline-filter active whitespace-nowrap py-1.5 -my-1.5 transition-colors"
-            >
-                <span aria-hidden="true">[ </span>All<span aria-hidden="true"> ]</span>
-            </button>
-            {
-                filters.map(({ type, label }) => (
-                    <button
-                        type="button"
-                        data-type={type}
-                        aria-pressed="false"
-                        class="timeline-filter whitespace-nowrap py-1.5 -my-1.5 transition-colors"
-                    >
-                        <span aria-hidden="true">[ </span>{label}<span aria-hidden="true"> ]</span>
-                    </button>
-                ))
-            }
+        <div class="mb-10">
+            <div class="scroll-row font-mono text-sm">
+                <button
+                    type="button"
+                    data-type="all"
+                    aria-pressed="true"
+                    class="timeline-filter active whitespace-nowrap py-1.5 -my-1.5 transition-colors"
+                >
+                    <span aria-hidden="true">[ </span>All<span aria-hidden="true"> ]</span>
+                </button>
+                {
+                    filters.map(({ type, label }) => (
+                        <button
+                            type="button"
+                            data-type={type}
+                            aria-pressed="false"
+                            class="timeline-filter whitespace-nowrap py-1.5 -my-1.5 transition-colors"
+                        >
+                            <span aria-hidden="true">[ </span>{label}<span aria-hidden="true"> ]</span>
+                        </button>
+                    ))
+                }
+            </div>
         </div>
 
         <!-- The line and dots give the stacked entries a spine to read down. -->
@@ -140,6 +142,8 @@ const filters = filterOrder
 </style>
 
 <script>
+    import { revealInRow } from "../../scripts/scrollRow";
+
     (function () {
         let cleanupFn: (() => void) | null = null;
 
@@ -166,6 +170,7 @@ const filters = filterOrder
                 if (btn) {
                     btn.classList.add("active");
                     btn.setAttribute("aria-pressed", "true");
+                    revealInRow(btn);
                 }
 
                 var visible = 0;

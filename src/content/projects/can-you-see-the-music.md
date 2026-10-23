@@ -2,7 +2,7 @@
 title: 'Can You See The Music'
 pubDate: '2025-01-16'
 description: 'A course project on music data visualization, lyrics, audio features, sentiment, artists, and playlists.'
-category: 'Course Project'
+category: 'Coursework'
 status: 'archived'
 featured: false
 stack: ['Jupyter Notebook', 'Data Visualization', 'Music Analysis', 'NLP', 'Audio Features']

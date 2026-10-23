@@ -10,7 +10,7 @@ const { total, featuredCount, categories } = Astro.props;
 ---
 
 <div id="gallery-filters" hidden>
-    <div class="gallery-toolbar">
+    <div class="gallery-toolbar scroll-row">
         <div class="gallery-views" role="group" aria-label="Photo selection">
             <button type="button" data-gallery-view="all" aria-pressed="true" class="gallery-filter-button"><span aria-hidden="true">[ </span>All photos<span aria-hidden="true"> ]</span></button>
             {featuredCount > 0 && (
@@ -34,7 +34,7 @@ const { total, featuredCount, categories } = Astro.props;
     </div>
     <div class="gallery-subjects" role="group" aria-labelledby="gallery-subject-label">
         <span id="gallery-subject-label" class="gallery-subject-label">Subject</span>
-        <div class="gallery-subject-options">
+        <div class="gallery-subject-options scroll-row">
             <button type="button" data-gallery-subject="all" aria-pressed="true" class="gallery-filter-button gallery-subject-button"><span aria-hidden="true">[ </span>All<span aria-hidden="true"> ]</span></button>
             {categories.map((name) => (
                 <button type="button" data-gallery-subject={name} aria-pressed="false" class="gallery-filter-button gallery-subject-button"><span aria-hidden="true">[ </span>{name}<span aria-hidden="true"> ]</span></button>
@@ -62,15 +62,18 @@ const { total, featuredCount, categories } = Astro.props;
         display: none;
     }
 
+    /* Both rows are .scroll-row (global.css): one scrolling line on phones, wrapping from md up. */
     .gallery-toolbar {
-        display: flex;
-        flex-wrap: wrap;
         align-items: center;
         justify-content: space-between;
-        column-gap: 1.5rem;
-        /* A wrapped sort row clears the focus ring of the row above. */
-        row-gap: 0.75rem;
-        padding-bottom: 0.25rem;
+    }
+    @media (min-width: 768px) {
+        .gallery-toolbar {
+            column-gap: 1.5rem;
+            /* A wrapped sort row clears the focus ring of the row above. */
+            row-gap: 0.75rem;
+            padding-bottom: 0.25rem;
+        }
     }
 
     .gallery-views {
@@ -171,10 +174,12 @@ const { total, featuredCount, categories } = Astro.props;
     }
 
     .gallery-subject-options {
-        display: flex;
-        flex-wrap: wrap;
         align-items: stretch;
-        gap: 0.25rem 0.75rem;
+    }
+    @media (min-width: 768px) {
+        .gallery-subject-options {
+            row-gap: 0.25rem;
+        }
     }
 
     .gallery-results {
@@ -201,9 +206,6 @@ const { total, featuredCount, categories } = Astro.props;
     }
 
     @media (max-width: 639px) {
-        .gallery-toolbar {
-            column-gap: 0.75rem;
-        }
         .gallery-sort-label {
             position: absolute;
             width: 1px;
@@ -214,34 +216,9 @@ const { total, featuredCount, categories } = Astro.props;
         .gallery-sort {
             gap: 0.25rem;
         }
-        /* The Sort label is hidden here, so the select needs no left inset; this keeps it on the views row at 390px. */
+        /* The Sort label is hidden here, so the select needs no left inset and fits beside the views. */
         .gallery-sort select {
             padding-left: 0;
-        }
-        /*
-         * One scrolling row of subjects that bleeds past the 1.5rem page gutter.
-         * The block padding keeps focus rings inside the scroller's clip; the margin cancels it.
-         */
-        .gallery-subject-options {
-            flex-wrap: nowrap;
-            gap: 0.75rem;
-            margin: -0.25rem -1.5rem;
-            padding-block: 0.25rem;
-            overflow-x: auto;
-            overscroll-behavior-x: contain;
-            scrollbar-width: none;
-        }
-        .gallery-subject-options::-webkit-scrollbar {
-            display: none;
-        }
-        /* With the 0.75rem gap, these spacers put the first and last labels on the gutter line. */
-        .gallery-subject-options::before,
-        .gallery-subject-options::after {
-            content: "";
-            flex: 0 0 0.75rem;
-        }
-        .gallery-subject-button {
-            flex: none;
         }
         .gallery-subjects {
             padding-top: 0.75rem;

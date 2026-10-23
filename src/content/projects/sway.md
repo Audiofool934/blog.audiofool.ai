@@ -2,11 +2,11 @@
 title: 'Sway'
 pubDate: '2026-09-25'
 description: 'An instrument you play with your hands, with a generative band that responds to what you play.'
-category: 'Music Generation'
+category: 'Music'
 status: 'prototype'
 featured: true
 pinned: true
-pinOrder: 3
+pinOrder: 4
 stack: ['JavaScript', 'Python', 'Hand Tracking', 'Music Generation']
 type: 'Product'
 url: 'https://sway.audiofool.ai'

@@ -6,7 +6,7 @@ category: 'Agent'
 status: 'active'
 featured: true
 pinned: true
-pinOrder: 5
+pinOrder: 6
 url: 'https://cc-copilot.audiofool.ai/'
 stack: ['Python', 'Textual', 'TUI', 'Coding Agents', 'Observability']
 type: 'Product'

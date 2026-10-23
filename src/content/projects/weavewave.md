@@ -2,7 +2,7 @@
 title: 'WeaveWave'
 pubDate: '2026-03-12'
 description: 'A multimodal music generation framework that turns text, image, and video inputs into musical descriptions and synthesized audio.'
-category: 'Music Generation'
+category: 'Music'
 status: 'research'
 featured: true
 stack: ['Python', 'MusicGen', 'Gemma', 'Multimodal', 'Gradio']

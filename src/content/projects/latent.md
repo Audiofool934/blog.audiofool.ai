@@ -2,11 +2,11 @@
 title: 'Latent'
 pubDate: '2026-08-31'
 description: 'A personal photographic workspace for rediscovery, curation, and new work.'
-category: 'Photography'
+category: 'Tool'
 status: 'prototype'
 featured: true
 pinned: true
-pinOrder: 2
+pinOrder: 5
 stack: ['Swift', 'Python', 'Semantic Search', 'Photography']
 type: 'Product'
 url: 'https://latent.audiofool.ai/'

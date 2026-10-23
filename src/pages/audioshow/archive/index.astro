@@ -85,7 +85,7 @@ const placeholderImage = "/images/placeholder-album.svg";
                             </div>
                         </summary>
 
-                        <div data-episodes={range}>
+                        <div class="border-t border-[var(--border-subtle)]" data-episodes={range}>
                             {groupedEpisodes[range].map((ep) => {
                                 const cover = ep.imageUrl || placeholderImage;
                                 const artwork = audioImage(cover, 320) || placeholderImage;
@@ -262,6 +262,8 @@ const placeholderImage = "/images/placeholder-album.svg";
 </script>
 
 <style>
+    /* A faint line closes each episode, so a song and its open lyrics read as one unit. */
+    .episode-item { @apply border-b border-[var(--border-subtle)] last:border-b-0; }
     .episode-row { @apply flex items-center gap-4 py-2.5 px-2 -mx-2 transition-colors cursor-pointer; }
     .episode-row:hover { background-color: color-mix(in srgb, var(--text-main) 5%, transparent); }
     .episode-thumbnail { @apply w-12 h-12 flex-shrink-0 bg-[var(--border-subtle)] overflow-hidden; }
@@ -269,9 +271,10 @@ const placeholderImage = "/images/placeholder-album.svg";
     .episode-album { @apply text-xs text-[var(--text-muted)] truncate; }
     .episode-artist { @apply hidden md:block text-sm text-[var(--text-muted)] truncate max-w-[200px]; }
     .episode-play { @apply w-8 text-center opacity-50 hover:opacity-100 transition-opacity; }
-    /* Lyrics start under the number on phones, to keep a usable measure, and under the title
-       from md up: 48px thumbnail + 16px gap + 48px number + 16px gap. */
-    .lyrics-body { @apply ml-16 md:ml-[128px] space-y-3; }
+    /* A rule ties the lyrics to their song. The text starts under the number on phones, to keep
+       a usable measure, and under the title from md up (48px thumbnail + 16px gap + 48px number
+       + 16px gap = 128px); the rule sits 17px before it (1px rule + 16px padding). */
+    .lyrics-body { @apply ml-12 md:ml-[111px] pl-4 border-l border-[var(--border-main)] space-y-3; }
     .episode-lyric { @apply text-sm italic text-[var(--text-muted)] whitespace-pre-line; }
     .lyrics-arrow {
         @apply w-6 text-center text-[var(--text-muted)];
