@@ -9,7 +9,7 @@ pinned: true
 pinOrder: 2
 stack: ['Swift', 'Python', 'Semantic Search', 'Photography']
 type: 'Product'
-url: 'https://github.com/Audiofool934/latent'
+url: 'https://latent.audiofool.ai/'
 githubRepo: 'Audiofool934/latent'
 githubReadme: true
 ---
