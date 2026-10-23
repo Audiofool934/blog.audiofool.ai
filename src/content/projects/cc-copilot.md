@@ -7,7 +7,7 @@ status: 'active'
 featured: true
 pinned: true
 pinOrder: 5
-url: 'https://github.com/Audiofool934/cc-copilot'
+url: 'https://cc-copilot.audiofool.ai/'
 stack: ['Python', 'Textual', 'TUI', 'Coding Agents', 'Observability']
 type: 'Product'
 githubRepo: 'Audiofool934/cc-copilot'
