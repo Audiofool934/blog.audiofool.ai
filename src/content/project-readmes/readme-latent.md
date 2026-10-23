@@ -2,12 +2,14 @@
 project: "latent"
 repo: "Audiofool934/latent"
 sourceUrl: "https://github.com/Audiofool934/latent"
-syncedAt: "2026-10-17T02:09:23.286Z"
+syncedAt: "2026-10-23T13:29:05.465Z"
 ---
 
 # Latent
 
 A personal photographic workspace for rediscovery, curation, and new work.
+
+Project page: [latent.audiofool.ai](https://latent.audiofool.ai)
 
 Latent is a macOS app for photographers with a large archive of RAW and JPEG files.
 It builds a fast local index of previews and metadata, so you can browse the whole archive without downloading originals.

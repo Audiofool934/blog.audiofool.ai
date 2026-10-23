@@ -1,5 +1,5 @@
 {
-  "syncedAt": "2026-10-17T02:09:38.547Z",
+  "syncedAt": "2026-10-23T13:29:05.471Z",
   "projects": [
     {
       "project": "audiofool-blog",
@@ -244,11 +244,11 @@
       "project": "latent",
       "repo": "Audiofool934/latent",
       "url": "https://github.com/Audiofool934/latent",
-      "homepage": "",
+      "homepage": "https://latent.audiofool.ai",
       "description": "A macOS workspace for browsing, searching, and curating a large personal photo archive",
       "visibility": "public",
       "syncStatus": "current",
-      "syncedAt": "2026-10-17T02:09:23.287Z",
+      "syncedAt": "2026-10-23T13:29:05.471Z",
       "createdAt": "2026-10-07T11:37:17Z",
       "archived": false,
       "fork": false,
@@ -257,8 +257,8 @@
       "forks": 0,
       "openIssues": 0,
       "defaultBranch": "main",
-      "pushedAt": "2026-10-13T14:44:12Z",
-      "updatedAt": "2026-10-13T14:45:03Z",
+      "pushedAt": "2026-10-23T12:08:33Z",
+      "updatedAt": "2026-10-23T12:08:40Z",
       "license": "Apache-2.0",
       "topics": [
         "embeddings",
