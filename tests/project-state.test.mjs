@@ -29,6 +29,13 @@ test("project views use the public push date and keep the curated primary destin
     assert.equal(project.data.pubDate.toISOString(), "2026-05-13T00:00:00.000Z");
 });
 
+test("project timeline dates stay at publication when GitHub activity changes", () => {
+    for (const pushedAt of [snapshot.pushedAt, "2026-10-23T18:16:42Z"]) {
+        const state = getProjectState(project, [{ ...snapshot, pushedAt }]);
+        assert.equal(state.timelineDate, project.data.pubDate);
+    }
+});
+
 test("missing, stale, unavailable, private, invalid, or mismatched snapshots cannot become current updates", () => {
     for (const snapshots of [
         [],

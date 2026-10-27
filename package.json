@@ -26,6 +26,8 @@
     "generate:site-images": "node scripts/generate-site-images.mjs",
     "generate:audioshow-images": "node scripts/generate-audioshow-images.mjs",
     "refresh:github-projects": "node scripts/sync-github-projects.mjs",
+    "timeline:collect": "node scripts/collect-github-activity.mjs",
+    "timeline:approve": "node scripts/approve-timeline.mjs",
     "build:with-sync": "npm run refresh:github-projects && npm run build",
     "gallery:intake": "node scripts/gallery-intake/server.mjs",
     "check:unit": "node --experimental-strip-types --test tests/*.test.mjs",

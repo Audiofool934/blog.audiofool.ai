@@ -25,7 +25,7 @@ const portraits = [
 		name: "audiofool-film-portrait",
 		width: 960,
 		height: 828,
-		sizes: "(min-width: 768px) 324px, min(calc(100vw - 3rem), 420px)",
+		sizes: "(min-width: 768px) 325px, min(74.203vw, 325px)",
 		class: "index-portrait-film block dark:hidden",
 	},
 ];
@@ -53,7 +53,7 @@ const portraits = [
 								loading="lazy"
 								fetchpriority="high"
 								decoding="async"
-								class:list={[portrait.class, "w-full h-auto"]}
+								class:list={[portrait.class, "w-full h-full object-contain"]}
 							/>
 						</picture>
 					))
@@ -63,7 +63,7 @@ const portraits = [
 			<div class="w-full max-w-2xl min-w-0 xl:contents">
 				<div class="text-[var(--text-muted)] text-base md:text-lg leading-relaxed space-y-5 index-intro xl:col-start-1 xl:row-start-1">
 					<p>
-						I am <strong>Yinbo Wang</strong>.<br />
+						I am <strong>Yinbo Wang</strong>.<br class="hidden md:block" />
 						I build and study <strong>creative AI</strong>, with a focus on
 						<strong>multimodal understanding/generation</strong> and
 						<strong>AI agent</strong>.
@@ -125,21 +125,18 @@ const portraits = [
 		}
 	}
 
-	/* Phones: the square night cutout stays compact; the landscape film frame fills more of the column. */
+	/* Both themes share a height while preserving each portrait's full frame. */
 	.index-portrait {
 		flex: none;
-		width: min(64vw, 280px);
+		height: min(64vw, 280px);
+		aspect-ratio: 1;
 	}
 	:global(html:not(.dark)) .index-portrait {
-		width: min(100%, 420px);
+		aspect-ratio: 960 / 828;
 	}
-	/* Larger screens: cap both portraits at 280px tall (the film frame is 960×828). */
 	@media (min-width: 768px) {
 		.index-portrait {
-			width: 280px;
-		}
-		:global(html:not(.dark)) .index-portrait {
-			width: 324px;
+			height: 280px;
 		}
 	}
 

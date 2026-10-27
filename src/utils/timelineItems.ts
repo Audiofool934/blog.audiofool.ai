@@ -65,7 +65,7 @@ export async function getTimelineItems(): Promise<TimelineItem[]> {
                 kind: "project" as const,
                 lane: "project",
                 title: entry.data.title,
-                date: state.date,
+                date: state.timelineDate,
                 href: state.href,
                 description: entry.data.description || "",
                 sourceId: entry.id,

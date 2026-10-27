@@ -33,6 +33,8 @@ export function getProjectState(project: ProjectEntry, snapshots: GitHubProject[
 
     return {
         date: hasPush ? pushedAt : project.data.pubDate,
+        // A push updates the project index, not its public milestone history.
+        timelineDate: project.data.pubDate,
         href: project.data.pinned && project.data.url ? project.data.url : `/projects/${project.id}/`,
         status: current && github.archived ? "archived" : project.data.status,
         fork: current && Boolean(github.fork),

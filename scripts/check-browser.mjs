@@ -72,6 +72,46 @@ try {
         await page.screenshot({ path: fileURLToPath(new URL(name, artifacts)), fullPage: false, animations: "disabled" });
     }
 
+    await page.goto(`${base}/`);
+    await page.waitForFunction(() => window.__audioPlayerState?.initialized && window.__qaPageLoads);
+    const selectedRoutes = [
+        "/timeline/2026-10-26-moondog-mac-listening-room/",
+        "/timeline/2026-10-26-prismo-on-petdex/",
+        "/projects/mosaic/",
+        "/projects/moondog/",
+        "/projects/meric/",
+    ];
+    assert.deepEqual(await page.locator(".index-news a.group").evaluateAll((links) => links.map((link) => link.getAttribute("href"))), selectedRoutes);
+    await assertNoOverflow();
+    await screenshot("homepage-desktop-dark.png");
+    for (const href of selectedRoutes) {
+        await navigate(href);
+        assert.equal(await page.locator("main article > header > h1").count(), 1);
+        await page.goto(`${base}/`);
+        await page.waitForFunction(() => window.__qaPageLoads && window.__audioPlayerState?.initialized);
+    }
+    await page.setViewportSize({ width: 390, height: 844 });
+    await assertNoOverflow();
+    await screenshot("homepage-mobile-dark.png");
+    // Native "in viewport" checks ignore the fixed player covering the bottom.
+    await page.locator(".index-news").evaluate((section) => section.scrollIntoView({ block: "center", behavior: "instant" }));
+    assert(await page.locator(".index-news").evaluate((section) => section.getBoundingClientRect().bottom <= document.querySelector("#audio-player-bar > .fixed").getBoundingClientRect().top), "The Selected capture must show all links above the player");
+    await screenshot("homepage-mobile-selected-dark.png");
+    await page.locator('.index-news a[href="/projects/moondog/"]').press("Enter");
+    await page.waitForURL(`${base}/projects/moondog/`);
+    await page.goto(`${base}/`);
+    await page.locator("#theme-toggle-mobile").click();
+    assert.equal(await page.evaluate(() => document.documentElement.classList.contains("dark")), false);
+    await assertNoOverflow();
+    await screenshot("homepage-mobile-light.png");
+    await page.locator(".index-news").evaluate((section) => section.scrollIntoView({ block: "center", behavior: "instant" }));
+    assert(await page.locator(".index-news").evaluate((section) => section.getBoundingClientRect().bottom <= document.querySelector("#audio-player-bar > .fixed").getBoundingClientRect().top), "Light-theme Selected links must clear the player too");
+    await screenshot("homepage-mobile-selected-light.png");
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await screenshot("homepage-desktop-light.png");
+    await page.locator("#theme-toggle").click();
+    console.log("PASS Selected contains the Prismo and Moondog updates plus MERIC, Moondog, and mosAIc; links, keyboard navigation, both themes, and phone layout");
+
     await page.goto(`${base}/timeline/`);
     await page.waitForFunction(() => window.__audioPlayerState?.initialized && window.__qaPageLoads);
     await page.evaluate(() => {

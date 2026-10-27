@@ -35,6 +35,8 @@ npm run generate:site-images
 npm run generate:audioshow-images
 npm run gallery:intake             # Local photo curation desk; requires prepared .local/gallery-intake data
 npm run refresh:github-projects    # Explicit metadata and README sync
+npm run timeline:collect           # Public GitHub facts for local discussion
+npm run timeline:approve -- <file>  # Approve one reviewed draft into log; no deploy
 npm run build:with-sync            # Explicit GitHub sync and build
 ```
 
@@ -65,8 +67,16 @@ Project metadata lives in `src/content/projects/`, synced READMEs in `src/conten
 Pinned projects use `pinOrder` for display order and `url` for their primary destination in the project index.
 A project's `category` is one of the one-word classes in `categoryOrder` in `src/pages/projects/index.astro`; the Project Index filters show each class (plural where countable, such as `[ Agents ]`), and `?view=<class>` links to one.
 `src/utils/projectState.ts` shares project update dates, primary links, and GitHub archive status across Project Index and Timeline.
-Use current public GitHub `pushedAt` for update ordering; keep authored `pubDate` as the fallback and preserve project RSS GUIDs when links change.
+Use current public GitHub `pushedAt` for Project Index ordering, with authored `pubDate` as the fallback.
+Timeline project entries keep their authored publication dates; later milestones are approved log posts, never raw pushes.
+Preserve project RSS GUIDs when links change.
 The GitHub sync keeps unavailable public snapshots with a status notice and never imports private README content.
+GitHub timeline collection writes factual reports only under ignored `.local/timeline/`; it does not select updates or generate drafts.
+The manual-only GitHub workflow uploads factual review artifacts; it cannot commit or deploy.
+The local Hermes job owns weekly collection and discussion delivery, as described in `docs/timeline-curation.md`.
+Review sources and write reader-facing milestones together before running `timeline:approve`.
+Keep `githubActivity` source URLs on approved logs so collection can deduplicate them.
+See `docs/timeline-curation.md` for the editorial rules and approval path.
 
 ## Content and Routes
 

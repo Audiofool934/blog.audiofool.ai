@@ -1,0 +1,53 @@
+name: Collect GitHub facts for discussion
+
+on:
+  workflow_dispatch:
+    inputs:
+      since:
+        description: 'Optional UTC start date (YYYY-MM-DD); defaults to the last 30 days'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: timeline-review
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+      - name: Collect public project evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SINCE: ${{ inputs.since }}
+        run: |
+          if [ -n "$SINCE" ]; then
+            npm run timeline:collect -- --since "$SINCE"
+          else
+            npm run timeline:collect
+          fi
+      - name: Upload unpublished review packet
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: timeline-review-${{ github.run_id }}
+          path: |
+            .local/timeline/review*.json
+            .local/timeline/review*.md
+          archive: true
+          overwrite: false
+          include-hidden-files: true
+          retention-days: 30
+          if-no-files-found: ignore

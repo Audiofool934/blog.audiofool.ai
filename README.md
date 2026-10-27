@@ -57,6 +57,8 @@ npm run dev        # http://localhost:4321
 | `npm run check:browser` | Production browser interactions; run after a build |
 | `npm run check:performance` | Gzip size budgets and local math assets; run after a build |
 | `npm run refresh:github-projects` | Fetch fresh GitHub metadata and README snapshots |
+| `npm run timeline:collect` | Collect public GitHub facts for discussion; does not select or draft posts |
+| `npm run timeline:approve -- <file>` | Approve a reviewed JSON draft into the timeline; does not deploy |
 | `npm run build:with-sync` | Refresh GitHub snapshots, then build |
 | `npm run gallery:intake` | Local photo curation desk (see [its README](scripts/gallery-intake/README.md)) |
 
@@ -69,6 +71,14 @@ Notes live in `wiki/` and timeline entries in `log/`; older `/wiki/` and `/log/`
 **Updates.**
 `src/utils/timelineItems.ts` decides what counts as an update.
 The homepage, the Timeline, and the RSS feed all read from it.
+Project entries keep their publication dates rather than moving after every push.
+Later project updates enter the existing log collection only after discussion and approval.
+`timeline:collect` gathers public GitHub evidence into ignored `.local/timeline/`, grouped by project.
+Collection does not define milestones, rank changes, or generate post drafts.
+The facts are discussed with Everett before deciding whether to update Timeline.
+A local Hermes job collects facts weekly and sends a Chinese summary to Telegram for discussion, not automatic publication.
+The GitHub Action is manual-only and produces a factual review artifact as a fallback.
+See [Timeline curation](docs/timeline-curation.md) for the collection, drafting, and approval process.
 
 **Projects.**
 A project entry can point at a GitHub repository:
@@ -80,7 +90,8 @@ githubReadme: true
 
 `npm run refresh:github-projects` fetches repository metadata and the README, sanitizes it, and writes a snapshot to `src/data/github-projects.json` and `src/content/project-readmes/`.
 The snapshot is committed, so builds never call the GitHub API.
-Timeline and Project Index use the latest public GitHub push as the project update date, with the original publication date as a fallback.
+The Project Index uses the latest public GitHub push as the project update date, with the original publication date as a fallback.
+The Timeline uses publication dates and approved updates instead of push activity.
 Pinned projects keep their curated order and primary links.
 Unavailable repositories retain their last public snapshot and show a notice on the detail page.
 

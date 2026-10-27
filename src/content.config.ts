@@ -49,6 +49,7 @@ const log = defineCollection({
         tags: z.array(z.string()).default([]),
         description: z.string().optional(),
         timeline: z.boolean().default(true),
+        githubActivity: z.array(z.url()).default([]),
         redirectTo: z.string().optional(),
         image: image().optional(),
         imageAlt: z.string().optional(),

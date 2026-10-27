@@ -5,7 +5,9 @@ import type { TimelineItemKind } from "../utils/timelineItems";
  * timeline item by its kind and entry id; the build fails if one is missing.
  */
 export const homepageSelected: { kind: TimelineItemKind; id: string }[] = [
-    { kind: "log", id: "2026-08-31-how-lucky-was-this-lunar-transit" },
+    { kind: "log", id: "2026-10-26-prismo-on-petdex" },
+    { kind: "log", id: "2026-10-26-moondog-mac-listening-room" },
     { kind: "project", id: "meric" },
-    { kind: "note", id: "what-makes-an-agent-agentic" },
+    { kind: "project", id: "moondog" },
+    { kind: "project", id: "mosaic" },
 ];
