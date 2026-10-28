@@ -6,7 +6,7 @@ syncedAt: "2026-10-17T02:09:25.815Z"
 ---
 
 <p>
-  <img referrerpolicy="no-referrer" decoding="async" loading="lazy" src="https://raw.githubusercontent.com/Audiofool934/moondog/main/assets/brand/moondog-lunar-record/moondog-logo-1x1.png" width="156" alt="Moondog lunar record" />
+  <img referrerpolicy="no-referrer" decoding="async" loading="lazy" src="https://raw.githubusercontent.com/Audiofool934/moondog/main/assets/brand/moondog-logo.svg" width="156" alt="Moondog lunar record" />
 </p>
 
 <h1>Moondog</h1>
